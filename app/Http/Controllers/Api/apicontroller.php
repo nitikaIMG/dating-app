@@ -25,7 +25,7 @@ class apicontroller extends Controller
                 'password' => 'required',
                 'confirm_password' => 'required|same:password',
             ]);
-
+    
             if ($validator->fails()) {
                 return response()->json([
                     'message' => 'Validation Fails',
@@ -39,7 +39,6 @@ class apicontroller extends Controller
                 'password' => Hash::make($request->password),
                 'confirm_password' => $request->confirm_password,
             ]);
-
             return response()->json([
                 'message' => 'Registerd Successfully',
                 'data' => $users,
@@ -115,7 +114,7 @@ class apicontroller extends Controller
                 $data['email'] = $request->email;
                 $data['title'] = "Password Reset Mail";
                 $data['body'] = "Please click below link for reset password";
-
+                
                 Mail::send('forgetpassword', ['data' => $data], function ($message) use ($data) {
                     $message->to($data['email']);
                     $message->subject($data['title']);
@@ -175,11 +174,6 @@ class apicontroller extends Controller
             return response()->json(array(['success' => false, 'message' => $e->getMessage()]));
         }
     }
-
-
-
-
-
 
 
     // public function user(Request $request){

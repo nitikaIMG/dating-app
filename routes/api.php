@@ -2,8 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\apicontroller;
-
+use App\Http\Controllers\Api\Apicontroller;
+use App\Http\Controllers\Api\UserController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -19,10 +19,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('auth/register',[apicontroller::class,'register']);
-Route::post('auth/login',[apicontroller::class,'login']);
-Route::post('forgotpassword',[apicontroller::class,'forgot']);
+Route::post('auth/register',[Apicontroller::class,'register']);
+Route::post('auth/login',[Apicontroller::class,'login']);
+Route::post('forgotpassword',[Apicontroller::class,'forgot']);
 
-
-// Route::get('auth/user',[apicontroller::class,'user'])->middleware('auth:sanctum');
-
+Route::Resource('users', UserController::class);
+// Route::get('auth/user',[Apicontroller::class,'user'])->middleware('auth:sanctum');
