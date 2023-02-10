@@ -15,10 +15,29 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('first_name');
+            $table->string('last_name')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
+            $table->text('session_id')->nullable();
+            $table->text('active_device_id')->nullable();
+            $table->string('profile_image')->nullable();
+            $table->string('phone')->nullable()->unique();
+            $table->timestamp('phone_verified_at')->nullable();
+            $table->string('gender', 10)
+                ->nullable()
+                ->comment('m,f,o');
+            $table->tinyInteger('status')
+                ->default(1)
+                ->comment('1=Active,0=Blocked');
+            $table->string('refer_code', 191)->nullable();
+            $table->bigInteger('refer_by')->default(0);
+            $table->string('platform')->nullable();
+            $table->string('social_login_with')->nullable();
+            $table->string('social_id')->nullable();
+            $table->string('social_session_id')->nullable();;
+            $table->text('referred_from')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

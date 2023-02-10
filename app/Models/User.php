@@ -7,21 +7,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var string[]
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+    protected $guarded = ['id'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -33,12 +30,79 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'phone_verified_at' => 'datetime',
     ];
+
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+
+    # User may have one information record
+    public function info()
+    {
+        return $this->hasOne(UserInfo::class);
+    }
+
+    public function getStatusTextAttribute()
+    {
+        $status = [
+            0 => 'blocked',
+            1 => 'active',
+        ];
+
+        return $status[$this->status];
+    }
+
+    public function getNameAttribute()
+    {
+        return $this->last_name 
+            ? $this->first_name." ".$this->last_name 
+        : $this->first_name;
+    }
+
+    public function format()
+    {
+
+        return [
+            'id' => $this->id,
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name ?? '',
+            'phone' => $this->phone ?? '',
+            'email' => $this->email ?? '',
+            'dob'   => $this->dob ?? null,
+            'country' => $this->country,
+            'gender' => $this->gender,
+            'email_verified_at' => $this->email_verified_at,
+            'refer_code'=>$this->refer_code
+        ];
+    }
+
+    
+    public function isBlocked()
+    {
+        return $this->status === 0;
+    }
+
+    public function devices()
+    {
+        return $this->hasMany(UserDevice::class, 'user_id');
+    }
 }

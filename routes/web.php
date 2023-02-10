@@ -14,11 +14,12 @@ use App\Http\Controllers\Api\apicontroller;
 |
 */
 
+
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::any('resetpassword',[apicontroller::class,'resetpassword']);
+// Route::any('resetpassword',[apicontroller::class,'resetpassword']);
 
 
 

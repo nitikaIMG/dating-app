@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\apicontroller;
+use App\Http\Controllers\API\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,14 +16,12 @@ use App\Http\Controllers\Api\apicontroller;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::controller(AuthController::class)->group(function () {
+    Route::post('register', 'registerUser');
 });
 
-Route::post('auth/register',[apicontroller::class,'register']);
-Route::post('auth/login',[apicontroller::class,'login']);
-Route::post('forgotpassword',[apicontroller::class,'forgot']);
-
-
-// Route::get('auth/user',[apicontroller::class,'user'])->middleware('auth:sanctum');
+Route::middleware('jwt.verify')->group( function(){
+    Route::controller(AuthController::class)->group(function () {
+    });
+});
 
