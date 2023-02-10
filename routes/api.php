@@ -22,6 +22,8 @@ Route::controller(AuthController::class)->group(function () {
 
 Route::middleware('jwt.verify')->group( function(){
     Route::controller(AuthController::class)->group(function () {
+        Route::post('login','loginUser');
+        Route::post('verifyotp','verifyotp');
     });
 });
 

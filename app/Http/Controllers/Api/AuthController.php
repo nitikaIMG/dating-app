@@ -36,7 +36,8 @@ class AuthController extends ApiController
             'country'       => ['required', 'string'],
             'device_id'     => ['bail', 'nullable', 'max:191'],
             'referred_from'   => ['nullable', 'max:1000'],
-            'refer_code'   => ['nullable', 'max:8']
+            'refer_code'   => ['nullable', 'max:8'],
+            'otp'   => ['nullable'],
 
         ], $messages);
 
@@ -50,6 +51,7 @@ class AuthController extends ApiController
             $validated = $validator->validated();
 
             $dob = $request->get('dob');
+            $otp = 1234;
 
             if ($dob && ($dob = strtotime($dob))) {
                 $dob = date('Y-m-d', $dob);
@@ -67,6 +69,7 @@ class AuthController extends ApiController
                 'refer_code' => $this->getReferralCode($validated['name']),
                 'refer_by' => (isset($validated['refer_code'])) ? $this->getUserByRefercode($validated['refer_code']) : 0,
                 'country'  => $validated['country'],
+                'otp'  => $otp,
             ]);
             if (isset($validated['refer_code']) && $this->getUserByRefercode($validated['refer_code']) == 0) {
                 return ApiResponse::error('Refer code is Not valid');
@@ -127,64 +130,99 @@ class AuthController extends ApiController
         $validator = Validator::make($request->all(), [
             'email'         => ['required', 'email'],
             'password'      => ['required', 'string'],
+            // 'otp'      => ['required', 'numeric'],
         ], $messages);
 
         if ($validator->fails()) {
             return $this->validation_error_response($validator);
         }
+        try {
+            DB::beginTransaction();
 
-        $validated = $validator->validated();
+            $validated = $validator->validated();
 
-        if (!$token = JWTAuth::attempt($validated)) {
-            return ApiResponse::unauthorized('You have entered an invalid username or password.');
-        }
-        # Get the User
-        $user = $this->user();
-        if ($user->verified == 0) {
-            return ApiResponse::Notverify2("For Login Verify your email first.");
-            // return ApiResponse::Notverify2("For Login Verify your email first.");
-        }
-        # Validate for the customer only
-        if (!empty($user)) {
-            return ApiResponse::unauthorized('Invalid User Details');
-        } else {
-            if (
-                $user->active_device_id &&
-                $request->has('device_id') &&
-                $user->active_device_id !== $request->get('device_id')
-            ) {
+            if (!$token = JWTAuth::attempt($validated)) {
+                return ApiResponse::unauthorized('You have entered an invalid username or password.');
+            }
 
-                if (!$request->has('no_override') && false) {
-                    return ApiResponse::unauthorized(
-                        __("You're already logged into another device")
+            # Get the User
+            $user = $this->user();
+
+            if ($user) {
+                if ($user->email == $validated['email']) {
+                    return ApiResponse::ok(
+                        'Login Successful',
+                        $this->getUserWithToken($token, $user)
                     );
+                } else {
+                    return ApiResponse::error('Email not verified');
                 }
+            } else {
+                return ApiResponse::error('User Not Found');
             }
 
-            try {
-                if ($user->session_id) {
-                    JWTAuth::setToken($user->session_id)->invalidate(true);
-                }
-            } catch (\Exception $e) {
-                logger($e->getMessage());
+            if (empty($user->refer_code)) {
+                $user->refer_code = $this->getReferralCode($user->first_name);
+                $user->update();
             }
 
-            $user->active_device_id = $request->get('device_id');
-            $user->session_id = $token;
-            $user->update();
+            # Return Resonse with Token
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
         }
 
-        if (empty($user->refer_code)) {
-            $user->refer_code = $this->getReferralCode($user->first_name);
-            $user->update();
-        }
-
-        # Return Resonse with Token
-        return ApiResponse::ok(
-            'Login Successful',
-            $this->getUserWithToken($token, $user)
-        );
+        return ApiResponse::error('Something went wrong!');
     }
+
+    public function verifyotp(Request $request)
+    {
+        ## Validate Request Inputs
+        $messages = [];
+
+        $validator = Validator::make($request->all(), [
+            'phone'      => ['required'],
+            'otp'      => ['required', 'numeric'],
+        ], $messages);
+
+        
+        if ($validator->fails()) {
+            return $this->validation_error_response($validator);
+        }
+        try {
+            DB::beginTransaction();
+            
+            $validated = $validator->validated();
+
+            # Get the User
+            $user = $this->user();
+
+
+            if ($user) {
+                if ($user->otp == $validated['otp']) {
+                    return ApiResponse::ok(
+                        'Otp Verified Successful',
+                        $this->getUserWithotpverify($user)
+                    );
+                } else {
+                    return ApiResponse::error('Otp not verified');
+                }
+            } else {
+                return ApiResponse::error('Phone no  Not Found');
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
+        }
+
+        return ApiResponse::error('Something went wrong!');
+    }
+
+
+
+
 
     public function logout()
     {
@@ -440,7 +478,7 @@ class AuthController extends ApiController
         return [
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' =>JWTAuth::factory()->getTTL() * 60,
+            'expires_in' => JWTAuth::factory()->getTTL() * 60,
             // 'push_enabled' => $user->setting
             //     ? boolval($user->setting->push_notification)
             //     : false,
@@ -457,6 +495,14 @@ class AuthController extends ApiController
             // 'push_enabled' => $user->setting
             //     ? boolval($user->setting->push_notification)
             //     : false,
+            'user' => $user->format()
+        ];
+    }
+
+
+    public function getUserWithotpverify($user)
+    {
+        return [
             'user' => $user->format()
         ];
     }
