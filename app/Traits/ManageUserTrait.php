@@ -36,4 +36,8 @@ trait ManageUserTrait
             return 0;
         }
     }
+
+    public function generateOTP(){
+        return '1234';
+    }
 }

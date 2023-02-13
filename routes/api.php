@@ -18,8 +18,8 @@ use App\Http\Controllers\Api\AuthController;
 
 Route::controller(AuthController::class)->group(function () {
     Route::post('register', 'registerUser'); //registration
-    Route::post('verifyotp', 'verifyotp');
-    Route::post('loginwithmobile', 'loginwithmobile'); //login phone no
+    Route::post('verifyotp', 'verifyOtp');
+    Route::post('loginviamobile', 'loginviamobile'); //login phone no
     
 });
 

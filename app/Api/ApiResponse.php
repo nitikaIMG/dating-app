@@ -28,9 +28,9 @@ class ApiResponse implements ApiInterface
     public static function response($status = 200, $message = null, $data = [], ...$extraData)
     {
         $json = [
-            'STATUS'  => intval(!empty($data) || $status === 200),
-            'MESSAGE' => $message,
-            'DATA'    => !empty($data) ? $data : null
+            'status'  => intval(!empty($data) || $status === 200),
+            'message' => $message,
+            'data'    => !empty($data) ? $data : null
         ];
 
         if ($extraData) {
