@@ -17,13 +17,18 @@ use App\Http\Controllers\API\AuthController;
 */
 
 Route::controller(AuthController::class)->group(function () {
-    Route::post('register', 'registerUser');
+    Route::post('register', 'registerUser'); //registration
+    Route::post('verifyotp', 'verifyotp');
+    Route::post('loginwithmobile', 'loginwithmobile'); //login phone no
+    
 });
 
-Route::middleware('jwt.verify')->group( function(){
+Route::middleware('jwt.verify')->group(function () {
     Route::controller(AuthController::class)->group(function () {
-        Route::post('login','loginUser');
-        Route::post('verifyotp','verifyotp');
+        // Route::post('login', 'loginUser'); //login email password
+        
+        // Route::post('verifymobile', 'verifymobile');
+        Route::post('logout', 'logout'); //logout
+
     });
 });
-
