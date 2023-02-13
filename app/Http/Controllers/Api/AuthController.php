@@ -326,6 +326,7 @@ class AuthController extends ApiController
                 $users->profile_image= $imageName;
                 $users->active_device_id= $request->input('active_device_id');
                 $users->platform= $device_platform;
+                $users->phone_enable=1;
                 // $users->dob = $request->input('dob');
                 // $users->country = $request->input('country') ? $request->input('country') : 'GH';
                 // $users->gender = $request->input('gender');
@@ -358,8 +359,8 @@ class AuthController extends ApiController
         } else if ($device_platform == "ios") {
             $email = $request->email;
             $social_id = $request->social_id;
-            // $socialDatas = User::where('social_id',$social_id)->where('platform','ios')->where('email',$email)->first();
             $socialDatas = User::where('social_id', $social_id)->where('platform', 'ios')->first();
+            
             if ($socialDatas) {
                 // $userDatas = User::find($socialDatas->id);
                 // dd($userDatas);
@@ -422,6 +423,7 @@ class AuthController extends ApiController
                 $users->profile_image= $imageName;
                 $users->active_device_id= $request->input('active_device_id');
                 $users->platform= $device_platform;
+                $users->phone_enable=1;
                 // $users->dob = $request->input('dob');
                 // $users->country = $request->input('country') ? $request->input('country') : 'GH';
                 // $users->gender = $request->input('gender');

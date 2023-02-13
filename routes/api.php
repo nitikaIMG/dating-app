@@ -26,6 +26,7 @@ Route::middleware('jwt.verify')->group( function(){
         Route::post('login','loginUser');
         Route::post('verifyotp','verifyotp');
     });
+    Route::Resource('users', UserController::class);
 });
 
 
@@ -33,5 +34,5 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('social_login','social_login');
 });
 
-Route::Resource('users', UserController::class);
+
 // Route::get('auth/user',[Apicontroller::class,'user'])->middleware('auth:sanctum');
