@@ -10,6 +10,7 @@ use App\Http\Controllers\ApiController;
 use App\Models\User;
 use App\Traits\ManageUserTrait;
 use DB;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth as JWTAuth;
 
@@ -36,7 +37,8 @@ class AuthController extends ApiController
             'country'       => ['required', 'string'],
             'device_id'     => ['bail', 'nullable', 'max:191'],
             'referred_from'   => ['nullable', 'max:1000'],
-            'refer_code'   => ['nullable', 'max:8']
+            'refer_code'   => ['nullable', 'max:8'],
+            'otp'   => ['nullable'],
 
         ], $messages);
 
@@ -50,6 +52,7 @@ class AuthController extends ApiController
             $validated = $validator->validated();
 
             $dob = $request->get('dob');
+            $otp = 1234;
 
             if ($dob && ($dob = strtotime($dob))) {
                 $dob = date('Y-m-d', $dob);
@@ -67,6 +70,7 @@ class AuthController extends ApiController
                 'refer_code' => $this->getReferralCode($validated['name']),
                 'refer_by' => (isset($validated['refer_code'])) ? $this->getUserByRefercode($validated['refer_code']) : 0,
                 'country'  => $validated['country'],
+                'otp'  => $otp,
             ]);
             if (isset($validated['refer_code']) && $this->getUserByRefercode($validated['refer_code']) == 0) {
                 return ApiResponse::error('Refer code is Not valid');
@@ -127,63 +131,94 @@ class AuthController extends ApiController
         $validator = Validator::make($request->all(), [
             'email'         => ['required', 'email'],
             'password'      => ['required', 'string'],
+            // 'otp'      => ['required', 'numeric'],
         ], $messages);
 
         if ($validator->fails()) {
             return $this->validation_error_response($validator);
         }
+        try {
+            DB::beginTransaction();
 
-        $validated = $validator->validated();
+            $validated = $validator->validated();
 
-        if (!$token = JWTAuth::attempt($validated)) {
-            return ApiResponse::unauthorized('You have entered an invalid username or password.');
-        }
-        # Get the User
-        $user = $this->user();
-        if ($user->verified == 0) {
-            return ApiResponse::Notverify2("For Login Verify your email first.");
-            // return ApiResponse::Notverify2("For Login Verify your email first.");
-        }
-        # Validate for the customer only
-        if (!empty($user)) {
-            return ApiResponse::unauthorized('Invalid User Details');
-        } else {
-            if (
-                $user->active_device_id &&
-                $request->has('device_id') &&
-                $user->active_device_id !== $request->get('device_id')
-            ) {
+            if (!$token = JWTAuth::attempt($validated)) {
+                return ApiResponse::unauthorized('You have entered an invalid username or password.');
+            }
 
-                if (!$request->has('no_override') && false) {
-                    return ApiResponse::unauthorized(
-                        __("You're already logged into another device")
+            # Get the User
+            $user = $this->user();
+
+            if ($user) {
+                if ($user->email == $validated['email']) {
+                    return ApiResponse::ok(
+                        'Login Successful',
+                        $this->getUserWithToken($token, $user)
                     );
+                } else {
+                    return ApiResponse::error('Email not verified');
                 }
+            } else {
+                return ApiResponse::error('User Not Found');
             }
 
-            try {
-                if ($user->session_id) {
-                    JWTAuth::setToken($user->session_id)->invalidate(true);
-                }
-            } catch (\Exception $e) {
-                logger($e->getMessage());
+            if (empty($user->refer_code)) {
+                $user->refer_code = $this->getReferralCode($user->first_name);
+                $user->update();
             }
 
-            $user->active_device_id = $request->get('device_id');
-            $user->session_id = $token;
-            $user->update();
+            # Return Resonse with Token
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
         }
 
-        if (empty($user->refer_code)) {
-            $user->refer_code = $this->getReferralCode($user->first_name);
-            $user->update();
+        return ApiResponse::error('Something went wrong!');
+    }
+
+    public function verifyotp(Request $request)
+    {
+        ## Validate Request Inputs
+        $messages = [];
+
+        $validator = Validator::make($request->all(), [
+            'phone'      => ['required'],
+            'otp'      => ['required', 'numeric'],
+        ], $messages);
+
+        
+        if ($validator->fails()) {
+            return $this->validation_error_response($validator);
+        }
+        try {
+            DB::beginTransaction();
+            
+            $validated = $validator->validated();
+
+            # Get the User
+            $user = $this->user();
+
+
+            if ($user) {
+                if ($user->otp == $validated['otp']) {
+                    return ApiResponse::ok(
+                        'Otp Verified Successful',
+                        $this->getUserWithotpverify($user)
+                    );
+                } else {
+                    return ApiResponse::error('Otp not verified');
+                }
+            } else {
+                return ApiResponse::error('Phone no  Not Found');
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
         }
 
-        # Return Resonse with Token
-        return ApiResponse::ok(
-            'Login Successful',
-            $this->getUserWithToken($token, $user)
-        );
+        return ApiResponse::error('Something went wrong!');
     }
 
     public function logout()
@@ -201,8 +236,13 @@ class AuthController extends ApiController
         $messages = [];
 
         $validator = Validator::make($request->all(), [
-            'device_id'    => ['required'],
+            'name'    => ['required', 'string', 'min:3', 'max:60'],
+            'email'         => ['required', 'email'],
+            'profile_image' => ['required','mimes:jpg,jpeg,png,PNG,JPG,JPEG'],
+            'social_login_with' => ['required','in:google,facebook'],
+            'platform'=>['required','in:android,ios'],
             'social_id'         => ['required'],
+            'active_device_id'    => ['required', 'nullable', 'unique:users,active_device_id']
             // 'device_id'     => ['bail', 'nullable', 'max:191', 'unique:user_devices,device_id']
 
         ], $messages);
@@ -211,60 +251,39 @@ class AuthController extends ApiController
             return $this->validation_error_response($validator);
         }
 
+        $imageName = time().'.'.$request->profile_image->extension();
+        $request->profile_image->move(public_path(''), $imageName);
+
         $device_platform = $request->platform;
 
-        // $socialDatas = User::where('social_id', $request->get('social_id'))
-        //     ->first();
-
-        // if( $socialDatas ) {
-        //     $errors = [];
-
-        //     if( empty($socialDatas->dob) && empty($request->get('dob')) ) {
-        //         $errors['dob_required'] = null;
-        //         $errors['gender_required'] = $socialDatas->gender ?? $request->get('gender');
-        //     }
-
-        //     if( empty($socialDatas->gender) && empty($request->get('gender')) ) {
-        //         $errors['dob_required'] = $socialDatas->dob ?? $request->get('dob');
-        //         $errors['gender_required'] = null;
-        //     }
-
-        //     if( !empty($errors) ) {
-        //         return ApiResponse::ok(
-        //             'Dob or gender not filled',
-        //             [
-        //                 'dob_required' => $errors['dob_required'],
-        //                 'gender_required' => $errors['gender_required']
-        //             ]
-        //         );
-        //     }
-        // }
+        $socialDatas = User::where('social_id', $request->get('social_id'))
+            ->first();
 
         if ($device_platform == "android") {
-            // $first_name=$request->first_name;
-            // $last_name=$request->last_name;
             $email = $request->email;
             $social_id = $request->social_id;
             $socialDatas = User::where('social_id', $social_id)->where('platform', 'android')->where('email', $email)->first();
+
             if ($socialDatas) {
                 // $userDatas = User::find($socialDatas->id);
-                // dd($userDatas);
-                $updates = [
-                    'dob', 'country', 'gender',
-                    'phone', 'refer_code', 'referred_from'
-                ];
-                $updated = [];
+ 
+                // $updates = [
+                //     'dob', 'country', 'gender',
+                //     'phone', 'refer_code', 'referred_from'
+                // ];
+                // $updated = [];
 
-                foreach ($updates as $val) {
-                    $updated[$val] = !empty($socialDatas->{$val})
-                        ? $socialDatas->{$val} : $request->get($val);
-                }
+                // foreach ($updates as $val) {
+                //     $updated[$val] = !empty($socialDatas->{$val})
+                //         ? $socialDatas->{$val} : $request->get($val);
+                // }
 
-                $socialDatas->fill($updated);
+                // $socialDatas->fill($updated);
 
-                if ($socialDatas->isDirty()) {
-                    $socialDatas->save();
-                }
+                // if ($socialDatas->isDirty()) {
+                //     $socialDatas->save();
+                // }
+
                 $token = JWTAuth::fromUser($socialDatas);
                 $socialDatas->social_login = true;
                 if (empty($socialDatas->refer_code)) {
@@ -284,7 +303,6 @@ class AuthController extends ApiController
                     //         "DATA"=>(object)[]
                     // ]);
                     $userDatas = User::find($socialDatas->id);
-                    // dd($userDatas);
                     $token = JWTAuth::fromUser($userDatas);
                     if (empty($socialDatas->refer_code)) {
                         $socialDatas->refer_code = $this->getReferralCode($socialDatas->first_name);
@@ -296,35 +314,39 @@ class AuthController extends ApiController
                     );
                 }
                 $users = new User();
-                $users->verified = 1;
+                // $users->verified = 1;
                 $users->first_name = $request->input('name');
                 $users->last_name = $request->input('name');
                 $users->email = $request->input('email');
                 $users->email_verified_at = now();
                 $users->remember_token = Str::random(10);
-                $users->social_login_with = "gmail";
+                $users->social_login_with = $request->input('social_login_with');
                 $users->platform = $request->input('platform');
                 $users->social_id = $request->input('social_id');
-                $users->dob = $request->input('dob');
-                $users->country = $request->input('country') ? $request->input('country') : 'GH';
-                $users->gender = $request->input('gender');
+                $users->profile_image= $imageName;
+                $users->active_device_id= $request->input('active_device_id');
+                $users->platform= $device_platform;
+                $users->phone_enable=1;
+                // $users->dob = $request->input('dob');
+                // $users->country = $request->input('country') ? $request->input('country') : 'GH';
+                // $users->gender = $request->input('gender');
                 $users->refer_code = $this->getReferralCode($request->input('name'));
-                $users->phone = $request->input('phone');
+                // $users->phone = $request->input('phone');
                 $users->referred_from = $request->input('referred_from');
 
                 $users->save();
-                $users->syncRoles([User::CUSTOMER]);
+                // $users->syncRoles([User::CUSTOMER]);
 
                 # Create User Info
-                $users->info()->create([
-                    'dob'       => now()->parse($request->input('dob'))->format('Y-m-d'),
-                    'country'   => $request->input('country'),
-                ]);
+                // $users->info()->create([
+                //     'dob'       => now()->parse($request->input('dob'))->format('Y-m-d'),
+                //     'country'   => $request->input('country'),
+                // ]);
                 $token = JWTAuth::fromUser($users);
 
                 $datas = array('user' => $users, 'token' => $token);
                 $users->social_login = true;
-                // dd($users);
+
                 if (empty($users->refer_code)) {
                     $users->refer_code = $this->getReferralCode($users->first_name);
                     $users->update();
@@ -335,33 +357,29 @@ class AuthController extends ApiController
                 );
             }
         } else if ($device_platform == "ios") {
-            // dd();
-
-            // $first_name=$request->first_name;
-            // $last_name=$request->last_name;
             $email = $request->email;
             $social_id = $request->social_id;
-            // $socialDatas = User::where('social_id',$social_id)->where('platform','ios')->where('email',$email)->first();
             $socialDatas = User::where('social_id', $social_id)->where('platform', 'ios')->first();
+            
             if ($socialDatas) {
                 // $userDatas = User::find($socialDatas->id);
                 // dd($userDatas);
-                $updates = [
-                    'dob', 'country', 'gender',
-                    'phone', 'refer_code', 'referred_from'
-                ];
-                $updated = [];
+                // $updates = [
+                //     'dob', 'country', 'gender',
+                //     'phone', 'refer_code', 'referred_from'
+                // ];
+                // $updated = [];
 
-                foreach ($updates as $val) {
-                    $updated[$val] = !empty($socialDatas->{$val})
-                        ? $socialDatas->{$val} : $request->get($val);
-                }
+                // foreach ($updates as $val) {
+                //     $updated[$val] = !empty($socialDatas->{$val})
+                //         ? $socialDatas->{$val} : $request->get($val);
+                // }
 
-                $socialDatas->fill($updated);
+                // $socialDatas->fill($updated);
 
-                if ($socialDatas->isDirty()) {
-                    $socialDatas->save();
-                }
+                // if ($socialDatas->isDirty()) {
+                //     $socialDatas->save();
+                // }
                 $token = JWTAuth::fromUser($socialDatas);
                 $socialDatas->social_login = true;
                 if (empty($socialDatas->refer_code)) {
@@ -373,16 +391,13 @@ class AuthController extends ApiController
                     $this->getUserWithSocialToken($token, $socialDatas)
                 );
             } else {
-                // dd();
                 $socialEmail = User::where('email', $email)->first();
                 if ($socialEmail) {
                     // return response()->json([
                     //         "STATUS"=>409,
                     //         "MESSAGE" => "Email Has Already Been Taken",
-                    //         "DATA"=>(object)[]
                     // ]);
                     $userDatas = User::find($socialEmail->id);
-                    // dd($userDatas);
                     $token = JWTAuth::fromUser($userDatas);
                     $userDatas->social_login = true;
                     if (empty($userDatas->refer_code)) {
@@ -394,34 +409,35 @@ class AuthController extends ApiController
                         $this->getUserWithSocialToken($token, $userDatas)
                     );
                 }
-                // dd($socialDatas);
+         
                 $users = new User();
-                $users->verified = 1;
+                // $users->verified = 1;
                 $users->first_name = $request->input('name');
                 $users->last_name = $request->input('name');
                 $users->email = $request->input('email');
                 $users->email_verified_at = now();
                 $users->remember_token = Str::random(10);
-                $users->social_login_with = "Apple";
+                $users->social_login_with = $request->input('social_login_with');
                 $users->platform = $request->input('platform');
                 $users->social_id = $request->input('social_id');
-                $users->dob = $request->input('dob');
-                $users->country = $request->input('country') ? $request->input('country') : 'GH';
-                $users->gender = $request->input('gender');
+                $users->profile_image= $imageName;
+                $users->active_device_id= $request->input('active_device_id');
+                $users->platform= $device_platform;
+                $users->phone_enable=1;
+                // $users->dob = $request->input('dob');
+                // $users->country = $request->input('country') ? $request->input('country') : 'GH';
+                // $users->gender = $request->input('gender');
                 $users->refer_code = $this->getReferralCode($request->input('name'));
-                $users->phone = $request->input('phone');
+                // $users->phone = $request->input('phone');
                 $users->referred_from = $request->input('referred_from');
-
                 $users->save();
-                $users->syncRoles([User::CUSTOMER]);
 
                 # Create User Info
-                $users->info()->create([
-                    'dob'       => now()->parse($request->input('dob'))->format('Y-m-d'),
-                    'country'   => $request->input('country'),
-                ]);
+                // $users->info()->create([
+                //     'dob'       => now()->parse($request->input('dob'))->format('Y-m-d'),
+                //     'country'   => $request->input('country'),
+                // ]);
                 $token = JWTAuth::fromUser($users);
-                //$token=""
                 $datas = array('user' => $users, 'token' => $token);
                 $users->social_login = true;
                 if (empty($users->refer_code)) {
@@ -434,13 +450,16 @@ class AuthController extends ApiController
                 );
             }
         }
+        
     }
+
+
     public function getUserWithSocialToken($token, $user)
     {
         return [
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' =>JWTAuth::factory()->getTTL() * 60,
+            'expires_in' => JWTAuth::factory()->getTTL() * 60,
             // 'push_enabled' => $user->setting
             //     ? boolval($user->setting->push_notification)
             //     : false,
@@ -457,6 +476,14 @@ class AuthController extends ApiController
             // 'push_enabled' => $user->setting
             //     ? boolval($user->setting->push_notification)
             //     : false,
+            'user' => $user->format()
+        ];
+    }
+
+
+    public function getUserWithotpverify($user)
+    {
+        return [
             'user' => $user->format()
         ];
     }

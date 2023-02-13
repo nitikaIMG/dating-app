@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
-use App\Models\UserDetail;
+use App\Models\UserInfo;
+use Illuminate\Console\View\Components\Info;
 
 class UserController extends Controller
 {
@@ -36,7 +37,6 @@ class UserController extends Controller
      */
     public function create()
     {
-        dd("2");
     }
 
     /**
@@ -51,6 +51,10 @@ class UserController extends Controller
             // $token="";
             // $user_id=User::where('token',$token)->select('id')->first();
             // dd($user_id);
+            $user_id=1;
+
+            $users=UserInfo::where('user_id',$user_id)->where('deleted_at',0)->select('id')->first();
+            if(!$users){
 
             $validator =  Validator::make($request->all(), [
                 'name' => 'required|alpha',
@@ -67,19 +71,26 @@ class UserController extends Controller
                 ], 422);
             }
 
+            $imageName = time().'.'.$request->photos->extension();
+            $request->photos->move(public_path('images'), $imageName);
+
             $users = UserDetail::create([
-                // 'user_id'=>$user_id,
-                'user_id'=>'1',
+                'user_id'=>$user_id,
                 'name' => $request->name,
                 'dob' => date('Y-m-d', strtotime($request->dob)),
                 'gender' => $request->gender,
                 'interests' => $request->interests,
-                'photos' => $request->photos,
+                'photos' => $imageName,
             ]);
 
             return response()->json([
                 'data' => 'User Details Added Successfully',
             ], 200);
+        }else{
+            return response()->json([
+                'data' => 'User Details Already Exist !',
+            ], 200);
+        }
         } catch (\Exception $e) {
             return response()->json(array(['success' => false, 'message' => $e->getMessage()]));
         }
@@ -93,7 +104,6 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        dd("3");
     }
 
     /**
@@ -104,7 +114,11 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        dd("4");
+        try {
+            dd($id);
+        } catch (\Exception $e) {
+            return response()->json(array(['success' => false, 'message' => $e->getMessage()]));
+        }
     }
 
     /**
@@ -116,7 +130,6 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        dd("5");
     }
 
     /**
@@ -127,6 +140,5 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        dd("6");
     }
 }
