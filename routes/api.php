@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\Apicontroller;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AuthController;
 
@@ -18,13 +17,16 @@ use App\Http\Controllers\Api\AuthController;
 */
 
 Route::controller(AuthController::class)->group(function () {
-    Route::post('register', 'registerUser');
+    Route::post('register', 'registerUser'); //registration
+    Route::post('verifyotp', 'verifyotp');
+    Route::post('loginwithmobile', 'loginwithmobile'); //login phone no
+    
 });
 
-Route::middleware('jwt.verify')->group( function(){
+Route::middleware('jwt.verify')->group(function () {
     Route::controller(AuthController::class)->group(function () {
-        Route::post('login','loginUser');
-        Route::post('verifyotp','verifyotp');
+        Route::post('logout', 'logout'); //logout
+
     });
     Route::Resource('users', UserController::class);
 });
@@ -33,6 +35,3 @@ Route::middleware('jwt.verify')->group( function(){
 Route::controller(AuthController::class)->group(function () {
     Route::post('social_login','social_login');
 });
-
-
-// Route::get('auth/user',[Apicontroller::class,'user'])->middleware('auth:sanctum');
