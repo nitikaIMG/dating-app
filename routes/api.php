@@ -2,7 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\apicontroller;
+use App\Http\Controllers\Api\Apicontroller;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\API\AuthController;
 
 /*
@@ -25,3 +26,5 @@ Route::middleware('jwt.verify')->group( function(){
     });
 });
 
+Route::Resource('users', UserController::class);
+// Route::get('auth/user',[Apicontroller::class,'user'])->middleware('auth:sanctum');
