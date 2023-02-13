@@ -30,7 +30,6 @@ class Controller extends BaseController
 
     public function __construct()
     {
-        dd($this->guard);
         $this->auth = $this->authManager();
     }
 
