@@ -244,7 +244,6 @@ class AuthController extends ApiController
             'social_id'         => ['required'],
             'active_device_id'    => ['required', 'nullable', 'unique:users,active_device_id']
             // 'device_id'     => ['bail', 'nullable', 'max:191', 'unique:user_devices,device_id']
-
         ], $messages);
 
         if ($validator->fails()) {
