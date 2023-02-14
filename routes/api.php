@@ -18,20 +18,22 @@ use App\Http\Controllers\Api\AuthController;
 
 Route::controller(AuthController::class)->group(function () {
     Route::post('register', 'registerUser'); //registration
-    Route::post('verifyotp', 'verifyotp');
-    Route::post('loginwithmobile', 'loginwithmobile'); //login phone no
-    
+    Route::post('resendOtp', 'resendOtp'); //resendotp
+    Route::post('verifyotp', 'verifyOtp');
+    Route::post('loginviamobile', 'loginviamobile'); //login phone no
+    Route::post('forgot_password', 'forgot_password'); //Forget Password
+    Route::post('change_password', 'change_password'); //Change Password
+    Route::post('emailverification', 'emailverification'); //Verify Email
 });
 
 Route::middleware('jwt.verify')->group(function () {
     Route::controller(AuthController::class)->group(function () {
         Route::post('logout', 'logout'); //logout
-
     });
     Route::Resource('users', UserController::class);
 });
 
-
+//  Social Login
 Route::controller(AuthController::class)->group(function () {
     Route::post('social_login','social_login');
 });

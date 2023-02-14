@@ -92,7 +92,7 @@ class User extends Authenticatable implements JWTSubject
             'gender' => $this->gender,
             'email_verified_at' => $this->email_verified_at,
             'refer_code'=>$this->refer_code,
-            'otp'=>$this->otp,
+            // 'otp'=>$this->otp,
         ];
     }
 
