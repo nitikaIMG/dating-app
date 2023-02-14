@@ -111,7 +111,7 @@ class AuthController extends ApiController
         $validator = Validator::make($request->all(), [
             'phone'    => ['required'],
             'otp'      => ['required', 'numeric'],
-            'type'     => ['required', 'in:reg,login'],
+            'type'     => ['required', 'in:reg,login,forgot'],
             'device_id' => ['required', 'bail', 'nullable', 'max:191'],
         ], $messages);
 
@@ -235,126 +235,6 @@ class AuthController extends ApiController
         return ApiResponse::error('Something went wrong!');
     }
 
-    // login with email password
-    public function loginUser(Request $request)
-    {
-        ## Validate Request Inputs
-        $messages = [];
-
-        $validator = Validator::make($request->all(), [
-            'email'         => ['required', 'email'],
-            'password'      => ['required', 'string'],
-            // 'otp'      => ['required', 'numeric'],
-        ], $messages);
-
-        if ($validator->fails()) {
-            return $this->validation_error_response($validator);
-        }
-        try {
-            DB::beginTransaction();
-
-            $validated = $validator->validated();
-
-            if (!$token = JWTAuth::attempt($validated)) {
-                return ApiResponse::unauthorized('You have entered an invalid username or password.');
-            }
-
-            # Get the User
-            $user = $this->user();
-
-            if ($user) {
-                if ($user->email == $validated['email']) {
-                    return ApiResponse::ok(
-                        'Login Successful',
-                        $this->getUserWithToken($token, $user)
-                    );
-                } else {
-                    return ApiResponse::error('Email not verified');
-                }
-            } else {
-                return ApiResponse::error('User Not Found');
-            }
-
-            if (empty($user->refer_code)) {
-                $user->refer_code = $this->getReferralCode($user->first_name);
-                $user->update();
-            }
-
-            # Return Resonse with Token
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return ApiResponse::error($e->getMessage());
-            logger($e->getMessage());
-        }
-
-        return ApiResponse::error('Something went wrong!');
-    }
-
-    // public function generateotp($phone)
-    // {
-    //     $users =  User::where('phone', $phone)->first();
-    //     // $now = now();
-    //     if ($users) {
-    //         return $users;
-    //     }
-    //     return User::create([
-    //         'otp' => rand('0000', '9999'),
-    //     ]);
-    // }
-
-
-    public function verifymobile(Request $request)
-    {
-        $messages = [];
-
-        $validator = Validator::make($request->all(), [
-            'phone'         => ['required', 'digits:10']
-        ], $messages);
-
-        if ($validator->fails()) {
-            return $this->validation_error_response($validator);
-        }
-        try {
-            DB::beginTransaction();
-            $user = User::where('phone', $request->phone)->first();
-            $token = JWTAuth::fromUser($user);
-            if (!$token) {
-                return ApiResponse::unauthorized('You have entered an invalid mobile no.');
-            }
-
-            # Get the User
-            // $user = $this->user();
-
-            // $otpupdate = rand('0000', '9999');
-            // User::where('phone', $request->phone)->update(['otp' => $otpupdate]);
-
-            // if (empty($user->otp) || !empty($user->otp)) {
-            //     $user['otp'] = $otpupdate;
-            //     $user->update();
-            // }
-
-            if ($user) {
-                if ($user->phone == $request->phone) {
-                    // $user->sendSms($request->phone);
-                    return ApiResponse::ok(
-                        'Phone number verified and Otp sent successfully on ' . $user->phone,
-                        // $this->getUserWithToken($token, $user)
-                    );
-                } else {
-                    return ApiResponse::error('Mobile number not verified');
-                }
-            } else {
-                return ApiResponse::error('User Not Found');
-            }
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return ApiResponse::error($e->getMessage());
-            logger($e->getMessage());
-        }
-
-        return ApiResponse::error('Something went wrong!');
-    }
-
     public function logout()
     {
         $user = auth()->user()->id;
@@ -409,58 +289,80 @@ class AuthController extends ApiController
             return $this->validation_error_response($validator);
         }
 
-        $imageName = time() . '.' . $request->profile_image->extension();
-        $request->profile_image->move(public_path(''), $imageName);
-        $device_platform = $request->platform;
+        try {
+                DB::beginTransaction();
 
-        $email = $request->email;
-        $socialDatas = User::where('email', $email)->first();
+                $imageName = time() . '.' . $request->profile_image->extension();
+                $request->profile_image->move(public_path(''), $imageName);
+                $device_platform = $request->platform;
 
-        if (!empty($socialDatas)){
-            $token = JWTAuth::fromUser($socialDatas);
-            if (empty($socialDatas->refer_code)) {
-                $socialDatas->refer_code = $this->getReferralCode($socialDatas->first_name);
-                $socialDatas->update();
-            }
-            $type = (!empty($socialDatas->dob)?false:true);
-            return ApiResponse::ok(
-                'Login Successfully',
-                $this->getUserWithToken($token, $socialDatas,$type)
-            );
-        } else {
-        
-            $users = new User();
-            $users->first_name = $request->input('name');
-            $users->last_name = $request->input('name');
-            $users->email = $request->input('email');
-            $users->email_verified_at = now();
-            $users->remember_token = Str::random(10);
-            $users->social_login_with = $request->input('social_login_with');
-            $users->platform = $request->input('platform');
-            $users->social_id = $request->input('social_id');
-            $users->profile_image = $imageName;
-            $users->active_device_id = $request->input('active_device_id');
-            $users->platform = $device_platform;
-            $users->phone_enable = 1;
-            $users->refer_code = $this->getReferralCode($request->input('name'));
-            $users->referred_from = $request->input('referred_from');
-            $users->save();
-        
-            $token = JWTAuth::fromUser($users);
+                $email = $request->email;
+                $socialDatas = User::where('email', $email)->first();
 
-            $datas = array('user' => $users, 'token' => $token);
-            $users->social_login = true;
+                if (!empty($socialDatas)){
+                    $token = JWTAuth::fromUser($socialDatas);
+                    if (empty($socialDatas->refer_code)) {
+                        $socialDatas->refer_code = $this->getReferralCode($socialDatas->first_name);
+                        $socialDatas->update();
+                    }
 
-            if (empty($users->refer_code)) {
-                $users->refer_code = $this->getReferralCode($users->first_name);
-                $users->update();
-            }
-            $type = (!empty($socialDatas->dob)?false:true);
-                return ApiResponse::ok(
+                    // $type = (!empty($socialDatas->dob)?false:true);  #social Login response
+                    // return ApiResponse::ok(
+                    //     'Login Successfully',
+                    //     $this->getUserWithToken($token, $socialDatas,$type)
+                    // );
+
+                    return ApiResponse::ok(
                     'Login Successfully',
-                    $this->getUserWithToken($token, $socialDatas,$type)
-                );
+                        $this->getUserWithotpverify($socialDatas)
+                    );
+
+                } else {
+                
+                    $users = new User();
+                    $users->first_name = $request->input('name');
+                    $users->last_name = $request->input('name');
+                    $users->email = $request->input('email');
+                    $users->email_verified_at = now();
+                    $users->remember_token = Str::random(10);
+                    $users->social_login_with = $request->input('social_login_with');
+                    $users->platform = $request->input('platform');
+                    $users->social_id = $request->input('social_id');
+                    $users->profile_image = $imageName;
+                    $users->active_device_id = $request->input('active_device_id');
+                    $users->platform = $device_platform;
+                    $users->phone_enable = 1;
+                    $users->refer_code = $this->getReferralCode($request->input('name'));
+                    $users->referred_from = $request->input('referred_from');
+                    $users->save();
+                
+                    $token = JWTAuth::fromUser($users);
+
+                    $datas = array('user' => $users, 'token' => $token);
+                    $users->social_login = true;
+
+                    if (empty($users->refer_code)) {
+                        $users->refer_code = $this->getReferralCode($users->first_name);
+                        $users->update();
+                    }
+                    // $type = (!empty($socialDatas->dob)?false:true); #social Login response
+                    //     return ApiResponse::ok(
+                    //         'Login Successfully',
+                    //         $this->getUserWithToken($token, $socialDatas,$type)
+                    //     );
+
+                    
+                    return ApiResponse::ok(
+                        'Login Successfully',
+                        $this->getUserWithotpverify($socialDatas)
+                    );
+                }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
         }
+        return ApiResponse::error('Something went wrong!');
     }
 
     public function getUserWithToken($token, $user, $type)
@@ -487,5 +389,149 @@ class AuthController extends ApiController
     {
         // Mail::to($user)->send(new UserVerify($user));
         return true;
+    }
+
+    // Forget Password
+    public function forgot_password(Request $request)
+    {
+        $messages = [];
+
+        $validator = Validator::make($request->all(), [
+            'phone'         => ['required', 'digits:10'],
+        ], $messages);
+
+        if ($validator->fails()) {
+            return $this->validation_error_response($validator);
+        }
+        try {
+            DB::beginTransaction();
+            $user = User::where('phone', $request->phone)->where('phone_verified_at', '!=', NULL)->first();
+
+             # Get the User
+             if (!empty($user)) {
+                // $user->sendSms($request->phone);
+                $code['otp'] = $this->generateOTP();
+                User::where('id', $user->id)->update($code);
+
+                DB::commit();
+
+                return ApiResponse::ok(
+                    'OTP has been sent on your mobile no ' . $request->phone,
+                );
+            } else {
+                return ApiResponse::error('Invalid Mobile Number');
+            }
+
+            # Return Resonse with Token
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
+        }
+
+        return ApiResponse::error('Something went wrong!');
+    }
+  
+    // Reset Password
+    public function change_password(Request $request)
+    {
+        $messages = [];
+
+        $validator = Validator::make($request->all(), [
+            'phone'    => ['required'],
+            'otp'      => ['required', 'numeric'],
+            'type'     => ['required', 'in:reg,login,forgot'],
+            'device_id'=> ['required', 'bail', 'nullable', 'max:191'],
+            'password' => ['required', 'string', 'min:8', 'max:8'],
+        ], $messages);
+
+        if ($validator->fails()) {
+            return $this->validation_error_response($validator);
+        }
+        try {
+            DB::beginTransaction();
+
+            $validated = $validator->validated();
+
+            $user = User::where('phone', $validated['phone'])->first();
+            if (!empty($user)) {
+                if (!empty($user->otp)) {
+                    if ($user->otp == $validated['otp']) {
+                        $verified['otp'] = NULL;
+                        $verified['password'] = $request->password;
+                        $verified['active_device_id'] = 1;
+                        User::where('id', $user->id)->update($verified);
+                        if ($device_id = $request->get('device_id')) {
+                            $user->devices()->create([
+                                'device_id' => $device_id
+                            ]);
+                        }
+                        $token = JWTAuth::fromUser($user);
+                        $type = ($request->type == 'forgot') ? true : ((!empty($user->dob)) ? false : true);
+                        // $message = ($request->type == 'forgot') ? 'Registration Sucessfully!' : 'Login Successfully';
+                        $message = 'Password Changed Succesfully';
+                        DB::commit();
+
+                        return ApiResponse::ok(
+                            $message,
+                            $this->getUserWithToken($token, $user, $type)
+                        );
+                    } else {
+                        return ApiResponse::error('Please enter a valid OTP');
+                    }
+                } else {
+                    return ApiResponse::error('OTP get expired!. Please resend');
+                }
+            } else {
+                return ApiResponse::error('Invalid Phone Number');
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
+        }
+
+        return ApiResponse::error('Something went wrong!');
+    }
+
+     // login with Email
+     public function emailverification(Request $request)
+     {
+        $messages = [];
+
+        $validator = Validator::make($request->all(), [
+            'email'         => ['required', 'email'],
+        ], $messages);
+
+        if ($validator->fails()) {
+            return $this->validation_error_response($validator);
+        }
+        try {
+            DB::beginTransaction();
+
+            $validated = $validator->validated();
+
+            $user = User::where('email', $validated['email'])->first();
+            if (!empty($user)) {
+                        $verified['email_verified_at'] = now();
+                        $verified['active_device_id'] = 1;
+                        User::where('id', $user->id)->update($verified);
+                        $message='Email Verification Sucessfully!';
+                        
+                        DB::commit();
+                        return ApiResponse::ok(
+                            $message,
+                            $this->getUserWithotpverify($user)
+                        );
+            } else {
+                return ApiResponse::error('Invalid Email');
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
+        }
+
+        return ApiResponse::error('Something went wrong!');
     }
 }

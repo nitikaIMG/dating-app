@@ -40,4 +40,6 @@ trait ManageUserTrait
     public function generateOTP(){
         return '1234';
     }
+
+    
 }
