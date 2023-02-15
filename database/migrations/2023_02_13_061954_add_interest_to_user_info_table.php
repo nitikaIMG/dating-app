@@ -14,8 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('user_info', function (Blueprint $table) {
-            $table->string('interests')->comment('0=>Mail,1=>Femail,2=>Other')->nullable()->after('country');
-            $table->string('photos')->nullable()->after('interests'); 
+            $table->string('interests')->comment('0=>Male,1=>Female,2=>Other')->nullable()->after('country'); 
             $table->string('deleted_at')->comment('1=>deleted')->default(0); 
         });
     }
@@ -29,7 +28,6 @@ return new class extends Migration
     {
         Schema::table('user_info', function (Blueprint $table) {
             $table->dropColumn('interests');
-            $table->dropColumn('photos');
             $table->dropColumn('deleted_at');
         });
     }

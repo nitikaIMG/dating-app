@@ -105,7 +105,7 @@ class ApiResponse implements ApiInterface
      *
      * @return JsonResponse
      */
-    public static function simple($message = null,$status = 200)
+    public static function simple($message = null, $status = 200)
     {
         if (is_null($message)) {
             $message = config('api.messages.success');
@@ -166,7 +166,7 @@ class ApiResponse implements ApiInterface
 
         return static::arrayResponse(static::HTTP_NOT_FOUND, $message, []);
     }
-    
+
     /**
      * Create Not found (404) API response. for Arrays
      *
@@ -222,7 +222,7 @@ class ApiResponse implements ApiInterface
     {
         return static::response(static::HTTP_BAD_REQUEST, $message, $data, ...$extraData);
     }
-    
+
     /**
      * Create Validation (401) API response.
      *

@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+// namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -8,6 +9,15 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\UserInfo;
 use Illuminate\Console\View\Components\Info;
+use App\Http\Resources\UserInfoResource;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth as JWTAuth;
+use App\Api\ApiResponse;
+use App\Http\Resources\UserResource;
+use Auth;
+use DB;
+use Str;
+
+
 
 class UserController extends Controller
 {
@@ -18,15 +28,19 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-          try {
-
-            $users=User::all();
-
-            return response()->json([
-                'data' => $users,
-            ], 200);
+        try {
+            DB::beginTransaction();
+            $users = User::where('phone_verified_at', '!=', null)->with('UserInfo')->get();
+            // dd($users);
+            if (!empty($users)) {
+                return UserResource::collection($users);
+            } else {
+                return ApiResponse::error('No Data');
+            }
         } catch (\Exception $e) {
-            return response()->json(array(['success' => false, 'message' => $e->getMessage()]));
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
         }
     }
 
@@ -48,51 +62,60 @@ class UserController extends Controller
     public function store(Request $request)
     {
         try {
-            // $token="";
-            // $user_id=User::where('token',$token)->select('id')->first();
-            // dd($user_id);
-            $user_id=1;
+            DB::beginTransaction();
+            $auth_user_id = auth()->user()->id;
+            $users = User::where('id', $auth_user_id)->where('active_device_id', 1)->first();
 
-            $users=UserInfo::where('user_id',$user_id)->where('deleted_at',0)->select('id')->first();
-            if(!$users){
+            if ($users) {
+                $validator =  Validator::make($request->all(), [
+                    'last_name'     => 'required|alpha|min:2|max:30',
+                    'gender'        => 'required|in:m,f,o',
+                    'interests'     => 'required|integer|max:2',
+                    'profile_image' => 'required|mimes:jpg,jpeg,png,PNG,JPG,JPEG',
+                ]);
 
-            $validator =  Validator::make($request->all(), [
-                'name' => 'required|alpha',
-                'dob' => 'required|date',
-                'gender' => 'required|integer|max:2',
-                'interests' => 'required|integer|max:2',
-                'photos' => 'required|mimes:jpg,jpeg,png,PNG,JPG,JPEG',
-            ]);
+                if ($validator->fails()) {
+                    return $this->validation_error_response($validator);
+                }
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'message' => 'Validation Fails',
-                    'error' => $validator->errors(),
-                ], 422);
+                // image insertion
+                $imageName = time() . '.' . $request->profile_image->extension();
+                $request->profile_image->move(public_path('images'), $imageName);
+
+                // add data into users table
+                $verified['last_name']     = $request->last_name;
+                $verified['gender']        = $request->gender;
+                $verified['profile_image'] = $request->profile_image;
+                User::where('id', $auth_user_id)->update($verified);
+
+                // add data into usersinfo table
+                $verifieds['interests'] = $request->interests;
+                UserInfo::where('user_id', $auth_user_id)->update($verifieds);
+                DB::commit();
+
+                return ApiResponse::ok(
+                    'User Details Added Successfully',
+                    $this->getUser($users)
+                );
+            } elseif ($users->phone_enable == 1) {  //logged in by social authentication
+                $validator =  Validator::make($request->all(), [
+                    'phone' => 'required|digits:10',
+                ]);
+
+                if ($validator->fails()) {
+                    return $this->validation_error_response($validator);
+                }
+
+                $verifieddata['phone']        = $request->phone;
+                $verifieddata['phone_enable'] = 0;
+                User::where('id', $auth_user_id)->update($verifieddata);
+            } else {
+                return ApiResponse::error('User Details Already Exist !');
             }
-
-            $imageName = time().'.'.$request->photos->extension();
-            $request->photos->move(public_path('images'), $imageName);
-
-            $users = UserDetail::create([
-                'user_id'=>$user_id,
-                'name' => $request->name,
-                'dob' => date('Y-m-d', strtotime($request->dob)),
-                'gender' => $request->gender,
-                'interests' => $request->interests,
-                'photos' => $imageName,
-            ]);
-
-            return response()->json([
-                'data' => 'User Details Added Successfully',
-            ], 200);
-        }else{
-            return response()->json([
-                'data' => 'User Details Already Exist !',
-            ], 200);
-        }
         } catch (\Exception $e) {
-            return response()->json(array(['success' => false, 'message' => $e->getMessage()]));
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
         }
     }
 
@@ -141,4 +164,13 @@ class UserController extends Controller
     public function destroy($id)
     {
     }
+
+    public function getUser($users)
+    {
+        return $users->format();
+    }
+    // public function getUserWithotpverify($user)
+    // {
+    //     return $user->format();
+    // }
 }

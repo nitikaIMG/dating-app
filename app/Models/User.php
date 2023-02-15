@@ -73,9 +73,9 @@ class User extends Authenticatable implements JWTSubject
 
     public function getNameAttribute()
     {
-        return $this->last_name 
-            ? $this->first_name." ".$this->last_name 
-        : $this->first_name;
+        return $this->last_name
+            ? $this->first_name . " " . $this->last_name
+            : $this->first_name;
     }
 
     public function format()
@@ -91,12 +91,12 @@ class User extends Authenticatable implements JWTSubject
             'country' => $this->country,
             'gender' => $this->gender,
             'email_verified_at' => $this->email_verified_at,
-            'refer_code'=>$this->refer_code,
+            'refer_code' => $this->refer_code,
             // 'otp'=>$this->otp,
         ];
     }
 
-    
+
     public function isBlocked()
     {
         return $this->status === 0;
@@ -108,4 +108,10 @@ class User extends Authenticatable implements JWTSubject
     }
 
 
+    //aachuki
+
+    public function UserInfo()
+    {
+        return $this->hasOne(UserInfo::class);
+    }
 }
