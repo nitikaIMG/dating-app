@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\UserRule;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
@@ -29,6 +30,14 @@ class UserResource extends JsonResource
             'updated_at' => (string) $this->updated_at,
             'userinfo' => $this->UserInfo,
         ];
+
+
+        return $rules = UserRule::get([
+            'id' => $this->id,
+            'terms_conditions' => $this->terms_conditions,
+            'agree_status' => $this->agree_status,
+        ]);
+
         // return parent::toArray($request);
     }
 }
