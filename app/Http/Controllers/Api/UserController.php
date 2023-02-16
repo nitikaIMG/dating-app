@@ -22,7 +22,7 @@ use Str;
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the user.
      *
      * @return \Illuminate\Http\Response
      */
@@ -54,7 +54,7 @@ class UserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a details of users.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -68,6 +68,7 @@ class UserController extends Controller
 
             if ($users) {
                 $validator =  Validator::make($request->all(), [
+                    'last_name'     => 'required|alpha|min:2|max:30',
                     'last_name'     => 'required|alpha|min:2|max:30',
                     'gender'        => 'required|in:m,f,o',
                     'interests'     => 'required|integer|max:2',

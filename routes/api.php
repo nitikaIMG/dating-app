@@ -40,6 +40,3 @@ Route::middleware('jwt.verify')->group(function () {
 Route::controller(AuthController::class)->group(function () {
     Route::post('social_login', 'social_login');
 });
-
-// Api resource users
-// Route::apiResource('users', 'UserController');
