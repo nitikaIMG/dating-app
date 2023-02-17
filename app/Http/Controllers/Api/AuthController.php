@@ -22,7 +22,7 @@ class AuthController extends ApiController
     {
     }
 
-    // registration api
+    #registration
     public function registerUser(Request $request)
     {
 
@@ -52,12 +52,12 @@ class AuthController extends ApiController
             # Store Validated Inputs
             $validated = $validator->validated();
 
-            $dob = $request->get('dob');
+            // $dob1 = $request->get('dob');
+            $mydate = strtotime("now");
+            $dob = date('d/m/Y', $mydate);
             $otp = 1234;
 
-            if ($dob && ($dob = strtotime($dob))) {
-                $dob = date('Y-m-d', $dob);
-            }
+
             # Create User and store its Information
             $user = User::create([
                 'first_name' => $validated['name'],
@@ -72,6 +72,7 @@ class AuthController extends ApiController
                 'refer_by' => (isset($validated['refer_code'])) ? $this->getUserByRefercode($validated['refer_code']) : 0,
                 'country'  => $validated['country'],
                 'otp'  => $otp,
+                'platform'  => $validated['platform'],
             ]);
             if (isset($validated['refer_code']) && $this->getUserByRefercode($validated['refer_code']) == 0) {
                 return ApiResponse::error('Refer code is Not valid');
@@ -79,7 +80,8 @@ class AuthController extends ApiController
 
             # Create User Info
             $user->info()->create([
-                'dob'       => now()->parse($request->dob)->format('Y-m-d'),
+                'dob'       => $dob,
+                // 'dob'       => now()->parse($request->dob)->format('d-m-Y'),
                 'country'   => $validated['country'],
             ]);
 
@@ -104,6 +106,7 @@ class AuthController extends ApiController
         return ApiResponse::error('Something went wrong!');
     }
 
+    #verify otp
     public function verifyOtp(Request $request)
     {
         $messages = [];
@@ -162,6 +165,7 @@ class AuthController extends ApiController
         return ApiResponse::error('Something went wrong!');
     }
 
+    #resend otp
     public function resendOtp(Request $request)
     {
         $messages = [];
@@ -198,7 +202,7 @@ class AuthController extends ApiController
         return ApiResponse::error('Something went wrong!');
     }
 
-    // login with mobile
+    #login with mobile
     public function loginviamobile(Request $request)
     {
         $messages = [];
@@ -219,6 +223,7 @@ class AuthController extends ApiController
                 // $user->sendSms($request->phone);
                 $code['otp'] = $this->generateOTP();
                 User::where('id', $user->id)->update($code);
+                DB::commit();
                 return ApiResponse::ok(
                     'OTP has been sent on your mobile no ' . $request->phone,
                 );
@@ -235,40 +240,26 @@ class AuthController extends ApiController
         return ApiResponse::error('Something went wrong!');
     }
 
-    public function logout()
-    {
-        $user = auth()->user()->id;
-        if ($user) {
-            // User::where('id', $user)->update(['session_id' => null]);
-            // $this->auth->logout();
-            auth()->logout();
-            return ApiResponse::ok('Logged Out Successfully ');
-        } else {
-            return ApiResponse::error('First login user');
-        }
-        // $auth = auth()->logout();
-    }
-
-    public function sendSmsOnMobile(Request $request)
+    #logout
+    public function logout(Request $request)
     {
         try {
-            $sid = env('TWILIO_ID');
-            $token = env('TWILIO_TOKEN');
-            $phn_no = env('TWILIO_PHN_NO');
-            $client = new Client($sid, $token);
-            $client->messages->create('+91' . $request->phone, [
-                'from' => $phn_no,
-                'body' => "Otp sent by twilio",
-            ]);
-
-            return ApiResponse::ok(
-                'Message Sent',
-            );
+            DB::beginTransaction();
+            $user = auth()->user()->id;
+            if ($user) {
+                User::where('id', $user)->update(['active_device_id' => Null]);
+                // $this->auth->logout();
+                DB::commit();
+                auth()->logout();
+                return ApiResponse::ok('Logged Out Successfully');
+            } else {
+                return ApiResponse::error('First login user');
+            }
         } catch (\Exception $e) {
+            DB::rollBack();
             return ApiResponse::error($e->getMessage());
             logger($e->getMessage());
         }
-        // return $request->phone;
     }
 
     #social Login
@@ -290,73 +281,72 @@ class AuthController extends ApiController
         }
 
         try {
-                DB::beginTransaction();
+            DB::beginTransaction();
 
-                $imageName = time() . '.' . $request->profile_image->extension();
-                $request->profile_image->move(public_path(''), $imageName);
-                $device_platform = $request->platform;
+            $imageName = time() . '.' . $request->profile_image->extension();
+            $request->profile_image->move(public_path(''), $imageName);
+            $device_platform = $request->platform;
 
-                $email = $request->email;
-                $socialDatas = User::where('email', $email)->first();
+            $email = $request->email;
+            $socialDatas = User::where('email', $email)->first();
 
-                if (!empty($socialDatas)){
-                    $token = JWTAuth::fromUser($socialDatas);
-                    if (empty($socialDatas->refer_code)) {
-                        $socialDatas->refer_code = $this->getReferralCode($socialDatas->first_name);
-                        $socialDatas->update();
-                    }
-
-                    // $type = (!empty($socialDatas->dob)?false:true);  #social Login response
-                    // return ApiResponse::ok(
-                    //     'Login Successfully',
-                    //     $this->getUserWithToken($token, $socialDatas,$type)
-                    // );
-
-                    return ApiResponse::ok(
-                    'Login Successfully',
-                        $this->getUserWithotpverify($socialDatas)
-                    );
-
-                } else {
-                
-                    $users = new User();
-                    $users->first_name = $request->input('name');
-                    $users->last_name = $request->input('name');
-                    $users->email = $request->input('email');
-                    $users->email_verified_at = now();
-                    $users->remember_token = Str::random(10);
-                    $users->social_login_with = $request->input('social_login_with');
-                    $users->platform = $request->input('platform');
-                    $users->social_id = $request->input('social_id');
-                    $users->profile_image = $imageName;
-                    $users->active_device_id = $request->input('active_device_id');
-                    $users->platform = $device_platform;
-                    $users->phone_enable = 1;
-                    $users->refer_code = $this->getReferralCode($request->input('name'));
-                    $users->referred_from = $request->input('referred_from');
-                    $users->save();
-                
-                    $token = JWTAuth::fromUser($users);
-
-                    $datas = array('user' => $users, 'token' => $token);
-                    $users->social_login = true;
-
-                    if (empty($users->refer_code)) {
-                        $users->refer_code = $this->getReferralCode($users->first_name);
-                        $users->update();
-                    }
-                    // $type = (!empty($socialDatas->dob)?false:true); #social Login response
-                    //     return ApiResponse::ok(
-                    //         'Login Successfully',
-                    //         $this->getUserWithToken($token, $socialDatas,$type)
-                    //     );
-
-                    
-                    return ApiResponse::ok(
-                        'Login Successfully',
-                        $this->getUserWithotpverify($socialDatas)
-                    );
+            if (!empty($socialDatas)) {
+                $token = JWTAuth::fromUser($socialDatas);
+                if (empty($socialDatas->refer_code)) {
+                    $socialDatas->refer_code = $this->getReferralCode($socialDatas->first_name);
+                    $socialDatas->update();
                 }
+
+                // $type = (!empty($socialDatas->dob)?false:true);  #social Login response
+                // return ApiResponse::ok(
+                //     'Login Successfully',
+                //     $this->getUserWithToken($token, $socialDatas,$type)
+                // );
+
+                return ApiResponse::ok(
+                    'Login Successfully',
+                    $this->getUserWithotpverify($socialDatas)
+                );
+            } else {
+
+                $users = new User();
+                $users->first_name = $request->input('name');
+                $users->last_name = $request->input('name');
+                $users->email = $request->input('email');
+                $users->email_verified_at = now();
+                $users->remember_token = Str::random(10);
+                $users->social_login_with = $request->input('social_login_with');
+                $users->platform = $request->input('platform');
+                $users->social_id = $request->input('social_id');
+                $users->profile_image = $imageName;
+                $users->active_device_id = $request->input('active_device_id');
+                $users->platform = $device_platform;
+                $users->phone_enable = 1;
+                $users->refer_code = $this->getReferralCode($request->input('name'));
+                $users->referred_from = $request->input('referred_from');
+                $users->save();
+
+                $token = JWTAuth::fromUser($users);
+
+                $datas = array('user' => $users, 'token' => $token);
+                $users->social_login = true;
+
+                if (empty($users->refer_code)) {
+                    $users->refer_code = $this->getReferralCode($users->first_name);
+                    $users->update();
+                }
+                // $type = (!empty($socialDatas->dob)?false:true); #social Login response
+                //     return ApiResponse::ok(
+                //         'Login Successfully',
+                //         $this->getUserWithToken($token, $socialDatas,$type)
+                //     );
+
+
+                return ApiResponse::ok(
+                    'Login Successfully',
+                    $this->getUserWithotpverify($socialDatas)
+                );
+            }
         } catch (\Exception $e) {
             DB::rollBack();
             return ApiResponse::error($e->getMessage());
@@ -365,33 +355,7 @@ class AuthController extends ApiController
         return ApiResponse::error('Something went wrong!');
     }
 
-    public function getUserWithToken($token, $user, $type)
-    {
-        return [
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => JWTAuth::factory()->getTTL() * 60,
-            // 'push_enabled' => $user->setting
-            //     ? boolval($user->setting->push_notification)
-            //     : false,
-            'user' => $user->format(),
-            'profile_enable' => $type ?? false,
-        ];
-    }
-
-    public function getUserWithotpverify($user)
-    {
-        return $user->format();
-    }
-
-    # function usedfor sendmail using userverify mail
-    public function sendverifyMail($user, $user_id)
-    {
-        // Mail::to($user)->send(new UserVerify($user));
-        return true;
-    }
-
-    // Forget Password
+    #Forget Password
     public function forgot_password(Request $request)
     {
         $messages = [];
@@ -407,8 +371,8 @@ class AuthController extends ApiController
             DB::beginTransaction();
             $user = User::where('phone', $request->phone)->where('phone_verified_at', '!=', NULL)->first();
 
-             # Get the User
-             if (!empty($user)) {
+            # Get the User
+            if (!empty($user)) {
                 // $user->sendSms($request->phone);
                 $code['otp'] = $this->generateOTP();
                 User::where('id', $user->id)->update($code);
@@ -431,8 +395,8 @@ class AuthController extends ApiController
 
         return ApiResponse::error('Something went wrong!');
     }
-  
-    // Reset Password
+
+    #Reset Password
     public function change_password(Request $request)
     {
         $messages = [];
@@ -441,7 +405,7 @@ class AuthController extends ApiController
             'phone'    => ['required'],
             'otp'      => ['required', 'numeric'],
             'type'     => ['required', 'in:reg,login,forgot'],
-            'device_id'=> ['required', 'bail', 'nullable', 'max:191'],
+            'device_id' => ['required', 'bail', 'nullable', 'max:191'],
             'password' => ['required', 'string', 'min:8', 'max:8'],
         ], $messages);
 
@@ -494,9 +458,9 @@ class AuthController extends ApiController
         return ApiResponse::error('Something went wrong!');
     }
 
-     // login with Email
-     public function emailverification(Request $request)
-     {
+    #login with Email
+    public function emailverification(Request $request)
+    {
         $messages = [];
 
         $validator = Validator::make($request->all(), [
@@ -513,16 +477,16 @@ class AuthController extends ApiController
 
             $user = User::where('email', $validated['email'])->first();
             if (!empty($user)) {
-                        $verified['email_verified_at'] = now();
-                        $verified['active_device_id'] = 1;
-                        User::where('id', $user->id)->update($verified);
-                        $message='Email Verification Sucessfully!';
-                        
-                        DB::commit();
-                        return ApiResponse::ok(
-                            $message,
-                            $this->getUserWithotpverify($user)
-                        );
+                $verified['email_verified_at'] = now();
+                $verified['active_device_id'] = 1;
+                User::where('id', $user->id)->update($verified);
+                $message = 'Email Verification Sucessfully!';
+
+                DB::commit();
+                return ApiResponse::ok(
+                    $message,
+                    $this->getUserWithotpverify($user)
+                );
             } else {
                 return ApiResponse::error('Invalid Email');
             }
@@ -533,5 +497,54 @@ class AuthController extends ApiController
         }
 
         return ApiResponse::error('Something went wrong!');
+    }
+
+    // public function sendSmsOnMobile(Request $request)
+    // {
+    //     try {
+    //         $sid = env('TWILIO_ID');
+    //         $token = env('TWILIO_TOKEN');
+    //         $phn_no = env('TWILIO_PHN_NO');
+    //         $client = new Client($sid, $token);
+    //         $client->messages->create('+91' . $request->phone, [
+    //             'from' => $phn_no,
+    //             'body' => "Otp sent by twilio",
+    //         ]);
+
+    //         return ApiResponse::ok(
+    //             'Message Sent',
+    //         );
+    //     } catch (\Exception $e) {
+    //         return ApiResponse::error($e->getMessage());
+    //         logger($e->getMessage());
+    //     }
+    //     // return $request->phone;
+    // }
+
+
+    public function getUserWithToken($token, $user, $type)
+    {
+        return [
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => JWTAuth::factory()->getTTL() * 60,
+            // 'push_enabled' => $user->setting
+            //     ? boolval($user->setting->push_notification)
+            //     : false,
+            'user' => $user->format(),
+            'profile_enable' => $type ?? false,
+        ];
+    }
+
+    public function getUserWithotpverify($user)
+    {
+        return $user->format();
+    }
+
+    # function usedfor sendmail using userverify mail
+    public function sendverifyMail($user, $user_id)
+    {
+        // Mail::to($user)->send(new UserVerify($user));
+        return true;
     }
 }

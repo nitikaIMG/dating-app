@@ -13,13 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('user_info', function (Blueprint $table) {
+        Schema::create('user_rules', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')
-                ->constrained('users')
-                ->onDelete('cascade');
-            $table->string('dob')->nullable();
-            $table->string('country')->default('IN')->nullable();
+            $table->longtext('terms_conditions');
             $table->timestamps();
         });
     }
@@ -31,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_infos');
+        Schema::dropIfExists('user_rules');
     }
 };

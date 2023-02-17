@@ -13,9 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('user_info', function (Blueprint $table) {
-            $table->string('interests')->comment('0=>Male,1=>Female,2=>Other')->nullable()->after('country'); 
-            $table->string('deleted_at')->comment('1=>deleted')->default(0); 
+        Schema::table('users', function (Blueprint $table) {
+            $table->tinyInteger('agree_rules_status')->comment('0=>not agree,1=>agree')->default(0);
         });
     }
 
@@ -26,9 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('user_info', function (Blueprint $table) {
-            $table->dropColumn('interests');
-            $table->dropColumn('deleted_at');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('agree_rules_status');
         });
     }
 };
