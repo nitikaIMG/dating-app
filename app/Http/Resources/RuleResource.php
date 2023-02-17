@@ -2,9 +2,13 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\ResourceCollection;
+use App\Models\UserRule;
+use App\Models\User;
 
-class UserCollection extends ResourceCollection
+use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class RuleResource extends JsonResource
 {
     /**
      * Transform the resource collection into an array.
@@ -14,6 +18,10 @@ class UserCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'terms_conditions' => $this->terms_conditions,
+        ];
+        // return parent::toArray($request);
     }
 }

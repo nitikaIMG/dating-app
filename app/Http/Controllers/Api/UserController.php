@@ -33,9 +33,13 @@ class UserController extends Controller
             DB::beginTransaction();
             $users = User::where('phone_verified_at', '!=', null)->with('UserInfo')->get();
             if (!empty($users)) {
-                return UserResource::collection($users);
+                $userdetail = UserResource::collection($users);
+                return ApiResponse::ok(
+                    'All Users Details',
+                    $this->getUser($userdetail)
+                );
             } else {
-                return ApiResponse::error('No Data');
+                return ApiResponse::error('No User Found');
             }
         } catch (\Exception $e) {
             DB::rollBack();
@@ -51,6 +55,7 @@ class UserController extends Controller
      */
     public function create()
     {
+        //
     }
 
     /**
@@ -61,6 +66,8 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        ## Users Profile Api 
+        ## After agreed rules user will come here and fill details
         try {
             DB::beginTransaction();
             $auth_user_id = auth()->user()->id;
@@ -70,7 +77,6 @@ class UserController extends Controller
                     $validator =  Validator::make($request->all(), [
                         'last_name'     => 'required|alpha|min:2|max:30',
                         'dob'           => 'required',
-                        'last_name'     => 'required|alpha|min:2|max:30',
                         'gender'        => 'required|in:m,f,o',
                         'interests'     => 'required|integer|max:2',
                         'profile_image' => 'required|mimes:jpg,jpeg,png,PNG,JPG,JPEG',
@@ -147,13 +153,7 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        // try {
-        //     $auth_user_id = auth()->user()->id;
-        // } catch (\Exception $e) {
-        //     DB::rollBack();
-        //     return ApiResponse::error($e->getMessage());
-        //     logger($e->getMessage());
-        // }
+        //
     }
 
     /**
@@ -165,80 +165,7 @@ class UserController extends Controller
      */
     public function update(Request $request)
     {
-        try {
-            DB::beginTransaction();
-            $auth_user_id = auth()->user()->id;
-            if (!empty($auth_user_id)) {
-                $validator =  Validator::make($request->all(), [
-                    'first_name'    => ['required', 'string', 'min:3', 'max:60'],
-                    'last_name'     => ['required', 'string', 'min:3', 'max:60'],
-                    'gender'        => ['required', 'in:m,f,o'],
-                    'dob'           => ['required', 'date'],
-                    'country'       => ['required', 'string'],
-                    'interests'     => ['required', 'integer', 'max:2'],
-                    'phone'         => ['numeric', 'digits:10'],
-                    'profile_image' => ['required', 'mimes:jpg,jpeg,png,PNG,JPG,JPEG'],
-                ]);
-
-                if ($validator->fails()) {
-                    return $this->validation_error_response($validator);
-                }
-
-
-                $imageName = time() . '.' . $request->profile_image->extension();
-                $request->profile_image->move(public_path('images'), $imageName);
-
-                $users = User::find($auth_user_id)->first();
-
-                # Update data into users table
-                $verified['first_name']    = $request->first_name;
-                $verified['last_name']     = $request->last_name;
-                $verified['gender']        = $request->gender;
-                $verified['profile_image'] = $request->profile_image;
-
-                $phoneexist = User::where('phone', $request->phone)->select('phone')->first();
-                if ($phoneexist) {
-                    return ApiResponse::error('Mobile Number Already Exist');
-                } else {
-                    $veri['phone']        = $request->phone;
-                }
-
-                $verified['phone']        = $veri['phone'] ?? $users->phone;
-
-                User::where('id', $auth_user_id)->update($verified);
-
-
-
-                # Update data into usersinfo table
-                $verifieds['dob'] = $request->dob;
-                $verifieds['country'] = $request->country;
-                $verifieds['interests'] = $request->interests;
-                UserInfo::where('user_id', $auth_user_id)->update($verifieds);
-
-
-                $users['first_name']  = $verified['first_name'];
-                $users['last_name'] = $verified['last_name'];
-                $users['phone'] = $verified['phone'];
-                $users['gender'] = $verified['gender'];
-                $users['dob'] = $verifieds['dob'];
-                $users['country'] = $verifieds['country'];
-                $users['interests'] = $verifieds['interests'];
-                $users['email'] = $users->email;
-                $users['phone'] = $users->phone;
-
-                DB::commit();
-                return ApiResponse::ok(
-                    'User Profile Updated Successfully',
-                    $this->getUser($users)
-                );
-            } else {
-                return ApiResponse::error('User Not Authanticated');
-            }
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return ApiResponse::error($e->getMessage());
-            logger($e->getMessage());
-        }
+        //
     }
 
     /**
@@ -249,14 +176,15 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
+        //
     }
 
-    public function getUser($users)
+    public function getUser($userdetail)
     {
-        $users['dob'] = $users['UserInfo']['dob'];
-        $users['country'] = $users['UserInfo']['country'];
-        $users['interests'] = $users['UserInfo']['interests'];
-        return $users->format();
+        // $userdetail['dob'] = $userdetail['UserInfo']['dob'];
+        // $userdetail['country'] = $userdetail['UserInfo']['country'];
+        // $userdetail['interests'] = $userdetail['UserInfo']['interests'];
+        return $userdetail;
     }
 
     public function getUserdata($users)
@@ -267,143 +195,23 @@ class UserController extends Controller
         return $users->formatdata();
     }
 
-    # Agree Rules
-    public function agreerules(Request $request)
-    {
-        try {
-            DB::beginTransaction();
-            $rules =  UserRule::all();
-            $auth_user_id = auth()->user()->id;
-
-            $users = User::where('id', $auth_user_id)->where('active_device_id', 1)->first();
-            if (!empty($rules)) {
-                if (!empty($users)) {
-                    $validator =  Validator::make($request->all(), [
-                        'agree_rules_status'  => 'required|in:1',
-                    ]);
-
-                    if ($validator->fails()) {
-                        return $this->validation_error_response($validator);
-                    }
-
-                    // add data into users table
-                    $verified['agree_rules_status']     = $request->agree_rules_status;
-                    User::where('id', $auth_user_id)->update($verified);
-
-                    DB::commit();
-
-                    return ApiResponse::ok(
-                        'Rules Agreed Successfully By User',
-                        $this->getUser($users)
-                    );
-                } else {
-                    return ApiResponse::error('No User Found');
-                }
-            } else {
-                return ApiResponse::error('No Rules Are Mentioned Here !!');
-            }
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return ApiResponse::error($e->getMessage());
-            logger($e->getMessage());
-        }
-    }
-
-    public function editProfile(Request $request)
-    {
-        try {
-            DB::beginTransaction();
-            $auth_user_id = auth()->user()->id;
-            if (!empty($auth_user_id)) {
-                $validator =  Validator::make($request->all(), [
-                    'first_name'    => ['required', 'string', 'min:3', 'max:60'],
-                    'last_name'     => ['required', 'string', 'min:3', 'max:60'],
-                    'gender'        => ['required', 'in:m,f,o'],
-                    'dob'           => ['required', 'date'],
-                    'country'       => ['required', 'string'],
-                    'interests'     => ['required', 'integer', 'max:2'],
-                    'phone'         => ['numeric', 'digits:10'],
-                    'profile_image' => ['required', 'mimes:jpg,jpeg,png,PNG,JPG,JPEG'],
-                ]);
-
-                if ($validator->fails()) {
-                    return $this->validation_error_response($validator);
-                }
-
-
-                $imageName = time() . '.' . $request->profile_image->extension();
-                $request->profile_image->move(public_path('images'), $imageName);
-
-                $users = User::find($auth_user_id)->first();
-
-                # Update data into users table
-                $verified['first_name']    = $request->first_name;
-                $verified['last_name']     = $request->last_name;
-                $verified['gender']        = $request->gender;
-                $verified['profile_image'] = $request->profile_image;
-
-                $phoneexist = User::where('phone', $request->phone)->select('phone')->first();
-                if ($phoneexist) {
-                    return ApiResponse::error('Mobile Number Already Exist');
-                } else {
-                    $veri['phone']        = $request->phone;
-                }
-
-                $verified['phone']        = $veri['phone'] ?? $users->phone;
-
-                User::where('id', $auth_user_id)->update($verified);
-
-
-
-                # Update data into usersinfo table
-                $verifieds['dob'] = $request->dob;
-                $verifieds['country'] = $request->country;
-                $verifieds['interests'] = $request->interests;
-                UserInfo::where('user_id', $auth_user_id)->update($verifieds);
-
-
-                $users['first_name']  = $verified['first_name'];
-                $users['last_name'] = $verified['last_name'];
-                $users['phone'] = $verified['phone'];
-                $users['gender'] = $verified['gender'];
-                $users['dob'] = $verifieds['dob'];
-                $users['country'] = $verifieds['country'];
-                $users['interests'] = $verifieds['interests'];
-                $users['email'] = $users->email;
-                $users['phone'] = $users->phone;
-
-                DB::commit();
-                return ApiResponse::ok(
-                    'User Profile Updated Successfully',
-                    $this->getUser($users)
-                );
-            } else {
-                return ApiResponse::error('User Not Authanticated');
-            }
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return ApiResponse::error($e->getMessage());
-            logger($e->getMessage());
-        }
-    }
-
-    public function detailofuser(Request $request, $id)
-    {
-        try {
-            DB::beginTransaction();
-            $users = User::where('id', $id)->where('phone_verified_at', '!=', null)->with('UserInfo')->first();
-            if (!empty($users)) {
-                return ApiResponse::ok(
-                    'User Details',
-                    $this->getUserdata($users)
-                );
-            } else {
-                return ApiResponse::error('User not exist');
-            }
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return ApiResponse::error($e->getMessage());
-            logger($e->getMessage());
-        }
-    }
+    // public function detailofuser(Request $request, $id)
+    // {
+    //     try {
+    //         DB::beginTransaction();
+    //         $users = User::where('id', $id)->where('phone_verified_at', '!=', null)->with('UserInfo')->first();
+    //         if (!empty($users)) {
+    //             return ApiResponse::ok(
+    //                 'User Details',
+    //                 $this->getUserdata($users)
+    //             );
+    //         } else {
+    //             return ApiResponse::error('User not exist');
+    //         }
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         return ApiResponse::error($e->getMessage());
+    //         logger($e->getMessage());
+    //     }
+    // }
 }

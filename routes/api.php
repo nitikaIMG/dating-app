@@ -4,6 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\RuleController;
+use App\Http\Controllers\Api\UserProfileController;
+use App\Http\Controllers\Api\MediaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,13 +36,15 @@ Route::middleware('jwt.verify')->group(function () {
         Route::post('logout', 'logout'); //logout
     });
 
-    Route::apiResource('users', UserController::class); //filled user_detail and show list
 
-    Route::controller(UserController::class)->group(function () {
-        Route::post('agreerules', 'agreerules'); # Rules screen
-        Route::post('editProfile', 'editProfile'); # Edit Profile
-        Route::get('detailofuser/{id}', 'detailofuser'); # Show all the details of user by id
-    });
+    // Route::controller(UserController::class)->group(function () {
+        // Route::post('detailofuser/{id}', 'detailofuser'); # Show all the details of user by id
+    // });
+
+    Route::apiResource('users', UserController::class); # filled user_detail and show list
+    Route::apiResource('rules', RuleController::class); # Rules Controller
+    Route::apiResource('userprofile', UserProfileController::class); # User Profile Controller 
+    Route::apiResource('media', MediaController::class); # User Media Controller 
 });
 
 # Social Login

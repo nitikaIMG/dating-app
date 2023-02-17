@@ -2,13 +2,15 @@
 
 namespace App\Http\Resources;
 
-use App\Models\UserRule;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Models\User;
 
-class UserResource extends JsonResource
+
+class UserProfileResource extends JsonResource
 {
     /**
-     * Transform the resource into an array.
+     * Transform the resource collection into an array.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
@@ -23,15 +25,11 @@ class UserResource extends JsonResource
             'phone ' => $this->phone,
             'gender' => $this->gender,
             'active_device_id' => $this->active_device_id,
-            'phone_enable' => $this->phone_enable,
-            'platform' => $this->platform,
             'profile_image' => $this->profile_image,
             'created_at' => (string) $this->created_at,
             'updated_at' => (string) $this->updated_at,
-            'agree_rules_status' => $this->agree_rules_status,
             'userinfo' => $this->UserInfo,
         ];
-
-        // return parent::toArray($request);
+        // return User::toArray($request);
     }
 }
