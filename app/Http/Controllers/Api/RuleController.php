@@ -82,6 +82,7 @@ class RuleController extends Controller
 
                     DB::commit();
                     $userdata = new UserResource($users);
+                    
                     return ApiResponse::ok(
                         'Rules Agreed Successfully By User',
                         $this->getUser($userdata)

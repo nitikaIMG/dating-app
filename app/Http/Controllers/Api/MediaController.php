@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Api\ApiResponse;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\MediaResource;
+use Illuminate\Support\Facades\Storage;
 
 
 class MediaController extends Controller
@@ -61,7 +62,6 @@ class MediaController extends Controller
      */
     public function store(Request $request)
     {
-
         try {
             DB::beginTransaction();
             $auth_user_id = auth()->user()->id;
@@ -74,39 +74,64 @@ class MediaController extends Controller
                     return $this->validation_error_response($validator);
                 }
 
-                $allowedfileExtension = ['pdf', 'jpg', 'png', 'PNG', 'JPG', 'JPEG'];
-                $files = $request->media_image;
+                $query = Media::where('user_id', $auth_user_id)->select('media_image')->first();
 
-                foreach ($files as $file) {
+                if (empty($query)) {
+                    $images = array();
+                    if ($files = $request->file('media_image')) {
+                        foreach ($files as $file) {
+                            $imgname = md5(rand('1000', '10000'));
+                            $extension = strtolower($file->getClientOriginalExtension());
+                            $img_full_name = $imgname . '.' . $extension;
+                            $upload_path = 'public/media/';
+                            $img_url = $upload_path . $img_full_name;
+                            $file->move($upload_path, $img_full_name);
 
-                    // $imageName = time() . '.' . $request->media_image->extension();
-                    // $request->media_image->move(public_path('media'), $imageName);
-
-                    $extension = $file->getClientOriginalExtension();
-
-                    $check = in_array($extension, $allowedfileExtension);
-
-                    if ($check) {
-                        foreach ($request->media_image as $key => $mediaFiles) {
-
-                            $name = $mediaFiles->getClientOriginalName();
-                            $path = $mediaFiles->move('public/media/', $name);
-
-                            $user = new Media();
-                            $user->media_image = $path;
-                            $user->user_id = $auth_user_id;
-                            $user->save();
-                            DB::commit();
-                            $img[$key]=asset("public/media/".$name);
-                            $user->media_image = $img;
+                            array_push($images, $img_url);
                         }
-                    } else {
-                        return ApiResponse::error('invalid file format');
                     }
-                    $user_media = new MediaResource($user);
+
+
+                    $imp_image =  implode('|', $images);
+                    $media = Media::insert([
+                        'media_image' => $imp_image,
+                        'user_id' => $auth_user_id,
+                        'created_at' => \Carbon\Carbon::now(),
+                        'updated_at' => \Carbon\Carbon::now(),
+                    ]);
+                    $query1 = Media::where('user_id', $auth_user_id)->first();
+
+                    DB::commit();
+                    $user_media = new MediaResource($query1);
                     return ApiResponse::ok(
                         'Media Added Successfully',
                         $this->mediaimages($user_media)
+                    );
+                } else {
+                    $explode = explode('|', $query->media_image);
+                    if ($files = $request->file('media_image')) {
+                        foreach ($files as $file) {
+                            $imgname = md5(rand('1000', '10000'));
+                            $extension = strtolower($file->getClientOriginalExtension());
+                            $img_full_name = $imgname . '.' . $extension;
+                            $upload_path = 'public/media/';
+                            $img_url = $upload_path . $img_full_name;
+                            $file->move($upload_path, $img_full_name);
+
+                            array_push($explode, $img_url);
+                        }
+                    }
+                    $imp_image =  implode('|', $explode);
+
+                    $verified['media_image'] = $imp_image;
+                    $verified['updated_at']  = \Carbon\Carbon::now();
+                    $media = Media::where('user_id', $auth_user_id)->update($verified);
+
+                    DB::commit();
+                    $user_media = new MediaResource($query);
+                    return ApiResponse::ok(
+                        'Media Added Successfully',
+                        $this->mediaimages($user_media),
                     );
                 }
             } else {
@@ -130,10 +155,13 @@ class MediaController extends Controller
         try {
             DB::beginTransaction();
             $id = auth()->user()->id;
-            $medias =  Media::where('user_id', $id)->get();
+            $medias =  Media::where('user_id', $id)->first();
             if (!empty($medias)) {
+                $exe_img = explode('|', $medias->media_image);
+                $medias =  Media::where('user_id', $id)->first();
+                $medias['media_image'] = explode('|', $medias->media_image);
+                $user_media = new MediaResource($medias);
 
-                $user_media = MediaResource::collection($medias);
                 return ApiResponse::ok(
                     'All Media Of User',
                     $this->mediaimages($user_media)
@@ -166,65 +194,40 @@ class MediaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $update_key)
     {
+        dd($request->file('media_image'));
+        dd($request->all());
         try {
             DB::beginTransaction();
             $id = auth()->user()->id;
+            $user_media = Media::where('user_id', $id)->first();
+
             if (!empty($id)) {
-                $validator =  Validator::make($request->all(), [
-                    'media_image' => ['required', 'mimes:jpg,jpeg,png,PNG,JPG,JPEG'],
-                ]);
+                if (!empty($user_media)) {
+                    $explode = explode('|', $user_media->media_image);
+                    // dd($explode);
+                    if (isset($explode[$update_key])) {
+                        $verified['media_image'][$update_key]     = $request->media_image;
+                        // dd($request->media_image);
+                        $explode[$update_key] = $request->media_image;
+                        dd($explode);
 
-                if ($validator->fails()) {
-                    return $this->validation_error_response($validator);
-                }
-
-
-                $imageName = time() . '.' . $request->media_image->extension();
-                $request->media_image->move(public_path('media'), $imageName);
-
-                $users = User::find($id)->first();
-
-                # Update data into media table
-                $verified['profile_image'] = $request->profile_image;
-
-                $phoneexist = User::where('phone', $request->phone)->select('phone')->first();
-                if ($phoneexist) {
-                    return ApiResponse::error('Mobile Number Already Exist');
+                        $arr = implode('|', $explode);
+                        // dd($arr);
+                        $verified['media_image'] = $arr;
+                        $media = Media::where('user_id', $id)->update($verified);
+                        DB::commit();
+                        $user_media = new MediaResource($media);
+                        // dd($user_media);
+                        return ApiResponse::ok(
+                            'Media Updated Successfully',
+                            $this->mediaimages($user_media)
+                        );
+                    }
                 } else {
-                    $veri['phone']        = $request->phone;
+                    return ApiResponse::error('No Media Here!!');
                 }
-
-                $verified['phone']        = $veri['phone'] ?? $users->phone;
-
-                User::where('id', $auth_user_id)->update($verified);
-
-
-
-                # Update data into usersinfo table
-                $verifieds['dob'] = $request->dob;
-                $verifieds['country'] = $request->country;
-                $verifieds['interests'] = $request->interests;
-                UserInfo::where('user_id', $auth_user_id)->update($verifieds);
-
-
-                $users['first_name']  = $verified['first_name'];
-                $users['last_name'] = $verified['last_name'];
-                $users['phone'] = $verified['phone'];
-                $users['gender'] = $verified['gender'];
-                $users['dob'] = $verifieds['dob'];
-                $users['country'] = $verifieds['country'];
-                $users['interests'] = $verifieds['interests'];
-                $users['email'] = $users->email;
-                $users['phone'] = $users->phone;
-                DB::commit();
-                // $userd = new UserResource($users);
-                $userd = new UserProfileResource($users);
-                return ApiResponse::ok(
-                    'User Profile Updated Successfully',
-                    $this->getUser($userd)
-                );
             } else {
                 return ApiResponse::error('User Not Authanticated');
             }
@@ -241,9 +244,31 @@ class MediaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $d_id)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $id = auth()->user()->id;
+            $user_media_delete = Media::where('user_id', $id)->first();
+            $images = explode("|", $user_media_delete->media_image);
+            // $destination = 'public/media/'.$user_media_delete->media_image;
+            if (isset($images[$d_id])) {
+                unset($images[$d_id]);
+                $arr = implode('|', $images);
+                $verified['media_image'] = $arr;
+                $media = Media::where('user_id', $id)->update($verified);
+                DB::commit();
+                $user_media = new MediaResource($user_media_delete);
+                return ApiResponse::ok(
+                    'Media Deleted Successfully',
+                    $this->mediaimages($user_media)
+                );
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
+        }
     }
 
     public function mediaimages($mediaimages)

@@ -16,10 +16,9 @@ class MediaResource extends JsonResource
      */
     public function toArray($request)
     {
-        // dd($request->file('media_image'));
         return [
             'id' => $this->id,
-            // 'user_id' => $this->user_id,
+            'user_id' => $this->user_id,
             'media_image' => $this->media_image,
             'created_at' => (string) $this->created_at,
             'updated_at' => (string) $this->updated_at,
