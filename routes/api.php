@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\RuleController;
 use App\Http\Controllers\Api\UserProfileController;
 use App\Http\Controllers\Api\MediaController;
+use App\Http\Controllers\Api\FilterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,11 +36,18 @@ Route::middleware('jwt.verify')->group(function () {
     Route::controller(AuthController::class)->group(function () {
         Route::post('logout', 'logout'); //logout
     });
+    Route::controller(FilterController::class)->group(function () {
+        Route::post('filterProfilePrivacy', 'filterProfilePrivacybyGender'); //filter Profile Privacy by Gender
+        Route::post('filterviaage', 'filterProfilePrivacybyage'); //filter Profile Privacy by age
+        Route::post('nearbyusers', 'filterProfilenearbyusers'); //filter Profile Privacy near by users
+    });
 
 
     // Route::controller(UserController::class)->group(function () {
-        // Route::post('detailofuser/{id}', 'detailofuser'); # Show all the details of user by id
+    // Route::post('detailofuser/{id}', 'detailofuser'); # Show all the details of user by id
     // });
+
+
 
     Route::apiResource('users', UserController::class); # filled user_detail and show list
     Route::apiResource('rules', RuleController::class); # Rules Controller

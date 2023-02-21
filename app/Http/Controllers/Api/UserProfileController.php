@@ -47,9 +47,11 @@ class UserProfileController extends Controller
             $auth_user_id = auth()->user()->id;
             if (!empty($auth_user_id)) {
                 $validator =  Validator::make($request->all(), [
-                    'first_name'    => ['required', 'string', 'min:3', 'max:60'],
-                    'last_name'     => ['required', 'string', 'min:3', 'max:60'],
-                    'gender'        => ['required', 'in:m,f,o'],
+                    'first_name'     => ['required', 'string', 'min:3', 'max:60'],
+                    'last_name'      => ['required', 'string', 'min:3', 'max:60'],
+                    'gender'         => ['required', 'in:m,f,o'],
+                    'age'            => ['required', 'numeric'],
+                    'enable_location'=> ['required', 'in:1,0'],
                     'dob'           => ['required', 'date'],
                     'country'       => ['required', 'string'],
                     'interests'     => ['required', 'integer', 'max:2'],
@@ -71,6 +73,8 @@ class UserProfileController extends Controller
                 $verified['first_name']    = $request->first_name;
                 $verified['last_name']     = $request->last_name;
                 $verified['gender']        = $request->gender;
+                $verified['age']        = $request->age;
+                $verified['enable_location']        = $request->enable_location;
                 $verified['profile_image'] = $request->profile_image;
 
                 $phoneexist = User::where('phone', $request->phone)->select('phone')->first();
@@ -98,6 +102,8 @@ class UserProfileController extends Controller
                 $users['phone'] = $verified['phone'];
                 $users['gender'] = $verified['gender'];
                 $users['dob'] = $verifieds['dob'];
+                $users['age'] = $verifieds['dob'];
+                $users['enable_location'] = $verifieds['enable_location'];
                 $users['country'] = $verifieds['country'];
                 $users['interests'] = $verifieds['interests'];
                 $users['email'] = $users->email;
