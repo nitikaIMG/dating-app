@@ -20,6 +20,7 @@ class FilterController extends ApiController
     use ManageUserTrait;
     public function __construct()
     {
+        //
     }
 
     # Filter out on basis on Profile privacy(Men, Women, Everyone)
@@ -113,15 +114,13 @@ class FilterController extends ApiController
     }
 
 
-
     # Filter out on basis on Profile privacy(Men, Women, Everyone)
     public function filterProfilePrivacybyage(Request $request)
     {
-        $messages = [];
         $validator = Validator::make($request->all(), [
             'first_age'        => ['required', 'numeric'],
             'second_age'        => ['required', 'numeric'],
-        ], $messages);
+        ]);
 
         if ($validator->fails()) {
             return $this->validation_error_response($validator);
@@ -133,17 +132,13 @@ class FilterController extends ApiController
             $agefrom = $request->first_age;
             $ageto = $request->second_age;
             $user = User::where('phone_verified_at', '!=', null)->whereBetween('age', [$agefrom, $ageto])->get();
-            $userAge = User::whereBetween('age', [$agefrom, $ageto])->get();
-            // dd($userAge);
-            // dd(!empty($user) && isset($userAge));
-            if (!empty($user) && isset($userAge)) {
-                dd('fvk');
+            $userAge = User::whereBetween('age', [$agefrom, $ageto])->get()->toArray();
+            if (!empty($user) && !empty($userAge)) {
                 return ApiResponse::ok(
                     'User Detail',
                     $this->getUserWithotpverify($user)
                 );
             } else {
-                dd('uyoyoy');
                 return ApiResponse::error('No Data Found Between Required Age');
             }
         } catch (\Exception $e) {
@@ -157,7 +152,6 @@ class FilterController extends ApiController
 
     public function getUserWithotpverify($user)
     {
-        // dd($user);
         return $user;
     }
 }
