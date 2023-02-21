@@ -333,7 +333,6 @@ class UserController extends Controller
 
                 $imageName = time() . '.' . $request->profile_image->extension();
                 $request->profile_image->move(public_path('images'), $imageName);
-
                 $users = User::find($auth_user_id)->first();
 
                 # Update data into users table
@@ -346,10 +345,10 @@ class UserController extends Controller
                 if ($phoneexist) {
                     return ApiResponse::error('Mobile Number Already Exist');
                 } else {
-                    $veri['phone']        = $request->phone;
+                    $veri['phone'] = $request->phone;
                 }
 
-                $verified['phone']        = $veri['phone'] ?? $users->phone;
+                $verified['phone'] = $veri['phone'] ?? $users->phone;
 
                 User::where('id', $auth_user_id)->update($verified);
 
