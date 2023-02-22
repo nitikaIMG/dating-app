@@ -136,7 +136,13 @@ class User extends Authenticatable implements JWTSubject
 
     public function UserInfo()
     {
-   return $this->hasOne(UserInfo::class);
+        return $this->hasOne(UserInfo::class);
+    }
+
+    # request model 
+    public function requests()
+    {
+        return $this->hasMany(Requests::class, 'receiver_id');
     }
 
     // public function media()

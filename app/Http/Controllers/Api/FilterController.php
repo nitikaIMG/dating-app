@@ -147,10 +147,6 @@ class FilterController extends ApiController
         return ApiResponse::error('Something went wrong!');
     }
 
-    public function acceptedRequest(){
-        dd('accepted');
-    }
-
     public function getUserWithotpverify($user)
     {
         return $user;

@@ -22,8 +22,9 @@ class Requests extends Model
         ];
     }
     
-    // public function RequestData()
-    // {
-    //     return $this->hasOne(RequestResource::class);
-    // }
+    # user model 
+    public function users()
+    {
+        return $this->belongsTo(User::class,'id');
+    }
 }

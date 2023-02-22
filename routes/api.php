@@ -43,7 +43,6 @@ Route::middleware('jwt.verify')->group(function () {
         Route::post('filter ProfilePrivacy', 'filterProfilePrivacybyGender'); # filter Profile Privacy by Gender
         Route::post('filterviaage', 'filterProfilePrivacybyage'); # filter Profile Privacy by age
         Route::post('nearbyusers', 'filterProfilenearbyusers'); # filter Profile Privacy near by users
-        Route::get('acceptedRequest', 'acceptedRequest'); # List out popular profile (on basis on accepted requests)
     });
 
 
