@@ -97,9 +97,6 @@ class FilterController extends ApiController
 
 
 
-
-
-
         //     //     $parties = DB::select(DB::raw("SELECT *,111.045*DEGREES(ACOS(COS(RADIANS(':lat'))*COS(RADIANS(`latitude`))*COS(RADIANS(`longitude`) - RADIANS(':long'))+SIN(RADIANS(':lat'))*SIN(RADIANS(`latitude`)))) AS distance_in_km FROM parties ORDER BY distance_in_km asc LIMIT 0,5"), array(
         //     //         'lat' => $lat,
         //     //         'long' => $long
@@ -110,11 +107,11 @@ class FilterController extends ApiController
         //     //     $parties = Parties::all();
         //     // }
         //     // return Fractal::includes('places')->collection($parties, new PartyTransformer);
-        // }
+
     }
 
 
-    # Filter out on basis on Profile privacy(Men, Women, Everyone)
+    # Filter out on basis on Age
     public function filterProfilePrivacybyage(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -148,6 +145,10 @@ class FilterController extends ApiController
         }
 
         return ApiResponse::error('Something went wrong!');
+    }
+
+    public function acceptedRequest(){
+        dd('accepted');
     }
 
     public function getUserWithotpverify($user)

@@ -21,31 +21,27 @@ use App\Http\Controllers\Api\FilterController;
 */
 
 Route::controller(AuthController::class)->group(function () {
-    Route::post('register', 'registerUser'); //registration
-    Route::post('resendOtp', 'resendOtp'); //resendotp
-    Route::post('verifyotp', 'verifyOtp'); //verifyotp
-    Route::post('loginviamobile', 'loginviamobile'); //login phone no
-    Route::post('forgot_password', 'forgot_password'); //Forget Password
-    Route::post('change_password', 'change_password'); //Change Password
-    Route::post('emailverification', 'emailverification'); //Verify Email
+    Route::post('register', 'registerUser'); # registration
+    Route::post('resendOtp', 'resendOtp'); # resendotp
+    Route::post('verifyotp', 'verifyOtp'); # verifyotp
+    Route::post('loginviamobile', 'loginviamobile'); # login phone no
+    Route::post('forgot_password', 'forgot_password'); # Forget Password
+    Route::post('change_password', 'change_password'); # Change Password
+    Route::post('emailverification', 'emailverification'); # Verify Email
 
 
 });
 
 Route::middleware('jwt.verify')->group(function () {
     Route::controller(AuthController::class)->group(function () {
-        Route::post('logout', 'logout'); //logout
+        Route::post('logout', 'logout'); # logout
     });
     Route::controller(FilterController::class)->group(function () {
-        Route::post('filterProfilePrivacy', 'filterProfilePrivacybyGender'); //filter Profile Privacy by Gender
-        Route::post('filterviaage', 'filterProfilePrivacybyage'); //filter Profile Privacy by age
-        Route::post('nearbyusers', 'filterProfilenearbyusers'); //filter Profile Privacy near by users
+        Route::post('filter ProfilePrivacy', 'filterProfilePrivacybyGender'); # filter Profile Privacy by Gender
+        Route::post('filterviaage', 'filterProfilePrivacybyage'); # filter Profile Privacy by age
+        Route::post('nearbyusers', 'filterProfilenearbyusers'); # filter Profile Privacy near by users
+        Route::get('acceptedRequest', 'acceptedRequest'); # List out popular profile (on basis on accepted requests)
     });
-
-
-    // Route::controller(UserController::class)->group(function () {
-    // Route::post('detailofuser/{id}', 'detailofuser'); # Show all the details of user by id
-    // });
 
 
 
