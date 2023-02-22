@@ -8,6 +8,9 @@ use App\Http\Controllers\Api\RuleController;
 use App\Http\Controllers\Api\UserProfileController;
 use App\Http\Controllers\Api\MediaController;
 use App\Http\Controllers\Api\FilterController;
+use App\Http\Controllers\Api\RequestApiController;
+use App\Http\Controllers\Api\FavouritesProfileApiController;
+use App\Http\Controllers\Api\LikeProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,10 +51,16 @@ Route::middleware('jwt.verify')->group(function () {
     Route::apiResource('users', UserController::class); # filled user_detail and show list
     Route::apiResource('rules', RuleController::class); # Rules Controller
     Route::apiResource('userprofile', UserProfileController::class); # User Profile Controller 
-    Route::apiResource('media', MediaController::class); # User Media Controller 
+    Route::apiResource('media', MediaController::class); # User Media Controller
+    
+    Route::apiResource('requestapprove', RequestApiController::class);
+    Route::apiResource('postunfavourites', FavouritesProfileApiController::class);
+    Route::apiResource('likeunlikeuser', LikeProfileController::class);
+
 });
 
 # Social Login
 Route::controller(AuthController::class)->group(function () {
     Route::post('social_login', 'social_login');
 });
+
