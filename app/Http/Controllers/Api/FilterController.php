@@ -105,6 +105,7 @@ class FilterController extends ApiController
                 ->limit(20)
                 ->get();
 
+
             if (!empty($users)) {
                 return ApiResponse::ok(
                     'User list nearby you',
@@ -160,11 +161,9 @@ class FilterController extends ApiController
     #save address with lat long
     public function addLocation(Request $request)
     {
-        dd('ghj');
         $validator = Validator::make($request->all(), [
             'latitude'        => ['required', 'between:-90,90'],
             'longitude'        => ['required', 'between:-180,180'],
-            'distance'        => ['required', 'numeric'],
         ]);
 
         if ($validator->fails()) {
@@ -174,19 +173,21 @@ class FilterController extends ApiController
         try {
             DB::beginTransaction();
             $validated = $validator->validated();
+            $id = auth()->user()->id;
 
-            $latitude  = $validated['latitude'];
-            $longitude = $validated['longitude'];
-            $distance  = $validated['distance'] * 1000;
+            if (!empty($id)) {
+                $data['latitude']  = $validated['latitude'];
+                $data['longitude'] = $validated['longitude'];
 
+                User::where('id', $id)->update($data);
+                DB::commit();
 
-            if (!empty($users)) {
                 return ApiResponse::ok(
-                    'User list nearby you',
-                    $this->getUserWithotpverify($users)
+                    'Adress added successfully',
+                    $this->getUserWithotpverify($data)
                 );
             } else {
-                return ApiResponse::error('No user found related to ths address');
+                return ApiResponse::error('No user found');
             }
         } catch (\Exception $e) {
             DB::rollBack();
