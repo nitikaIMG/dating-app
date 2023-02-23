@@ -15,6 +15,9 @@ return new class extends Migration
     {
         Schema::create('like_profiles', function (Blueprint $table) {
             $table->id();
+            $table->integer('sender_id')->nullable();
+            $table->integer('liked_user_id')->nullable();
+            $table->integer('like_status')->comment('0 => unlike 1=> like')->nullable();
             $table->timestamps();
         });
     }
