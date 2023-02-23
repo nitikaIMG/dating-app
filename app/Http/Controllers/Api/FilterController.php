@@ -71,43 +71,53 @@ class FilterController extends ApiController
         return ApiResponse::error('Something went wrong!');
     }
 
-    # Filter out Profile nearby users
+    # Profile of nearby users
     public function filterProfilenearbyusers(Request $request)
     {
-        dd('nerar by user');
-        // if ($request->has('lat') && $request->has('long')) {
-        //     $lat = $request->lat;
-        //     $long = $request->long;
+        $validator = Validator::make($request->all(), [
+            'latitude'        => ['required', 'between:-90,90'],
+            'longitude'        => ['required', 'between:-180,180'],
+            // 'distance'        => ['required', 'numeric'],
+        ]);
 
-        //     $data = DB::table("users")
-        //         ->select(
-        //             "users.id",
-        //             DB::raw("6371 * acos(cos(radians(" . $lat . ")) 
-        //         * cos(radians(users.lat)) 
-        //         * cos(radians(users.long) - radians(" . $long . ")) 
-        //         + sin(radians(" . $lat . ")) 
-        //         * sin(radians(users.lat))) AS distance")
-        //         )
-        //         ->groupBy("users.id")
-        //         ->get();
+        if ($validator->fails()) {
+            return $this->validation_error_response($validator);
+        }
 
-        //     dd($data);
+        try {
+            DB::beginTransaction();
+            $validated = $validator->validated();
 
+            $latitude  = $validated['latitude'];
+            $longitude = $validated['longitude'];
 
+            $users = User::selectRaw("id,first_name,last_name,latitude, longitude,
+                        ( 6371 * acos( cos( radians(?) ) *
+                            cos( radians( latitude ) )
+                           * cos( radians( longitude ) - radians(?)
+                           ) + sin( radians(?) ) *
+                            sin( radians( latitude ) ) )
+                        ) AS distance", [$latitude, $longitude, $latitude])
+                // ->having("distance", "<", $distance)
+                ->where('enable_location', 1)
+                ->orderBy("distance", 'asc')
+                ->offset(0)
+                ->limit(20)
+                ->get();
 
-
-
-        //     //     $parties = DB::select(DB::raw("SELECT *,111.045*DEGREES(ACOS(COS(RADIANS(':lat'))*COS(RADIANS(`latitude`))*COS(RADIANS(`longitude`) - RADIANS(':long'))+SIN(RADIANS(':lat'))*SIN(RADIANS(`latitude`)))) AS distance_in_km FROM parties ORDER BY distance_in_km asc LIMIT 0,5"), array(
-        //     //         'lat' => $lat,
-        //     //         'long' => $long
-        //     //     ));
-        //     //     $hidacik = Parties::hydrate($parties);
-        //     //     return Fractal::includes('places')->collection($hidacik, new PartyTransformer);
-        //     // } else {
-        //     //     $parties = Parties::all();
-        //     // }
-        //     // return Fractal::includes('places')->collection($parties, new PartyTransformer);
-
+            if (!empty($users)) {
+                return ApiResponse::ok(
+                    'User list nearby you',
+                    $this->getUserWithotpverify($users)
+                );
+            } else {
+                return ApiResponse::error('No user found related to ths address');
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
+        }
     }
 
 
@@ -145,6 +155,44 @@ class FilterController extends ApiController
         }
 
         return ApiResponse::error('Something went wrong!');
+    }
+
+    #save address with lat long
+    public function addLocation(Request $request)
+    {
+        dd('ghj');
+        $validator = Validator::make($request->all(), [
+            'latitude'        => ['required', 'between:-90,90'],
+            'longitude'        => ['required', 'between:-180,180'],
+            'distance'        => ['required', 'numeric'],
+        ]);
+
+        if ($validator->fails()) {
+            return $this->validation_error_response($validator);
+        }
+
+        try {
+            DB::beginTransaction();
+            $validated = $validator->validated();
+
+            $latitude  = $validated['latitude'];
+            $longitude = $validated['longitude'];
+            $distance  = $validated['distance'] * 1000;
+
+
+            if (!empty($users)) {
+                return ApiResponse::ok(
+                    'User list nearby you',
+                    $this->getUserWithotpverify($users)
+                );
+            } else {
+                return ApiResponse::error('No user found related to ths address');
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
+        }
     }
 
     public function getUserWithotpverify($user)

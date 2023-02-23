@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Api\ApiResponse;
 use App\Http\Resources\RequestResource;
+use App\Http\Resources\UserResource;
 
 class RequestApiController extends Controller
 {
@@ -19,12 +20,13 @@ class RequestApiController extends Controller
             DB::beginTransaction();
 
             $get = User::withCount([
-                'requests', 'requests as total_count' => function ($query) {
-                    $query->select(DB::raw('count(receiver_id)'));
+                'requests', 'requests as accepted_request_count' => function ($query) {
+                    $query->select(DB::raw('count(receiver_id)'))
+                        ->where('status', 1);
                 }
-            ])->orderBy('total_count', 'DESC')->get();
-            
-            // $userdetail = UserResource::collection($users);
+            ])->orderBy('accepted_request_count', 'DESC')->get();
+
+            // $userdetail = UserResource::collection($get);
             return ApiResponse::ok(
                 'Most Popular User Profile',
                 $this->getUser($get)
