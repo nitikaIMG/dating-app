@@ -24,7 +24,8 @@ use App\Http\Controllers\Api\LikeProfileController;
 */
 
 Route::controller(AuthController::class)->group(function () {
-    Route::post('register', 'registerUser'); # registration
+    // Route::post('register', 'registerUser'); # registration
+    Route::post('registeruser', 'registerUserViaMobile'); # registration with mobile no
     Route::post('resendOtp', 'resendOtp'); # resendotp
     Route::post('verifyotp', 'verifyOtp'); # verifyotp
     Route::post('loginviamobile', 'loginviamobile'); # login phone no

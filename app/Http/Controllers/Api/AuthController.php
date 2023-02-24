@@ -22,89 +22,89 @@ class AuthController extends ApiController
     {
     }
 
-    #registration
-    public function registerUser(Request $request)
-    {
+    #registration 
+    // public function registerUser(Request $request)
+    // {
 
-        ## Validate Request Inputs
-        $messages = [];
+    //     ## Validate Request Inputs
+    //     $messages = [];
 
-        $validator = Validator::make($request->all(), [
-            'name'    => ['required', 'string', 'min:3', 'max:60'],
-            'email'         => ['required', 'email', 'unique:users'],
-            'password'      => ['required', 'string', 'min:8', 'max:8'],
-            'phone'         => ['required', 'numeric', 'digits:10', 'unique:users'],
-            'dob'           => ['nullable', 'date'],
-            'gender'        => ['nullable', 'in:m,f,o'],
-            'country'       => ['required', 'string'],
-            'referred_from'   => ['nullable', 'max:1000'],
-            'refer_code'   => ['nullable', 'max:8'],
-            'otp'   => ['nullable'],
-            'platform' => ['required', 'in:android,ios,web'],
-        ], $messages);
+    //     $validator = Validator::make($request->all(), [
+    //         'name'    => ['required', 'string', 'min:3', 'max:60'],
+    //         'email'         => ['required', 'email', 'unique:users'],
+    //         'password'      => ['required', 'string', 'min:8', 'max:8'],
+    //         'phone'         => ['required', 'numeric', 'digits:10', 'unique:users'],
+    //         'dob'           => ['nullable', 'date'],
+    //         'gender'        => ['nullable', 'in:m,f,o'],
+    //         'country'       => ['required', 'string'],
+    //         'referred_from'   => ['nullable', 'max:1000'],
+    //         'refer_code'   => ['nullable', 'max:8'],
+    //         'otp'   => ['nullable'],
+    //         'platform' => ['required', 'in:android,ios,web'],
+    //     ], $messages);
 
-        if ($validator->fails()) {
-            return $this->validation_error_response($validator);
-        }
+    //     if ($validator->fails()) {
+    //         return $this->validation_error_response($validator);
+    //     }
 
-        try {
-            DB::beginTransaction();
-            # Store Validated Inputs
-            $validated = $validator->validated();
+    //     try {
+    //         DB::beginTransaction();
+    //         # Store Validated Inputs
+    //         $validated = $validator->validated();
 
-            // $dob1 = $request->get('dob');
-            $mydate = strtotime("now");
-            $dob = date('d/m/Y', $mydate);
-            $otp = 1234;
+    //         // $dob1 = $request->get('dob');
+    //         $mydate = strtotime("now");
+    //         $dob = date('d/m/Y', $mydate);
+    //         $otp = 1234;
 
 
-            # Create User and store its Information
-            $user = User::create([
-                'first_name' => $validated['name'],
-                'email'     => $validated['email'],
-                'password'  => Hash::make($validated['password']),
-                'phone'     => $validated['phone'],
-                'dob'       => $dob ?? null,
-                'gender'    => $validated['gender'] ?? null,
-                'type'      => 'user',
-                'referred_from' => $validated['referred_from'] ?? '',
-                'refer_code' => $this->getReferralCode($validated['name']),
-                'refer_by' => (isset($validated['refer_code'])) ? $this->getUserByRefercode($validated['refer_code']) : 0,
-                'country'  => $validated['country'],
-                'otp'  => $otp,
-                'platform'  => $validated['platform'],
-            ]);
-            if (isset($validated['refer_code']) && $this->getUserByRefercode($validated['refer_code']) == 0) {
-                return ApiResponse::error('Refer code is Not valid');
-            }
+    //         # Create User and store its Information
+    //         $user = User::create([
+    //             'first_name' => $validated['name'],
+    //             'email'     => $validated['email'],
+    //             'password'  => Hash::make($validated['password']),
+    //             'phone'     => $validated['phone'],
+    //             'dob'       => $dob ?? null,
+    //             'gender'    => $validated['gender'] ?? null,
+    //             'type'      => 'user',
+    //             'referred_from' => $validated['referred_from'] ?? '',
+    //             'refer_code' => $this->getReferralCode($validated['name']),
+    //             'refer_by' => (isset($validated['refer_code'])) ? $this->getUserByRefercode($validated['refer_code']) : 0,
+    //             'country'  => $validated['country'],
+    //             'otp'  => $otp,
+    //             'platform'  => $validated['platform'],
+    //         ]);
+    //         if (isset($validated['refer_code']) && $this->getUserByRefercode($validated['refer_code']) == 0) {
+    //             return ApiResponse::error('Refer code is Not valid');
+    //         }
 
-            # Create User Info
-            $user->info()->create([
-                'dob'       => $dob,
-                // 'dob'       => now()->parse($request->dob)->format('d-m-Y'),
-                'country'   => $validated['country'],
-            ]);
+    //         # Create User Info
+    //         $user->info()->create([
+    //             'dob'       => $dob,
+    //             // 'dob'       => now()->parse($request->dob)->format('d-m-Y'),
+    //             'country'   => $validated['country'],
+    //         ]);
 
-            // $user->session_id = $token;
-            $user->save();
+    //         // $user->session_id = $token;
+    //         $user->save();
 
-            DB::commit();
+    //         DB::commit();
 
-            if (isset($validated['refer_code'])) {
-                $this->generateCouponCode($user->refer_by);
-            }
-            return ApiResponse::ok(
-                'OTP has been sent on your mobile no ' . $validated['phone'],
-                $this->getUserWithotpverify($user)
-            );
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return ApiResponse::error($e->getMessage());
-            logger($e->getMessage());
-        }
+    //         if (isset($validated['refer_code'])) {
+    //             $this->generateCouponCode($user->refer_by);
+    //         }
+    //         return ApiResponse::ok(
+    //             'OTP has been sent on your mobile no ' . $validated['phone'],
+    //             $this->getUserWithotpverify($user)
+    //         );
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         return ApiResponse::error($e->getMessage());
+    //         logger($e->getMessage());
+    //     }
 
-        return ApiResponse::error('Something went wrong!');
-    }
+    //     return ApiResponse::error('Something went wrong!');
+    // }
 
     #verify otp
     public function verifyOtp(Request $request)
@@ -546,5 +546,51 @@ class AuthController extends ApiController
     {
         // Mail::to($user)->send(new UserVerify($user));
         return true;
+    }
+
+
+    #registration via mobile
+    public function registerUserViaMobile(Request $request)
+    {
+        ## Validate Request Inputs
+        $messages = [];
+
+        $validator = Validator::make($request->all(), [
+            'phone'    => ['required', 'numeric', 'digits:10', 'unique:users'],
+            'otp'      => ['nullable'],
+            'platform' => ['required', 'in:android,ios,web'],
+        ], $messages);
+
+        if ($validator->fails()) {
+            return $this->validation_error_response($validator);
+        }
+
+        try {
+            DB::beginTransaction();
+            # Store Validated Inputs
+            $validated = $validator->validated();
+
+            $otp = 123456;
+
+            # Create User and store its Information
+            $user = User::create([
+                'first_name' => $validated['name'] ?? '',
+                'phone'     => $validated['phone'],
+                'type'      => 'user',
+                'otp'  => $otp,
+                'platform'  => $validated['platform'],
+            ]);
+            DB::commit();
+            return ApiResponse::ok(
+                'OTP has been sent on your mobile no ' . $validated['phone'],
+                $this->getUserWithotpverify($user)
+            );
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
+        }
+
+        return ApiResponse::error('Something went wrong!');
     }
 }

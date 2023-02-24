@@ -31,11 +31,6 @@ class RequestApiController extends Controller
                 'Most Popular User Profile',
                 $this->getUser($userdetail)
             );
-
-            // $dat = User::withCount('requests', function ($categoryTable) {
-            //     $categoryTable->where('receiver_id', 2)->select('receiver_id')->get()->count();
-            // })->get();
-            // return $dat;
         } catch (\Exception $e) {
             DB::rollBack();
             return ApiResponse::error($e->getMessage());
@@ -48,10 +43,10 @@ class RequestApiController extends Controller
         try {
             DB::beginTransaction();
             $id = auth()->user()->id;
-
             $validator =  Validator::make($request->all(), [
-                'sender_id'    => ['required', 'numeric'],
-                'receiver_id'    => ['required', 'numeric'],
+                'sender_id'   => ['required', 'numeric'],
+                'receiver_id' => ['required', 'numeric'],
+                'status'      => ['nullable', 'numeric'],
             ]);
 
             if ($validator->fails()) {
@@ -61,29 +56,50 @@ class RequestApiController extends Controller
 
             $reqdata['sender_id'] = $validated['sender_id'];
             $reqdata['receiver_id'] = $validated['receiver_id'];
+            // $reqdata['status'] = $validated['status'];
 
-            $chk_id = User::where('id', $request->receiver_id)
-                ->where('id', $request->sender_id)
-                ->where('phone_verified_at', '!=', null)->get();
 
-            if (!empty($chk_id)) {
-                $sender = Requests::where('sender_id', $id)->first();
-                $receiver = Requests::where('receiver_id', $id)->first();
-                if ($request->sender_id  ==  $request->receiver_id) {
-                    return ApiResponse::error(
-                        'Invalid Request!!',
-                    );
-                } elseif ($request->sender_id == $id) {
-                    if ($sender->status == 0) {
-                        return ApiResponse::ok('Sorry!! Request has been already sent before!!');
-                    } elseif ($sender->status == 1) {
-                        return ApiResponse::ok('Your request already accepted!!');
+            $chk_sender_id = User::where('id', $request->sender_id)
+                ->where('phone_verified_at', '!=', null)->first();
+
+            $chk_receiver_id = User::where('id', $request->receiver_id)
+                ->where('phone_verified_at', '!=', null)->first();
+
+
+
+            if (!empty($chk_sender_id) && !empty($chk_receiver_id)) { # exist in database user table !!
+                if ($request->sender_id == $id) { # sender is equeal to auth user !!
+                    $sender_in_request_tbl = Requests::where('sender_id', $request->sender_id)->where('receiver_id', $request->receiver_id)->first();
+                    if (!empty($sender_in_request_tbl)) { # checking the record is exist or not in request tbl !!
+                        if ($request->sender_id == $id) {
+                            if ($sender_in_request_tbl->status == 0) {
+                                return ApiResponse::ok('Sorry!! Request has been already sent before!!');
+                            } elseif ($sender_in_request_tbl->status == 1) {
+                                return ApiResponse::ok('Your request already accepted!!');
+                            } else {
+                                $verified['status'] = 0;
+                                Requests::where('sender_id', $request->sender_id)
+                                    ->where('receiver_id', $request->receiver_id)->update($verified);
+                                DB::commit();
+                                return ApiResponse::ok('Your request has been sent again!!');
+                            }
+                        }
                     } else {
-                        $verified['status'] = 0;
-                        Requests::where('sender_id', $request->sender_id)
-                            ->where('receiver_id', $request->receiver_id)->update($verified);
-                        DB::commit();
-                        return ApiResponse::ok('Your request has been sent again!!');
+                        if ($request->sender_id == $id && $request->receiver_id == $id) {
+                            return ApiResponse::error('Sender and Receiver cannot same');
+                        } elseif ($request->sender_id == $id) {
+                            Requests::create([
+                                'sender_id' => $validated['sender_id'],
+                                'receiver_id' => $validated['receiver_id'],
+                            ]);
+                            DB::commit();
+                            $receiver_data = User::where('id', $request->receiver_id)->first();
+                            return ApiResponse::ok(
+                                'Request Has Been Sent Successfully!!',
+                            );
+                        } else {
+                            return ApiResponse::error('Sender not authenticate');
+                        }
                     }
                 } elseif ($request->receiver_id == $id) {
                     $validator =  Validator::make($request->all(), [
@@ -103,29 +119,31 @@ class RequestApiController extends Controller
                         $verified['status'] = 1;
                         Requests::where('sender_id', $request->sender_id)->where('receiver_id', $request->receiver_id)->update($verified);
                         DB::commit();
-                        return ApiResponse::ok('Request accepted by you');
+                        return ApiResponse::ok('Request accepted');
                     } elseif ($request->status == 2) {
                         $verified['status'] = 2;
                         Requests::where('sender_id', $request->sender_id)->where('receiver_id', $request->receiver_id)->update($verified);
                         DB::commit();
-                        return ApiResponse::ok('Request Rejected by you');
+                        return ApiResponse::ok('Request Rejected');
                     } else {
+                        $verified['status'] = 0;
+                        Requests::where('sender_id', $request->sender_id)->where('receiver_id', $request->receiver_id)->update($verified);
+                        DB::commit();
                         return ApiResponse::error('Your request is pending');
                     }
                 } else {
-
-                    Requests::create([
-                        'sender_id' => $validated['sender_id'],
-                        'receiver_id' => $validated['receiver_id'],
-                    ]);
-                    DB::commit();
-                    $receiver_data = User::where('id', $request->receiver_id)->first();
-                    return ApiResponse::ok(
-                        'Request Has Been Sent Successfully!!',
-                    );
+                    return ApiResponse::error('Sender Not Login');
                 }
             } else {
-                return ApiResponse::error('Users Not Found!');
+                if ($chk_receiver_id == null && $chk_sender_id == null) {
+                    return ApiResponse::error('Users Not Exist!!');
+                } else {
+                    if ($chk_receiver_id == null) {
+                        return ApiResponse::error('Receiver Not Exist!!');
+                    } else {
+                        return ApiResponse::error('Sender Not Exist!!');
+                    }
+                }
             }
         } catch (\Exception $e) {
             DB::rollBack();

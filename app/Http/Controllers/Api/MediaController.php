@@ -77,7 +77,6 @@ class MediaController extends Controller
                 $query = Media::where('user_id', $auth_user_id)->select('media_image')->first();
                 // $mediacount = explode('|', $query->media_image);
                 // $total_count = count($mediacount);
-                // dd($total_count);
                 // if ($total_count <= 9) {
                     if (empty($query)) {
                         $images = array();

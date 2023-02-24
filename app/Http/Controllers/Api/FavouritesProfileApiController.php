@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Api\ApiResponse;
 use App\Models\Favourite;
+use App\Models\User;
 
 class FavouritesProfileApiController extends Controller
 {
@@ -15,52 +16,69 @@ class FavouritesProfileApiController extends Controller
     {
         try {
             DB::beginTransaction();
-
+            $id = auth()->user()->id;
             $validator =  Validator::make($request->all(), [
-                'sender_id' => ['required'],
-                'fav_user_id'    => ['required'],
-                'fav_status'    => ['required'],
+                'sender_id'   => ['required', 'numeric'],
+                'fav_user_id' => ['required', 'numeric'],
             ]);
 
             if ($validator->fails()) {
                 return $this->validation_error_response($validator);
             }
-
-            $favdata['sender_id'] = $request['sender_id']; 
-            $favdata['receiver_id'] = $request['fav_user_id']; 
-            $favdata['status'] = $request['fav_status'];
-
             $validated = $validator->validated();
-            $findfavourites = Favourite::where('sender_id', $request->sender_id)
-            ->where('fav_user_id', $request->fav_user_id)->first();
-            if ($findfavourites != null) {
-                $sender_id = $request->sender_id;
-                $favuserid = $request->fav_user_id;
-                $fav_status = $request->fav_status;
-                $affectedRows = Favourite::where("sender_id", $sender_id)
-                ->where("fav_user_id", $favuserid)->update(["fav_status" => $fav_status]);
-                DB::commit();
-                if ($fav_status == 1) {
-                    return ApiResponse::ok(
-                        'You UnFavourite This User!!',$this->getfavdata($favdata)
-                    );
+
+            $favdata['sender_id'] = $request['sender_id'];
+            $favdata['fav_user_id'] = $request['fav_user_id'];
+
+            $chk_sender_id = User::where('id', $request->sender_id)
+                ->where('phone_verified_at', '!=', null)->first();
+            $chk_fav_user_id = User::where('id', $request->fav_user_id)
+                ->where('phone_verified_at', '!=', null)->first();
+
+            if (!empty($chk_sender_id) && !empty($chk_fav_user_id)) {
+
+                if ($request->sender_id == $id) {
+                    $findfavourites = Favourite::where('sender_id', $request->sender_id)
+                        ->where('fav_user_id', $request->fav_user_id)->first();
+
+                    if (!empty($findfavourites)) {
+                        if ($findfavourites->fav_status == 1) {
+                            $verified['fav_status'] = 0;
+                            Favourite::where('sender_id', $request->sender_id)
+                                ->where('fav_user_id', $request->fav_user_id)->update($verified);
+                            DB::commit();
+                            return ApiResponse::ok('User Remove from your favourites!!');
+                        } else {
+                            $verified['fav_status'] = 1;
+                            Favourite::where('sender_id', $request->sender_id)
+                                ->where('fav_user_id', $request->fav_user_id)->update($verified);
+                            DB::commit();
+                            return ApiResponse::ok('User Added in your favourites!!');
+                        }
+                    } else {
+                        $fav = Favourite::create([
+                            'sender_id' => $request->sender_id,
+                            'fav_user_id' => $request->fav_user_id,
+                            'fav_status' => 1
+                        ]);
+                        DB::commit();
+                        return ApiResponse::ok(
+                            'User Added in your favourites!!'
+                        );
+                    }
                 } else {
-                    return ApiResponse::ok(
-                        'You Favourite This User!!',$this->getfavdata($favdata)
-                    );
+                    return ApiResponse::error('Login First');
                 }
             } else {
-                $fav = Favourite::create([
-                    'sender_id' => $request->sender_id,
-                    'fav_user_id' => $request->fav_user_id,
-                    'fav_status' => 0
-                ]);
-                DB::commit();
-
-                $fav->save();
-                return ApiResponse::ok(
-                    'You Favourite This User!!',$this->getfavdata($favdata)
-                );
+                if ($chk_fav_user_id == null && $chk_sender_id == null) {
+                    return ApiResponse::error('Users Not Exist!!');
+                } else {
+                    if ($chk_fav_user_id == null) {
+                        return ApiResponse::error('Favourite profile id not exist!');
+                    } else {
+                        return ApiResponse::error('LUser Not Exist!!');
+                    }
+                }
             }
         } catch (\Exception $e) {
             DB::rollBack();
@@ -68,7 +86,8 @@ class FavouritesProfileApiController extends Controller
             logger($e->getMessage());
         }
     }
-    public function getfavdata($favdata){
+    public function getfavdata($favdata)
+    {
         return $favdata;
     }
 }
