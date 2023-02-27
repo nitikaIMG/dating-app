@@ -76,7 +76,7 @@ class FavouritesProfileApiController extends Controller
                     if ($chk_fav_user_id == null) {
                         return ApiResponse::error('Favourite profile id not exist!');
                     } else {
-                        return ApiResponse::error('LUser Not Exist!!');
+                        return ApiResponse::error('User Not Exist!!');
                     }
                 }
             }

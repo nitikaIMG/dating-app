@@ -21,7 +21,10 @@ class RuleResource extends JsonResource
         return [
             'id' => $this->id,
             'terms_conditions' => $this->terms_conditions,
+            'created_at' => (string) $this->created_at,
+            'updated_at' => (string) $this->updated_at,
         ];
+        
         // return parent::toArray($request);
     }
 }

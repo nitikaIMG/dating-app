@@ -78,6 +78,14 @@ class User extends Authenticatable implements JWTSubject
             : $this->first_name;
     }
 
+    public function userformat()
+    {
+        return [
+            'id' => $this->id,
+            'phone' => $this->phone ?? '',
+        ];
+    }
+
     public function format()
     {
 
@@ -143,6 +151,12 @@ class User extends Authenticatable implements JWTSubject
     public function requests()
     {
         return $this->hasMany(Requests::class, 'receiver_id');
+    }
+
+    # request model 
+    public function likeprofile()
+    {
+        return $this->hasMany(Requests::class, 'liked_user_id');
     }
 
     // public function media()

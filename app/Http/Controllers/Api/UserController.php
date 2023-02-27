@@ -17,6 +17,8 @@ use Auth;
 use DB;
 use Str;
 use App\Models\UserRule;
+use App\Http\Resources\UserProfileResource;
+
 
 
 
@@ -67,19 +69,22 @@ class UserController extends Controller
     public function store(Request $request)
     {
         ## Users Profile Api 
-        ## After agreed rules user will come here and fill details
+        ## After agreed the rules user will come here and fill details
         try {
             DB::beginTransaction();
             $auth_user_id = auth()->user()->id;
             $users = User::where('id', $auth_user_id)->where('agree_rules_status', 1)->with('UserInfo')->first();
-            if ($users) {
+            if (!empty($users)) {
                 if (empty($users->profile_image) && empty($users->gender)) {
                     $validator =  Validator::make($request->all(), [
+                        'first_name'    => 'required|alpha|min:2|max:30',
                         'last_name'     => 'required|alpha|min:2|max:30',
+                        'email'         => 'email|unique:users',
                         'dob'           => 'required',
                         'gender'        => 'required|in:m,f,o',
                         'interests'     => 'required|integer|max:2',
                         'profile_image' => 'required|mimes:jpg,jpeg,png,PNG,JPG,JPEG',
+                        'country'       => 'required',
                     ]);
 
                     if ($validator->fails()) {
@@ -91,27 +96,39 @@ class UserController extends Controller
                     $request->profile_image->move(public_path('images'), $imageName);
 
                     // add data into users table
+                    $verified['first_name']    = $request->first_name;
                     $verified['last_name']     = $request->last_name;
+                    $verified['email']         = $request->email;
                     $verified['gender']        = $request->gender;
                     $verified['profile_image'] = $request->profile_image;
                     User::where('id', $auth_user_id)->update($verified);
 
                     // add data into usersinfo table
                     $verifieds['interests'] = $request->interests;
-                    $verifieds['dob'] = $request->dob;
+                    $verifieds['dob']       = $request->dob;
+                    $verifieds['country']   = $request->country;
                     UserInfo::where('user_id', $auth_user_id)->update($verifieds);
-                    DB::commit();
 
+                    $data['id']           = $auth_user_id;
+                    $data['first_name']   = $verified['first_name'];
+                    $data['last_name']    = $verified['last_name'];
+                    $data['email']        = $verified['email'];
+                    $data['gender']       = $verified['gender'];
+                    $data['profile_image'] = $verified['profile_image'];
+                    $data['interests']    = $verifieds['interests'];
+                    $data['dob']          = $verifieds['dob'];
+                    $data['country']      = $verifieds['country'];
+
+                    DB::commit();
+                    
                     return ApiResponse::ok(
-                        'User Details Added Successfully',
-                        $this->getUser($users)
+                        'User Details Filled Successfully',
+                        $this->getUser($data)
                     );
                 } else {
                     return ApiResponse::ok(
-                        'User Details Already Exist !',
-                        $this->getUser($users)
+                        'User Details Already Filled !',
                     );
-                    // return ApiResponse::error('User Details Already Exist !');
                 }
             } elseif ($users->phone_enable == 1) {  //logged in by social authentication
                 $validator =  Validator::make($request->all(), [

@@ -51,12 +51,12 @@ class UserProfileController extends Controller
                     'last_name'      => ['required', 'string', 'min:3', 'max:60'],
                     'gender'         => ['required', 'in:m,f,o'],
                     'age'            => ['required', 'numeric'],
-                    'enable_location'=> ['required', 'in:1,0'],
-                    'dob'           => ['required', 'date'],
-                    'country'       => ['required', 'string'],
-                    'interests'     => ['required', 'integer', 'max:2'],
-                    'phone'         => ['numeric', 'digits:10'],
-                    'profile_image' => ['required', 'mimes:jpg,jpeg,png,PNG,JPG,JPEG'],
+                    'enable_location' => ['required', 'in:1,0'],
+                    'dob'            => ['required', 'date'],
+                    'country'        => ['required', 'string'],
+                    'interests'      => ['required', 'integer', 'max:2'],
+                    'phone'          => ['numeric', 'digits:10'],
+                    'profile_image'  => ['required', 'mimes:jpg,jpeg,png,PNG,JPG,JPEG'],
                 ]);
 
                 if ($validator->fails()) {
@@ -68,23 +68,23 @@ class UserProfileController extends Controller
                 $request->profile_image->move(public_path('images'), $imageName);
 
                 $users = User::find($auth_user_id)->first();
-
+                
                 # Update data into users table
-                $verified['first_name']    = $request->first_name;
-                $verified['last_name']     = $request->last_name;
-                $verified['gender']        = $request->gender;
-                $verified['age']        = $request->age;
-                $verified['enable_location']        = $request->enable_location;
-                $verified['profile_image'] = $request->profile_image;
+                $verified['first_name']      = $request->first_name;
+                $verified['last_name']       = $request->last_name;
+                $verified['gender']          = $request->gender;
+                $verified['age']             = $request->age;
+                $verified['enable_location'] = $request->enable_location;
+                $verified['profile_image']   = $request->profile_image;
+                
+                // $phoneexist = User::where('phone', $request->phone)->select('phone')->first();
+                // if ($phoneexist) {
+                //     return ApiResponse::error('Mobile Number Already Exist');
+                // } else {
+                //     $veri['phone']        = $request->phone;
+                // }
 
-                $phoneexist = User::where('phone', $request->phone)->select('phone')->first();
-                if ($phoneexist) {
-                    return ApiResponse::error('Mobile Number Already Exist');
-                } else {
-                    $veri['phone']        = $request->phone;
-                }
-
-                $verified['phone']        = $veri['phone'] ?? $users->phone;
+                // $verified['phone']        = $veri['phone'] ?? $users->phone;
 
                 User::where('id', $auth_user_id)->update($verified);
 
@@ -97,17 +97,17 @@ class UserProfileController extends Controller
                 UserInfo::where('user_id', $auth_user_id)->update($verifieds);
 
 
-                $users['first_name']  = $verified['first_name'];
-                $users['last_name'] = $verified['last_name'];
-                $users['phone'] = $verified['phone'];
-                $users['gender'] = $verified['gender'];
-                $users['dob'] = $verifieds['dob'];
-                $users['age'] = $verifieds['dob'];
-                $users['enable_location'] = $verifieds['enable_location'];
-                $users['country'] = $verifieds['country'];
-                $users['interests'] = $verifieds['interests'];
-                $users['email'] = $users->email;
-                $users['phone'] = $users->phone;
+                $users['first_name']      = $verified['first_name'];
+                $users['last_name']       = $verified['last_name'];
+                // $users['phone']           = $verified['phone'];
+                $users['gender']          = $verified['gender'];
+                $users['dob']             = $verifieds['dob'];
+                $users['age']             = $verified['age'];
+                $users['enable_location'] = $verified['enable_location'];
+                $users['country']         = $verifieds['country'];
+                $users['interests']       = $verifieds['interests'];
+                $users['email']           = $users->email;
+                // $users['phone']           = $users->phone;
                 DB::commit();
                 // $userd = new UserResource($users);
                 $userd = new UserProfileResource($users);

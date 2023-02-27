@@ -8,58 +8,100 @@ use App\Models\LikeProfile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Api\ApiResponse;
+use App\Models\User;
+use App\Http\Resources\UserProfileResource;
+
 
 class LikeProfileController extends Controller
 {
-    public function store(Request $request)
+    #list of people/users who likes your profile
+    public function index()
     {
-
         try {
             DB::beginTransaction();
+            $id = auth()->user()->id;
+            $getusers = LikeProfile::where('liked_user_id', $id)->where('like_status', 1)->with('users')->get();
+
+            if (!empty($getusers)) {
+                return ApiResponse::ok(
+                    'List Of Users Who Liked Your Profile',
+                    $this->getUserlist($getusers)
+                );
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponse::error(
+                'No User',
+            );
+        }
+    }
+    public function store(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $id = auth()->user()->id;
             $validator =  Validator::make($request->all(), [
-                'sender_id'    => ['required'],
-                'liked_user_id'    => ['required'],
-                'like_status'     => ['required'],
+                'sender_id'      => ['required', 'numeric'],
+                'liked_user_id'  => ['required', 'numeric'],
             ]);
 
             if ($validator->fails()) {
                 return $this->validation_error_response($validator);
             }
-            $likeddata['sender_id'] = $request['sender_id']; 
-            $likeddata['liked_user_id'] = $request['liked_user_id']; 
-            $likeddata['like_status'] = $request['like_status']; 
+            $likeddata['sender_id']     = $request['sender_id'];
+            $likeddata['liked_user_id'] = $request['liked_user_id'];
 
             $validated = $validator->validated();
-            $findlikeduser = LikeProfile::where('sender_id', $request->sender_id)
-                ->where("liked_user_id", $request->liked_user_id)->first();
-            $sender_id = $request->sender_id;
-            $likeuserid = $request->liked_user_id;
-            $like_status = $request->like_status;
-            if ($findlikeduser != null) {
-                $affectedRows = LikeProfile::where("sender_id", $sender_id)->where("liked_user_id", $likeuserid)
-                ->update(["like_status" => $like_status]);
-                DB::commit();
-                if ($like_status == 1) {
-                    return ApiResponse::ok(
-                        'You UnLiked This User!!',$this->getLikeUnlikeResponse($likeddata)
-                    );
+
+            $chk_sender_id = User::where('id', $request->sender_id)
+                ->where('phone_verified_at', '!=', null)->first();
+
+            $chk_liked_user_id = User::where('id', $request->liked_user_id)
+                ->where('phone_verified_at', '!=', null)->first();
+
+            if (!empty($chk_sender_id) && !empty($chk_liked_user_id)) {
+                if ($request->sender_id == $id) {
+                    $findliked = LikeProfile::where('sender_id', $request->sender_id)
+                        ->where('liked_user_id', $request->liked_user_id)->first();
+
+                    if (!empty($findliked)) {
+                        if ($findliked->like_status == 1) {
+                            $verified['like_status'] = 0;
+                            LikeProfile::where('sender_id', $request->sender_id)
+                                ->where('liked_user_id', $request->liked_user_id)->update($verified);
+                            DB::commit();
+                            return ApiResponse::ok('You dislike the user profile!!');
+                        } else {
+                            $verified['like_status'] = 1;
+                            LikeProfile::where('sender_id', $request->sender_id)
+                                ->where('liked_user_id', $request->liked_user_id)->update($verified);
+                            DB::commit();
+                            return ApiResponse::ok('You liked the user profile!!');
+                        }
+                    } else {
+                        $fav = LikeProfile::create([
+                            'sender_id' => $request->sender_id,
+                            'liked_user_id' => $request->liked_user_id,
+                            'like_status' => 1
+                        ]);
+                        DB::commit();
+                        return ApiResponse::ok(
+                            'User Added in your likes!!'
+                        );
+                    }
                 } else {
-                    return ApiResponse::ok(
-                        'You Liked This User!!',$this->getLikeUnlikeResponse($likeddata)
-                    );
+                    return ApiResponse::error('Login First');
                 }
             } else {
-                $fav = LikeProfile::create([
-                    'sender_id' => $sender_id,
-                    'liked_user_id' => $likeuserid,
-                    'like_status' => 0
-                ]);
-                $fav->save();
-                DB::commit();
-
-                return ApiResponse::ok(
-                    'You Liked This User!!',$this->getLikeUnlikeResponse($likeddata)
-                );
+                if ($chk_liked_user_id == null && $chk_sender_id == null) {
+                    return ApiResponse::error('Users Not Exist!!');
+                } else {
+                    if ($chk_liked_user_id == null) {
+                        return ApiResponse::error('Like profile id not exist!');
+                    } else {
+                        return ApiResponse::error('User Not Exist!!');
+                    }
+                }
             }
         } catch (\Exception $e) {
             DB::rollBack();
@@ -69,7 +111,13 @@ class LikeProfileController extends Controller
     }
 
 
-    public function getLikeUnlikeResponse($likeddata){
+    public function getLikeUnlikeResponse($likeddata)
+    {
         return $likeddata;
+    }
+
+    public function getUserlist($data)
+    {
+        return $data;
     }
 }

@@ -24,7 +24,8 @@ class RequestApiController extends Controller
                     $query->select(DB::raw('count(receiver_id)'))
                         ->where('status', 1);
                 }
-            ])->orderBy('accepted_request_count', 'DESC')->get();
+            ])->orderBy('accepted_request_count', 'DESC')
+            ->get();
 
             $userdetail = RequestResource::collection($get);
             return ApiResponse::ok(

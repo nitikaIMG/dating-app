@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth as JWTAuth;
 use Twilio\Rest\Client;
+use App\Http\Resources\UserProfileResource;
 
 class FilterController extends ApiController
 {
@@ -39,7 +40,8 @@ class FilterController extends ApiController
             DB::beginTransaction();
             $validated = $validator->validated();
 
-            $user = User::where('gender', $request->gender)->where('phone_verified_at', '!=', null)->get();
+            $user = User::where('gender', $request->gender)->where('phone_verified_at', '!=', null)->with('UserInfo')->get();
+
 
             if (!empty($user)) {
                 if ($request->gender == 'f') {
@@ -196,8 +198,35 @@ class FilterController extends ApiController
         }
     }
 
+    #Recent active users
+    public function activeusers()
+    {
+        try {
+            DB::beginTransaction();
+            $activeusers = User::where('active_device_id', 1)->select('id', 'first_name', 'last_name', 'email','phone','active_device_id','gender')->get();
+            if (!empty($activeusers)) {
+                return ApiResponse::ok(
+                    'Currently Active Users',
+                    $this->getActiveUser($activeusers)
+                );
+            } else {
+                return ApiResponse::error('No user active right now');
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
+        }
+    }
+
     public function getUserWithotpverify($user)
     {
         return $user;
+    }
+
+
+    public function getActiveUser($userd)
+    {
+        return $userd;
     }
 }

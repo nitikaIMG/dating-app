@@ -531,7 +531,8 @@ class AuthController extends ApiController
             // 'push_enabled' => $user->setting
             //     ? boolval($user->setting->push_notification)
             //     : false,
-            'user' => $user->format(),
+            'user' => $user->userformat(),
+            // 'user' => $user->format(),
             'profile_enable' => $type ?? false,
         ];
     }
@@ -559,6 +560,7 @@ class AuthController extends ApiController
             'phone'    => ['required', 'numeric', 'digits:10', 'unique:users'],
             'otp'      => ['nullable'],
             'platform' => ['required', 'in:android,ios,web'],
+            'dob'      => ['nullable', 'date'],
         ], $messages);
 
         if ($validator->fails()) {
@@ -570,6 +572,9 @@ class AuthController extends ApiController
             # Store Validated Inputs
             $validated = $validator->validated();
 
+            $mydate = strtotime("now");
+            $dob = date('d/m/Y', $mydate);
+
             $otp = 123456;
 
             # Create User and store its Information
@@ -580,10 +585,15 @@ class AuthController extends ApiController
                 'otp'  => $otp,
                 'platform'  => $validated['platform'],
             ]);
+
+            # Create User Info
+            $user->info()->create([
+                'dob'       => $dob,
+            ]);
             DB::commit();
             return ApiResponse::ok(
                 'OTP has been sent on your mobile no ' . $validated['phone'],
-                $this->getUserWithotpverify($user)
+                // $this->getUserWithotpverify($user)
             );
         } catch (\Exception $e) {
             DB::rollBack();

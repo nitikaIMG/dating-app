@@ -65,7 +65,7 @@ class RuleController extends Controller
             $rules =  UserRule::all();
             $auth_user_id = auth()->user()->id;
 
-            $users = User::where('id', $auth_user_id)->where('active_device_id', 1)->first();
+            $users = User::where('id', $auth_user_id)->first();
             if (!empty($rules)) {
                 if (!empty($users)) {
                     $validator =  Validator::make($request->all(), [
@@ -82,7 +82,7 @@ class RuleController extends Controller
 
                     DB::commit();
                     $userdata = new UserResource($users);
-                    
+
                     return ApiResponse::ok(
                         'Rules Agreed Successfully By User',
                         $this->getUser($userdata)
