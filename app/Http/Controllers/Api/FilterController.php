@@ -99,7 +99,6 @@ class FilterController extends ApiController
                            ) + sin( radians(?) ) *
                             sin( radians( latitude ) ) )
                         ) AS distance", [$latitude, $longitude, $latitude])
-                // ->having("distance", "<", $distance)
                 ->where('enable_location', 1)
                 ->orderBy("distance", 'asc')
                 ->offset(0)
@@ -202,7 +201,7 @@ class FilterController extends ApiController
     {
         try {
             DB::beginTransaction();
-            $activeusers = User::where('active_device_id', 1)->select('id', 'first_name', 'last_name', 'email','phone','active_device_id','gender')->get();
+            $activeusers = User::where('active_device_id', 1)->select('id', 'first_name', 'last_name', 'email', 'phone', 'active_device_id', 'gender')->get();
             if (!empty($activeusers)) {
                 return ApiResponse::ok(
                     'Currently Active Users',

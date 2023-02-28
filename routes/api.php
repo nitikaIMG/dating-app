@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\FilterController;
 use App\Http\Controllers\Api\RequestApiController;
 use App\Http\Controllers\Api\FavouritesProfileApiController;
 use App\Http\Controllers\Api\LikeProfileController;
+use App\Http\Controllers\Api\ProfileControlController;
 use App\Http\Controllers\Api\ProfileController;
 
 /*
@@ -49,9 +50,9 @@ Route::middleware('jwt.verify')->group(function () {
         Route::get('activeusers', 'activeusers'); # recent active users 
     });
 
-    Route::controller(ProfileController::class)->group(function () {
-        Route::post('profilepic', 'profilepicture'); # Profile Controller for other use fetch and add fields 
-    });
+    // Route::controller(ProfileController::class)->group(function () {
+    //     Route::post('profilepic', 'profilepicture'); # Profile Controller for other use fetch and add fields 
+    // });
 
 
 
@@ -64,8 +65,7 @@ Route::middleware('jwt.verify')->group(function () {
     Route::apiResource('postunfavourites', FavouritesProfileApiController::class);
     Route::apiResource('likeunlikeuser', LikeProfileController::class);
     Route::apiResource('profile', ProfileController::class); # Profile Controller for other use
-
-
+    Route::apiResource('profilecontrol', ProfileControlController::class); # profile control api
 });
 
 # Social Login

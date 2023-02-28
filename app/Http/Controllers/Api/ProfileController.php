@@ -25,6 +25,7 @@ class ProfileController extends Controller
      */
     public function index()
     {
+        dd('dfsh');
         # profile Api with per and more fields
         try {
             DB::beginTransaction();
@@ -60,7 +61,74 @@ class ProfileController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        # profile Api with add and fetch fields # point no. 13
+
+        try {
+            DB::beginTransaction();
+            $id = auth()->user()->id;
+
+            $showprofile = User::where('id', $id)->with('media')->with('UserInfo')->first();
+
+
+            $messages = [];
+            $validator = Validator::make($request->all(), [
+                'about_me'           => ['required', 'string'],
+                'life_interests'     => ['required', 'string'],
+                'relationship_goals' => ['required', 'string'],
+                'life_style'         => ['required', 'string'],
+                'job_title'          => ['required', 'string'],
+                'company'            => ['required', 'string'],
+                'school'             => ['required', 'string'],
+            ], $messages);
+
+            if ($validator->fails()) {
+                return $this->validation_error_response($validator);
+            }
+
+            # submit data in userInfo table
+            $about_me           = $request->about_me;
+            $life_interests     = $request->life_interests;
+            $relationship_goals = $request->relationship_goals;
+            $life_style         = $request->life_style;
+            $job_title          = $request->job_title;
+            $company            = $request->company;
+            $school             = $request->school;
+
+
+            $data['about_me']           =  $about_me;
+            $data['life_interests']     =  $life_interests;
+            $data['relationship_goals'] =  $relationship_goals;
+            $data['life_style']         =  $life_style;
+            $data['job_title']          =  $job_title;
+            $data['company']            =  $company;
+            $data['school']             =  $school;
+
+
+            if (!empty($showprofile)) {
+                $update_data = UserInfo::where('user_id', $id)->update($data);
+                DB::commit();
+
+                $showprofiledata = User::with('media')->with('UserInfo')->where('id', $id)->first();
+
+                $media = $showprofile->media->toArray();
+                $user_media = explode('|', $media[0]['media_image']);
+                $user_info = $showprofile->UserInfo->toArray();
+                $user_age = $showprofile->age;
+                $user_info['age'] = $user_age;
+                $user_info['media'] = $user_media;
+
+                return ApiResponse::ok(
+                    'Added more information successfully related to profile',
+                    $this->getprofiledata($user_info)
+                );
+            } else {
+                return ApiResponse::error('No user login right now');
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
+        }
     }
 
     /**
@@ -97,95 +165,77 @@ class ProfileController extends Controller
         //
     }
 
-    public function profilepicture(Request $request)
-    {
-        # profile Api with add and fetch fields
+    // public function profilepicture(Request $request)
+    // {
+    //     # profile Api with add and fetch fields # point no. 13
 
-        try {
-            DB::beginTransaction();
-            $id = auth()->user()->id;
+    //     try {
+    //         DB::beginTransaction();
+    //         $id = auth()->user()->id;
 
-            $showprofile = User::where('id', $id)->with('media')->with('UserInfo')->first();
-
-
-            $messages = [];
-            $validator = Validator::make($request->all(), [
-                'about_me'           => ['required', 'string'],
-                'life_interests'     => ['required', 'string'],
-                'relationship_goals' => ['required', 'string'],
-                'life_style'         => ['required', 'string'],
-                'job_title'          => ['required', 'string'],
-                'company'            => ['required', 'string'],
-                'school'             => ['required', 'string'],
-            ], $messages);
-
-            if ($validator->fails()) {
-                return $this->validation_error_response($validator);
-            }
-
-            # submit data in userInfo table
-            $about_me           = $request->about_me;
-            $life_interests     = $request->life_interests;
-            $relationship_goals = $request->relationship_goals;
-            $life_style         = $request->life_style;
-            $job_title          = $request->job_title;
-            $company            = $request->company;
-            $school             = $request->school;
-
-            # get data from users table
-            $userdata['profile_image'] =  $showprofile->profile_image;
-            $userdata['first_name']    =  $showprofile->first_name;
-            $userdata['last_name']     =  $showprofile->last_name;
-            $userdata['age']           =  $showprofile->age;
+    //         $showprofile = User::where('id', $id)->with('media')->with('UserInfo')->first();
 
 
+    //         $messages = [];
+    //         $validator = Validator::make($request->all(), [
+    //             'about_me'           => ['required', 'string'],
+    //             'life_interests'     => ['required', 'string'],
+    //             'relationship_goals' => ['required', 'string'],
+    //             'life_style'         => ['required', 'string'],
+    //             'job_title'          => ['required', 'string'],
+    //             'company'            => ['required', 'string'],
+    //             'school'             => ['required', 'string'],
+    //         ], $messages);
 
-            $data['about_me']           =  $about_me;
-            $data['life_interests']     =  $life_interests;
-            $data['relationship_goals'] =  $relationship_goals;
-            $data['life_style']         =  $life_style;
-            $data['job_title']          =  $job_title;
-            $data['company']            =  $company;
-            $data['school']             =  $school;
+    //         if ($validator->fails()) {
+    //             return $this->validation_error_response($validator);
+    //         }
+
+    //         # submit data in userInfo table
+    //         $about_me           = $request->about_me;
+    //         $life_interests     = $request->life_interests;
+    //         $relationship_goals = $request->relationship_goals;
+    //         $life_style         = $request->life_style;
+    //         $job_title          = $request->job_title;
+    //         $company            = $request->company;
+    //         $school             = $request->school;
 
 
+    //         $data['about_me']           =  $about_me;
+    //         $data['life_interests']     =  $life_interests;
+    //         $data['relationship_goals'] =  $relationship_goals;
+    //         $data['life_style']         =  $life_style;
+    //         $data['job_title']          =  $job_title;
+    //         $data['company']            =  $company;
+    //         $data['school']             =  $school;
 
 
+    //         if (!empty($showprofile)) {
+    //             $update_data = UserInfo::where('user_id', $id)->update($data);
+    //             DB::commit();
 
+    //             $showprofiledata = User::with('media')->with('UserInfo')->where('id', $id)->first();
 
+    //             $media = $showprofile->media->toArray();
+    //             $user_media = explode('|', $media[0]['media_image']);
+    //             $user_info = $showprofile->UserInfo->toArray();
+    //             $user_age = $showprofile->age;
+    //             $user_info['age'] = $user_age;
+    //             $user_info['media'] = $user_media;
 
-            if (!empty($showprofile)) {
-                $update_data = UserInfo::where('user_id', $id)->update($data);
-                DB::commit();
-
-                $showprofiledata = User::with('media')->with('UserInfo')->where('id', $id)->first();
-                // dd($showprofiledata);
-                $media = $showprofile->media->toArray();
-                $user_media = explode('|', $media[0]['media_image']);
-                dump($user_media);
-
-                $user_info = $showprofile->UserInfo->toArray();
-                dump($user_info);
-
-                $user_age = $showprofile->age;
-                dd($user_age);
-
-                
-
-                $udata = new UserInfoResource($update_data);
-                return ApiResponse::ok(
-                    'Added more information successfully',
-                    $this->getprofiledata($udata)
-                );
-            } else {
-                return ApiResponse::error('No user login right now');
-            }
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return ApiResponse::error($e->getMessage());
-            logger($e->getMessage());
-        }
-    }
+    //             return ApiResponse::ok(
+    //                 'Added more information successfully related to profile',
+    //                 $this->getprofiledata($user_info)
+    //             );
+    //         } else {
+    //             return ApiResponse::error('No user login right now');
+    //         }
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         return ApiResponse::error($e->getMessage());
+    //         logger($e->getMessage());
+    //     }
+    // }
 
     public function getdata($data)
     {
@@ -194,7 +244,6 @@ class ProfileController extends Controller
 
     public function getprofiledata($udata)
     {
-        // dd($udata);
         return $udata;
     }
 }
