@@ -11,8 +11,8 @@ class Media extends Model
     protected $table = 'media';
     protected $guarded = [];
 
-    // public function user()
-    // {
-    //     return $this->belongsTo(User::class, 'user_id');
-    // }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -112,10 +112,10 @@ class AuthController extends ApiController
         $messages = [];
 
         $validator = Validator::make($request->all(), [
-            'phone'    => ['required'],
-            'otp'      => ['required', 'numeric'],
-            'type'     => ['required', 'in:reg,login,forgot'],
-            'device_id' => ['required', 'bail', 'nullable', 'max:191'],
+            'phone'     => ['required'],
+            'otp'       => ['required', 'numeric'],
+            'type'      => ['required', 'in:reg,login,forgot'],
+            'device_id' => ['bail', 'nullable', 'max:191'],
         ], $messages);
 
         if ($validator->fails()) {
@@ -186,6 +186,7 @@ class AuthController extends ApiController
                 // $user->sendSms($request->phone);
                 $code['otp'] = $this->generateOTP();
                 User::where('id', $user->id)->update($code);
+                DB::commit();
                 return ApiResponse::ok(
                     'OTP has been resent on your mobile no ' . $request->phone,
                 );
@@ -273,7 +274,7 @@ class AuthController extends ApiController
             'social_login_with' => ['required', 'in:google,facebook'],
             'platform'          => ['required', 'in:android,ios,web'],
             'social_id'         => ['required'],
-            'device_id'         => ['required', 'nullable'],
+            'device_id'         => ['nullable'],
         ], $messages);
 
         if ($validator->fails()) {
@@ -405,7 +406,7 @@ class AuthController extends ApiController
             'phone'    => ['required'],
             'otp'      => ['required', 'numeric'],
             'type'     => ['required', 'in:reg,login,forgot'],
-            'device_id' => ['required', 'bail', 'nullable', 'max:191'],
+            'device_id'=> ['bail', 'nullable', 'max:191'],
             'password' => ['required', 'string', 'min:8', 'max:8'],
         ], $messages);
 

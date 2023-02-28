@@ -4,7 +4,6 @@ namespace App\Http\Controllers\API;
 
 use App\Api\ApiResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\ApiController;
 use App\Models\User;
