@@ -28,6 +28,7 @@ class User extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
         'remember_token',
+        'pivot',
     ];
 
     protected $casts = [
@@ -159,8 +160,20 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Requests::class, 'liked_user_id');
     }
 
+    #media model
     public function media()
     {
         return $this->hasMany(Media::class);
+    }
+
+    # blockuser model
+    // public function blockuser()
+    // {
+    //     return $this->belongsToMany(BlockUser::class,'blockusers');
+    // }
+
+    public function blockuser()
+    {
+        return $this->hasMany(BlockUser::class);
     }
 }

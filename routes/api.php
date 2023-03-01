@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\FavouritesProfileApiController;
 use App\Http\Controllers\Api\LikeProfileController;
 use App\Http\Controllers\Api\ProfileControlController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\SettingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +54,13 @@ Route::middleware('jwt.verify')->group(function () {
     // Route::controller(ProfileController::class)->group(function () {
     //     Route::post('profilepic', 'profilepicture'); # Profile Controller for other use fetch and add fields 
     // });
+
+    Route::controller(SettingController::class)->group(function () {
+        Route::post('accountsetting', 'accountsetting'); # account setting show and update phone no. 
+        Route::post('globaluser', 'globaluser'); # global (if enable then user can see nearby and around the world users list)
+        Route::post('blockuser', 'blockuser'); # block the users
+        Route::get('blockuserlist', 'blockuserlist'); # Showing the list of block users
+    });
 
 
 
