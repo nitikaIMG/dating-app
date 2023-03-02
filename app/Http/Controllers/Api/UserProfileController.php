@@ -76,18 +76,8 @@ class UserProfileController extends Controller
                 $verified['age']             = $request->age;
                 $verified['enable_location'] = $request->enable_location;
                 $verified['profile_image']   = $request->profile_image;
-                
-                // $phoneexist = User::where('phone', $request->phone)->select('phone')->first();
-                // if ($phoneexist) {
-                //     return ApiResponse::error('Mobile Number Already Exist');
-                // } else {
-                //     $veri['phone']        = $request->phone;
-                // }
-
-                // $verified['phone']        = $veri['phone'] ?? $users->phone;
 
                 User::where('id', $auth_user_id)->update($verified);
-
 
 
                 # Update data into usersinfo table
@@ -99,7 +89,6 @@ class UserProfileController extends Controller
 
                 $users['first_name']      = $verified['first_name'];
                 $users['last_name']       = $verified['last_name'];
-                // $users['phone']           = $verified['phone'];
                 $users['gender']          = $verified['gender'];
                 $users['dob']             = $verifieds['dob'];
                 $users['age']             = $verified['age'];
@@ -107,7 +96,6 @@ class UserProfileController extends Controller
                 $users['country']         = $verifieds['country'];
                 $users['interests']       = $verifieds['interests'];
                 $users['email']           = $users->email;
-                // $users['phone']           = $users->phone;
                 DB::commit();
                 // $userd = new UserResource($users);
                 $userd = new UserProfileResource($users);
