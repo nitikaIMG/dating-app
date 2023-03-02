@@ -24,13 +24,14 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('forgot_password', 'forgot_password'); //Forget Password
     Route::post('change_password', 'change_password'); //Change Password
     Route::post('emailverification', 'emailverification'); //Verify Email
+  
 });
 
 Route::middleware('jwt.verify')->group(function () {
     Route::controller(AuthController::class)->group(function () {
         Route::post('logout', 'logout'); //logout
     });
-    Route::Resource('users', UserController::class);
+    Route::apiResource('users', UserController::class);
 });
 
 //  Social Login

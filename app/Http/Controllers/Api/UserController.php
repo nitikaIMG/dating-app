@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Api\ApiResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\UserInfo;
-use Illuminate\Console\View\Components\Info;
+use DB;
+use App\Traits\ManageUserTrait;
+use Illuminate\Support\Str;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth as JWTAuth;
+
 
 class UserController extends Controller
 {
@@ -18,18 +23,26 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-          try {
+        try {
+            DB::beginTransaction();
 
-            $users=User::all();
+            $users = User::with('info')->through(function(){
+                
+            });
+            dump($users);
 
-            return response()->json([
-                'data' => $users,
-            ], 200);
+            DB::commit();
+
+            return ApiResponse::ok(
+                'User List',
+                $this->getUsers($users)
+            );
         } catch (\Exception $e) {
-            return response()->json(array(['success' => false, 'message' => $e->getMessage()]));
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
         }
     }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -37,6 +50,7 @@ class UserController extends Controller
      */
     public function create()
     {
+        //
     }
 
     /**
@@ -104,6 +118,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
+        //
     }
 
     /**
@@ -114,11 +129,7 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        try {
-            dd($id);
-        } catch (\Exception $e) {
-            return response()->json(array(['success' => false, 'message' => $e->getMessage()]));
-        }
+        //
     }
 
     /**
@@ -130,6 +141,7 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+        //
     }
 
     /**
@@ -140,5 +152,6 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
+        //
     }
 }

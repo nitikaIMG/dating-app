@@ -15,4 +15,9 @@ class UserInfo extends Model
     protected $casts = [
         'dob' => 'date:Y-m-d',
     ];
+    
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
