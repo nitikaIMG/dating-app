@@ -51,10 +51,6 @@ Route::middleware('jwt.verify')->group(function () {
         Route::get('activeusers', 'activeusers'); # recent active users 
     });
 
-    // Route::controller(ProfileController::class)->group(function () {
-    //     Route::post('profilepic', 'profilepicture'); # Profile Controller for other use fetch and add fields 
-    // });
-
     Route::controller(SettingController::class)->group(function () {
         Route::post('accountsetting', 'accountsetting'); # account setting show and update phone no. 
         Route::post('globaluser', 'globaluser'); # global (if enable then user can see nearby and around the world users list)

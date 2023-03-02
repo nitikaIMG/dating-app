@@ -120,7 +120,7 @@ class UserController extends Controller
                     $data['country']      = $verifieds['country'];
 
                     DB::commit();
-                    
+
                     return ApiResponse::ok(
                         'User Details Filled Successfully',
                         $this->getUser($data)
@@ -211,24 +211,4 @@ class UserController extends Controller
         $users['interests'] = $users['UserInfo']['interests'];
         return $users->formatdata();
     }
-
-    // public function detailofuser(Request $request, $id)
-    // {
-    //     try {
-    //         DB::beginTransaction();
-    //         $users = User::where('id', $id)->where('phone_verified_at', '!=', null)->with('UserInfo')->first();
-    //         if (!empty($users)) {
-    //             return ApiResponse::ok(
-    //                 'User Details',
-    //                 $this->getUserdata($users)
-    //             );
-    //         } else {
-    //             return ApiResponse::error('User not exist');
-    //         }
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         return ApiResponse::error($e->getMessage());
-    //         logger($e->getMessage());
-    //     }
-    // }
 }

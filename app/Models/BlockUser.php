@@ -10,7 +10,6 @@ class BlockUser extends Model
     use HasFactory;
     protected $table = 'blockusers';
     protected $guarded = [];
-    
 
     public function user()
     {

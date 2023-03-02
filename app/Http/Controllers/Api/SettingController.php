@@ -213,16 +213,6 @@ class SettingController extends ApiController
     }
 
 
-
-
-
-
-
-
-
-
-
-
     public function getUserWithotpverify($user)
     {
         return $user;
