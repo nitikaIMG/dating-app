@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Hash;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth as JWTAuth;
 use Twilio\Rest\Client;
 use App\Http\Resources\UserProfileResource;
+use App\Http\Resources\ProfileResource;
 
 class SettingController extends ApiController
 {
@@ -193,25 +194,17 @@ class SettingController extends ApiController
     # showing list of block user
     public function blockuserlist(Request $request)
     {
-        dd('blockuserlist');
         try {
             DB::beginTransaction();
             $id = auth()->user()->id;
-            $blockuserlist = BlockUser::where('blocked_by', $id)->get();
-            if (!empty($blockuserlist)) {
-                // $blockuser = BlockUser::where('blocked_by',$id)->get();
-                // // dd($blockuser);
-                // $get = $blockuser->with('users')->get()->toArray();
-                // // $blockuserdata = User::with('blockuser')->get();
-                // dd($get);
-
-                return ApiResponse::ok(
-                    'Blocked user list',
-                    $this->getaccountsetting($blockuserdata)
-                );
-            } else {
-                return ApiResponse::error('No user blocked');
-            }
+            $blockuserlist = BlockUser::where('blocked_by', $id)->with(['user' => function ($query) {
+                $query->select('id', 'phone');
+            }])->get()->pluck('user')->flatten();
+            
+            return ApiResponse::ok(
+                'Blocked user list',
+                $this->getaccountsetting($blockuserlist)
+            );
         } catch (\Exception $e) {
             DB::rollBack();
             return ApiResponse::error($e->getMessage());
