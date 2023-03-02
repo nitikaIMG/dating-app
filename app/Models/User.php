@@ -28,6 +28,7 @@ class User extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
         'remember_token',
+        'pivot',
     ];
 
     protected $casts = [
@@ -76,6 +77,14 @@ class User extends Authenticatable implements JWTSubject
         return $this->last_name
             ? $this->first_name . " " . $this->last_name
             : $this->first_name;
+    }
+
+    public function userformat()
+    {
+        return [
+            'id' => $this->id,
+            'phone' => $this->phone ?? '',
+        ];
     }
 
     public function format()
@@ -137,5 +146,29 @@ class User extends Authenticatable implements JWTSubject
     public function UserInfo()
     {
         return $this->hasOne(UserInfo::class);
+    }
+
+    # request model 
+    public function requests()
+    {
+        return $this->hasMany(Requests::class, 'receiver_id');
+    }
+
+    # request model 
+    public function likeprofile()
+    {
+        return $this->hasMany(Requests::class, 'liked_user_id');
+    }
+
+    #media model
+    public function media()
+    {
+        return $this->hasMany(Media::class);
+    }
+
+    # blockuser model
+    public function blockuser()
+    {
+        return $this->belongsTo(BlockUser::class, 'blocked_by');
     }
 }

@@ -38,7 +38,7 @@ trait ManageUserTrait
     }
 
     public function generateOTP(){
-        return '1234';
+        return '123456';
     }
 
     
