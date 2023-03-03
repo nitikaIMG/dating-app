@@ -25,7 +25,7 @@ class RequestApiController extends Controller
                         ->where('status', 1);
                 }
             ])->orderBy('accepted_request_count', 'DESC')
-            ->get();
+                ->get();
 
             $userdetail = RequestResource::collection($get);
             return ApiResponse::ok(
@@ -153,6 +153,35 @@ class RequestApiController extends Controller
         }
     }
 
+    public function showAllRequest()
+    {
+        try {
+            DB::beginTransaction();
+            $id = auth()->user()->id;
+            $userallrequest = Requests::where('receiver_id', $id)->where('status', 0)->get();
+            if (count($userallrequest) != 0) {
+                $listarr = [];
+                foreach ($userallrequest as $userallreq) {
+                    $getid =  $userallreq->sender_id;
+                    $users = User::where('id', $getid)->select('id', 'first_name', 'last_name')->get();
+                    array_push($listarr, $users);
+                }
+
+                $result = collect($listarr)->flatten();
+                return ApiResponse::ok(
+                    'Requested user list!!',
+                    $this->getRequestedUserList($result)
+                );
+            } else {
+                return ApiResponse::error('No user sent you request');
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
+        }
+    }
+
     public function getRequestdata($receiver_data)
     {
         return $receiver_data;
@@ -161,5 +190,10 @@ class RequestApiController extends Controller
     public function getUser($get)
     {
         return $get;
+    }
+
+    public function getRequestedUserList($result)
+    {
+        return $result;
     }
 }

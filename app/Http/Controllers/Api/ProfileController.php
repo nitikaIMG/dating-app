@@ -26,12 +26,16 @@ class ProfileController extends Controller
     public function index()
     {
         dd('dfsh');
-        # profile Api with per and more fields
+        # profile Api with % and more fields
         try {
             DB::beginTransaction();
             $id = auth()->user()->id;
             $showprofile = User::where('id', $id)->first();
             if (!empty($showprofile)) {
+
+
+
+
 
                 $data['profile_image']   =  $showprofile->profile_image;
                 $data['first_name'] =  $showprofile->first_name;
