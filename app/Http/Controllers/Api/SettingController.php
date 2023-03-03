@@ -146,7 +146,7 @@ class SettingController extends ApiController
     }
 
     # block the user
-    public function blockuser(Request $request)
+    public function blockcontact(Request $request)
     {
         $messages = [];
         $validator = Validator::make($request->all(), [
@@ -192,7 +192,7 @@ class SettingController extends ApiController
     }
 
     # showing list of block user
-    public function blockuserlist(Request $request)
+    public function blockcontactlist(Request $request)
     {
         try {
             DB::beginTransaction();
@@ -200,11 +200,70 @@ class SettingController extends ApiController
             $blockuserlist = BlockUser::where('blocked_by', $id)->with(['user' => function ($query) {
                 $query->select('id', 'phone');
             }])->get()->pluck('user')->flatten();
-            
+
             return ApiResponse::ok(
                 'Blocked user list',
                 $this->getaccountsetting($blockuserlist)
             );
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
+        }
+    }
+
+    # profile completnes percentage
+    public function profilecompletnesper()
+    {
+        try {
+            DB::beginTransaction();
+            $id = auth()->user()->id;
+
+            $userdata = User::where('id', $id)->with('UserInfo')->with('media')->first()->toArray();
+
+            $userinfo = $userdata['user_info'];
+
+            $aboutme  =  $userinfo['about_me'];
+            $jobtitle =  $userinfo['job_title'];
+            $company   =  $userinfo['company'];
+
+
+
+            $usermedia = $userdata['media'][0];
+
+            $media = $usermedia['media_image'];
+            $explode_media = explode('|', $media);
+
+
+            $maximumPoints     = 100;
+            $Completedaboutus  = 0;
+            $Completedjobtitle = 0;
+            $Completedcompany  = 0;
+            $Completedmedia    = 0;
+
+            if (!empty($id)) {
+                if ($aboutme != "" || $aboutme != null) {
+                    $Completedaboutus = 35;
+                }
+                if ($jobtitle != "" || $jobtitle != null) {
+                    $Completedjobtitle = 10;
+                }
+                if ($company != "" || $company != null) {
+                    $Completedcompany = 10;
+                }
+                if ($media != "" || $media != null) {
+                    $Completedmedia = round(count($explode_media) * 5.55);
+                }
+                $data = User::where('id', $id)->select('id', 'first_name', 'last_name')->first();
+
+                $percentage = ($Completedaboutus + $Completedjobtitle + $Completedcompany + $Completedmedia) * $maximumPoints / 100;
+                return ApiResponse::ok(
+                    $percentage . '% complete',
+                    $this->getaccountsetting($data)
+                );
+            } else {
+                return ApiResponse::error('User not authenticated');
+            }
         } catch (\Exception $e) {
             DB::rollBack();
             return ApiResponse::error($e->getMessage());

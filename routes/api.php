@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\FilterController;
 use App\Http\Controllers\Api\RequestApiController;
 use App\Http\Controllers\Api\FavouritesProfileApiController;
 use App\Http\Controllers\Api\LikeProfileController;
+use App\Http\Controllers\Api\MatchController;
 use App\Http\Controllers\Api\ProfileControlController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\SettingController;
@@ -54,9 +55,12 @@ Route::middleware('jwt.verify')->group(function () {
     Route::controller(SettingController::class)->group(function () {
         Route::post('accountsetting', 'accountsetting'); # account setting show and update phone no. 
         Route::post('globaluser', 'globaluser'); # global (if enable then user can see nearby and around the world users list)
-        Route::post('blockuser', 'blockuser'); # block the users
-        Route::get('blockuserlist', 'blockuserlist'); # Showing the list of block users
+        Route::post('blockcontact', 'blockcontact'); # block the users
+        Route::get('blockcontactlist', 'blockcontactlist'); # Showing the list of block users
+        Route::get('profilecompletnesper', 'profilecompletnesper'); # profile completnes percentage
     });
+
+    Route::get('showAllRequest', [RequestApiController::class, 'showAllRequest']); #show all request (all matched and not matched request on the basis of auth user)
 
 
 
@@ -64,12 +68,12 @@ Route::middleware('jwt.verify')->group(function () {
     Route::apiResource('rules', RuleController::class); # Rules Controller
     Route::apiResource('userprofile', UserProfileController::class); # User Profile Controller 
     Route::apiResource('media', MediaController::class); # User Media Controller
-
     Route::apiResource('requestapprove', RequestApiController::class);
     Route::apiResource('postunfavourites', FavouritesProfileApiController::class);
     Route::apiResource('likeunlikeuser', LikeProfileController::class);
     Route::apiResource('profile', ProfileController::class); # Profile Controller for other use
     Route::apiResource('profilecontrol', ProfileControlController::class); # profile control api
+    Route::apiResource('match', MatchController::class); # match found list
 });
 
 # Social Login
