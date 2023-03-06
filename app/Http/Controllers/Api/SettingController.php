@@ -17,6 +17,7 @@ use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth as JWTAuth;
 use Twilio\Rest\Client;
 use App\Http\Resources\UserProfileResource;
 use App\Http\Resources\ProfileResource;
+use App\Models\SubscriptionPlan;
 
 class SettingController extends ApiController
 {
@@ -261,6 +262,41 @@ class SettingController extends ApiController
                     $percentage . '% complete',
                     $this->getaccountsetting($data)
                 );
+            } else {
+                return ApiResponse::error('User not authenticated');
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
+        }
+    }
+
+    # show subscription plan api
+    public function showsubscription(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'plan_name'    => ['required', 'string', 'in:Tinder Plus,Tinder Gold,Tinder Platinum'],
+        ]);
+        if ($validator->fails()) {
+            return $this->validation_error_response($validator);
+        }
+        try {
+            DB::beginTransaction();
+            $validated = $validator->validated();
+            $validated['plan_name'] = $request->plan_name;
+            // dd('sdfsn');
+            $id = auth()->user()->id;
+
+            if (!empty($id)) {
+                $subscription_data = SubscriptionPlan::where('plan_name', $validated['plan_name'])->first();
+                // dd($subscription_data);
+                if (!empty($subscription_data)) {
+                    return ApiResponse::ok(
+                        $validated['plan_name'] . ' Active Plans',
+                        $this->getaccountsetting($subscription_data)
+                    );
+                }
             } else {
                 return ApiResponse::error('User not authenticated');
             }

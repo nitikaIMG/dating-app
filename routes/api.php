@@ -58,6 +58,7 @@ Route::middleware('jwt.verify')->group(function () {
         Route::post('blockcontact', 'blockcontact'); # block the users
         Route::get('blockcontactlist', 'blockcontactlist'); # Showing the list of block users
         Route::get('profilecompletnesper', 'profilecompletnesper'); # profile completnes percentage
+        Route::post('showsubscription', 'showsubscription'); # show subscription plans
     });
 
     Route::get('showAllRequest', [RequestApiController::class, 'showAllRequest']); #show all request (all matched and not matched request on the basis of auth user)
