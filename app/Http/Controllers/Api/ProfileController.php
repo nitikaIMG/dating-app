@@ -25,22 +25,62 @@ class ProfileController extends Controller
      */
     public function index()
     {
-        dd('dfsh');
-        # profile Api with % and more fields
+        // dd('dfsh');
+        # profile Api with per and more fields
         try {
             DB::beginTransaction();
             $id = auth()->user()->id;
-            $showprofile = User::where('id', $id)->first();
-            if (!empty($showprofile)) {
+            $userdata = User::where('id', $id)->with('UserInfo')->with('media')->first()->toArray();
+            if (!empty($userdata)) {
+
+                $usermedia  = $userdata['media'][0];
+                $expprofile =  explode('|', $usermedia['media_image']);
 
 
+                $data['profile_image'] = $expprofile[0];
+                $data['first_name']    =  $userdata['first_name'];
+                $data['last_name']     =  $userdata['last_name'];
+                $data['age']           =  $userdata['age'];
 
+                $userinfo =  $userdata['user_info'];
 
+                $aboutme  =  $userinfo['about_me'];
+                $jobtitle =  $userinfo['job_title'];
+                $company  =  $userinfo['company'];
 
-                $data['profile_image']   =  $showprofile->profile_image;
-                $data['first_name'] =  $showprofile->first_name;
-                $data['last_name'] =  $showprofile->last_name;
-                $data['age']   =  $showprofile->age;
+                $media = $usermedia['media_image'];
+                $explode_media = explode('|', $media);
+
+                $maximumPoints     = 100;
+                $Completedaboutus  = 0;
+                $Completedjobtitle = 0;
+                $Completedcompany  = 0;
+                $Completedmedia    = 0;
+
+                if (!empty($id)) {
+                    if ($aboutme != "" || $aboutme != null) {
+                        $Completedaboutus = 35;
+                    }
+                    if ($jobtitle != "" || $jobtitle != null) {
+                        $Completedjobtitle = 10;
+                    }
+                    if ($company != "" || $company != null) {
+                        $Completedcompany = 10;
+                    }
+                    if ($media != "" || $media != null) {
+                        $Completedmedia = round(count($explode_media) * 5.55);
+                    }
+                    
+                    $percentage = ($Completedaboutus + $Completedjobtitle + $Completedcompany + $Completedmedia) * $maximumPoints / 100;
+
+                    $data['profile_completeness_percentage'] = $percentage . '% complete';
+                    return ApiResponse::ok(
+                        $percentage . '% complete',
+                        $this->getdata($data)
+                    );
+                } else {
+                    return ApiResponse::error('User not authenticated');
+                }
 
 
                 return ApiResponse::ok(
