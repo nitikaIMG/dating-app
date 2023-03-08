@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Api\ApiResponse;
 use App\Http\Resources\RequestResource;
+use PHPUnit\Framework\Constraint\IsEmpty;
 
 class RequestApiController extends Controller
 {
@@ -46,7 +47,6 @@ class RequestApiController extends Controller
         try {
             DB::beginTransaction();
             $id = auth()->user()->id;
-
             $validator =  Validator::make($request->all(), [
                 'sender_id'    => ['required', 'numeric'],
                 'receiver_id'    => ['required', 'numeric'],
@@ -64,9 +64,14 @@ class RequestApiController extends Controller
                 ->where('id', $request->sender_id)
                 ->where('phone_verified_at', '!=', null)->get();
 
-            if (!empty($chk_id)) {
+                // && count($chk_id)>0
+                if(!$chk_id->IsEmpty()) {
+                    
                 $sender = Requests::where('sender_id', $id)->first();
                 $receiver = Requests::where('receiver_id', $id)->first();
+                if(empty($sender)){
+                    return ApiResponse::ok('Something Went Wrong');
+                }
                 if ($request->sender_id  ==  $request->receiver_id) {
                     return ApiResponse::error(
                         'Invalid Request!!',
@@ -97,6 +102,7 @@ class RequestApiController extends Controller
                     $reqdata['receiver_id'] = $request['receiver_id'];
                     $reqdata['status'] = $request['status'];
                     $validated = $validator->validated();
+                                         
                     if ($request->status == 1) {
                         $verified['status'] = 1;
                         Requests::where('sender_id', $request->sender_id)->where('receiver_id', $request->receiver_id)->update($verified);

@@ -134,6 +134,7 @@ class AuthController extends ApiController
                         $verified['phone_verified_at'] = now();
                         $verified['active_device_id'] = 1;
                         User::where('id', $user->id)->update($verified);
+                        
                         if ($device_id = $request->get('device_id')) {
                             $user->devices()->create([
                                 'device_id' => $device_id
