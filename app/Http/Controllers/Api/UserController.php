@@ -16,7 +16,7 @@ use App\Http\Resources\UserResource;
 use Auth;
 use DB;
 use Str;
-use App\Models\UserRule;
+use App\Models\{UserRule, LikeProfile};
 use App\Http\Resources\UserProfileResource;
 
 
@@ -31,6 +31,7 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
+        // dd('s');
         try {
             DB::beginTransaction();
             $users = User::where('phone_verified_at', '!=', null)->with('UserInfo')->get();
@@ -68,6 +69,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        
         ## Users Profile Api 
         ## After agreed the rules user will come here and fill details
         try {
@@ -210,5 +212,49 @@ class UserController extends Controller
         $users['country'] = $users['UserInfo']['country'];
         $users['interests'] = $users['UserInfo']['interests'];
         return $users->formatdata();
+    }
+    public function getActiveUser(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $getusers = User::where(['active_device_id'=>1])->get();
+            if (!empty($getusers)) {
+                return ApiResponse::ok(
+                    'List Of Active Users',
+                    $getusers
+                );
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponse::error(
+                'No User',
+            );
+        }
+    }
+    public function topRatedprofile(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $mainArray = [];
+            $new = [];
+            $getusers = LikeProfile::where('like_status','1')->get();
+            
+            if (!$getusers->isEmpty()) {
+                $groupedUsers = $getusers->groupBy('liked_user_id');
+                foreach ($groupedUsers as $likedUserId => $users) {
+                    $new[] = User::find($likedUserId);
+                }
+                return ApiResponse::ok(
+                    'List Of Top Rated Profiles',
+                    $new
+                );
+            }     
+        }
+        catch (\Exception $e){
+            DB::rollback();
+            return ApiResponse::error(
+                'No User',
+            );
+        }
     }
 }

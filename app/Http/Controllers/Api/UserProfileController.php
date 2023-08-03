@@ -11,6 +11,7 @@ use App\Api\ApiResponse;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\UserProfileResource;
 use DB;
+use Auth;
 
 class UserProfileController extends Controller
 {
@@ -42,6 +43,7 @@ class UserProfileController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         try {
             DB::beginTransaction();
             $auth_user_id = auth()->user()->id;
@@ -84,9 +86,31 @@ class UserProfileController extends Controller
                 $verifieds['dob'] = $request->dob;
                 $verifieds['country'] = $request->country;
                 $verifieds['interests'] = $request->interests;
+                if(!empty($request->about_me)){
+                    $verifieds['about_me'] = $request->about_me;
+                }
+                if(!empty($request->life_interests)){
+                    $verifieds['life_interests'] = $request->life_interests;
+                }
+                if(!empty($request->relationship_goals)){
+                    $verifieds['relationship_goals'] = $request->relationship_goals;
+                }
+                if(!empty($request->life_style)){
+                    $verifieds['life_style'] = $request->life_style;
+                }
+                if(!empty($request->job_title)){
+                    $verifieds['job_title'] = $request->job_title;
+                }
+                if(!empty($request->company)){
+                    $verifieds['company'] = $request->company;
+                }
+                if(!empty($request->school)){
+                    $verifieds['school'] = $request->school;
+                }
+         
                 UserInfo::where('user_id', $auth_user_id)->update($verifieds);
 
-
+                
                 $users['first_name']      = $verified['first_name'];
                 $users['last_name']       = $verified['last_name'];
                 $users['gender']          = $verified['gender'];
@@ -160,7 +184,7 @@ class UserProfileController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        
     }
 
     /**
@@ -177,5 +201,65 @@ class UserProfileController extends Controller
     public function getUser($userd)
     {
         return $userd;
+    }
+
+    public function myprofile(Request $request)
+    {
+        try{
+            DB::beginTransaction();
+            $id =Auth::user()->id;
+            $user = User::where(['id'=>$id])->first();
+            if(!empty($user)){
+                if($user->age_status == 1){$age = $user->age;}else{$age = '';}
+                $data = [
+                    'profile_image' =>  $user->profile_image,
+                    'name' => $user->name,
+                    'age' => $age,
+                ];
+                return ApiResponse::ok(
+                    'User Profile',
+                    $data
+                );
+            }
+        }
+        catch (\Exception $e){
+            DB::rollback();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
+
+        }
+    }
+
+    public function ProfileGlobal(Request $request)
+    {
+        try{
+            DB::beginTransaction();
+            $id = Auth::user()->id;
+            $status = $request->global_user_status;
+            $validator = Validator::make($request->all(),[
+                'global_user_status' => ['required','in:0,1'],
+            ]);
+            if($validator->fails()){
+                return $this->validation_error_response($validator);
+            }
+            $validated = $validator->validated();
+            $data['global_user_status'] = $status;
+
+            $update = User::where('id', $id)->update($data);
+            DB::commit();
+            if($update){
+              
+                return ApiResponse::ok(
+                   ( $status==1?'profile set globaly':'profile un set from global'),
+                );
+            }else{
+                return ApiResponse::error('Something went Wrong With Update Query');
+            }
+
+        }catch(\Exception $e){
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
+        }
     }
 }

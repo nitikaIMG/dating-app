@@ -165,6 +165,11 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Media::class);
     }
+    #explore user 
+    public function explore_users()
+    {
+        return $this->hasMany(ExploreUser::class,);
+    }
 
     # blockuser model
     public function blockuser()
