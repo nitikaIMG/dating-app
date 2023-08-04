@@ -78,7 +78,8 @@ class UserProfileController extends Controller
                 $verified['age']             = $request->age;
                 $verified['enable_location'] = $request->enable_location;
                 $verified['profile_image']   = $request->profile_image;
-
+                $verified['latitude']      = $request->latitude;
+                $verified['longitude']     = $request->longitude;
                 User::where('id', $auth_user_id)->update($verified);
 
 

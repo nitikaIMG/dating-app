@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\ProfileControlController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\ExploreController;
+use App\Http\Controllers\Api\PreferListController;
 
 /*
 |--------------------------------------------------------------------------
@@ -87,6 +88,7 @@ Route::middleware('jwt.verify')->group(function () {
     Route::apiResource('profilecontrol', ProfileControlController::class); # profile control api
     Route::apiResource('match', MatchController::class); # match found list
     Route::apiResource('explore', ExploreController::class); # expolore 
+    Route::apiResource('preferlist', PreferListController::class); # user choices/interests for matching 
 });
 
 # Social Login
