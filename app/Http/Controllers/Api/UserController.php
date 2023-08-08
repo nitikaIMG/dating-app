@@ -169,7 +169,8 @@ class UserController extends Controller
 
                     // image insertion
                     $imageName = time() . '.' . $request->profile_image->extension();
-                    $request->profile_image->move(public_path('images'), $imageName);
+                    $full_path  = $request->profile_image->move(public_path('images'), $imageName);
+                    $path = 'public/images/'.$imageName;
 
                     // add data into users table
                     $verified['first_name']    = $request->first_name;
@@ -191,7 +192,8 @@ class UserController extends Controller
                     $data['last_name']    = $verified['last_name'];
                     $data['email']        = $verified['email'];
                     $data['gender']       = $verified['gender'];
-                    $data['profile_image'] = $verified['profile_image'];
+                    // $data['profile_image'] = $verified['profile_image'];
+                    $data['profile_image'] = $path;
                     $data['interests']    = $verifieds['interests'];
                     $data['dob']          = $verifieds['dob'];
                     $data['country']      = $verifieds['country'];

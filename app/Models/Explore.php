@@ -9,7 +9,11 @@ class Explore extends Model
 {
     use HasFactory;
     protected $table = 'explores';
-    protected $fillable = ['name'];
+    protected $fillable = [
+            'name', 
+            'status', 
+            'thumbnail'
+        ];
     // protected $guarded = [];
 
     

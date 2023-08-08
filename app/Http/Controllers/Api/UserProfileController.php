@@ -67,7 +67,9 @@ class UserProfileController extends Controller
 
 
                 $imageName = time() . '.' . $request->profile_image->extension();
-                $request->profile_image->move(public_path('images'), $imageName);
+                 $full_path = $request->profile_image->move(public_path('images'), $imageName);
+                $path = 'public/images/'.$imageName;
+                // dd($path);
 
                 $users = User::find($auth_user_id)->first();
                 
@@ -77,7 +79,8 @@ class UserProfileController extends Controller
                 $verified['gender']          = $request->gender;
                 $verified['age']             = $request->age;
                 $verified['enable_location'] = $request->enable_location;
-                $verified['profile_image']   = $request->profile_image;
+                // $verified['profile_image']   =    $request->profile_image;
+                $verified['profile_image']   =    $path;
                 $verified['latitude']      = $request->latitude;
                 $verified['longitude']     = $request->longitude;
                 User::where('id', $auth_user_id)->update($verified);

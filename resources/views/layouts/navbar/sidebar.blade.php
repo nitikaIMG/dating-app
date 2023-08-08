@@ -4,63 +4,44 @@
         <div class="sidebar">
             <!-- Start Logobar -->
             <div class="logobar">
-                <a href="index.html" class="logo logo-large"><img src="{{asset('public/assets/images/logo.svg')}}" class="img-fluid" alt="logo"></a>
-                <a href="index.html" class="logo logo-small"><img src="{{asset('public/assets/images/small_logo.svg')}}" class="img-fluid" alt="logo"></a>
+                <a href="{{route('dashboard')}}" class="logo logo-large" style="color: aqua;font-weight:bold;"><img src="{{asset('public/assets/images/logo11.png')}}" width="70px" class="img-fluid" alt="logo">MatchMingle</a>
+                <a href="{{route('dashboard')}}" class="logo logo-small">MatchMingle</a>
             </div>
             <!-- End Logobar -->
             <!-- Start Navigationbar -->
             <div class="navigationbar">
                 <ul class="vertical-menu">
                     <li>
-                        <a href="index.html">
-                            <i class="ri-user-6-fill"></i><span>CRM</span>
+                        <a href="{{route('dashboard')}}">
+                            <span>Dashboard</span>
                         </a>
                     </li>
-                    <li>
+                    {{-- <li>
                         <a href="dashboard-ecommerce.html">
                             <i class="ri-store-2-fill"></i><span>E-Commerce</span>
                         </a>
-                    </li>
-                    <li>
+                    </li> --}}
+                    {{-- <li>
                         <a href="dashboard-hospital.html">
                             <i class="ri-hospital-fill"></i><span>Hospital</span>
                         </a>
-                    </li>
-                    <li class="vertical-header"></li>
-                    {{-- <li>
-                        <a href="javaScript:void();">
-                            <i class="ri-pencil-ruler-line"></i><span>Basic UI</span><i class="ri-arrow-right-s-line"></i>
-                        </a>
-                        <ul class="vertical-submenu">
-                            <li><a href="basic-ui-kits-alerts.html">Alerts</a></li>
-                            <li><a href="basic-ui-kits-badges.html">Badges</a></li>
-                            <li><a href="basic-ui-kits-buttons.html">Buttons</a></li>
-                            <li><a href="basic-ui-kits-cards.html">Cards</a></li>
-                            <li><a href="basic-ui-kits-carousel.html">Carousel</a></li>
-                            <li><a href="basic-ui-kits-collapse.html">Collapse</a></li>
-                            <li><a href="basic-ui-kits-dropdowns.html">Dropdowns</a></li>
-                            <li><a href="basic-ui-kits-embeds.html">Embeds</a></li>
-                            <li><a href="basic-ui-kits-grids.html">Grids</a></li>
-                            <li><a href="basic-ui-kits-images.html">Images</a></li>
-                            <li><a href="basic-ui-kits-media.html">Media</a></li>
-                            <li><a href="basic-ui-kits-modals.html">Modals</a></li>
-                            <li><a href="basic-ui-kits-paginations.html">Paginations</a></li>
-                            <li><a href="basic-ui-kits-popovers.html">Popovers</a></li>
-                            <li><a href="basic-ui-kits-progressbars.html">Progress Bars</a></li>
-                            <li><a href="basic-ui-kits-spinners.html">Spinners</a></li>
-                            <li><a href="basic-ui-kits-tabs.html">Tabs</a></li>
-                            <li><a href="basic-ui-kits-toasts.html">Toasts</a></li>
-                            <li><a href="basic-ui-kits-tooltips.html">Tooltips</a></li>
-                            <li><a href="basic-ui-kits-typography.html">Typography</a></li>
-                        </ul>
                     </li> --}}
-                    {{-- <li>
+                    <li class="vertical-header"></li>
+                    <li>
                         <a href="javaScript:void();">
-                            <i class="ri-pencil-ruler-2-line"></i><span>Advanced UI</span><i class="ri-arrow-right-s-line"></i>
+                            <i class="ri-user-6-fill"></i><span>All Users</span><i class="ri-arrow-right-s-line"></i>
                         </a>
                         <ul class="vertical-submenu">
-                            <li><a href="advanced-ui-kits-image-crop.html">Image Crop</a></li>
-                            <li><a href="advanced-ui-kits-jquery-confirm.html">jQuery Confirm</a></li>
+                            <li><a href="{{route('users.index')}}">Users</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javaScript:void();">
+                            <i class="feather icon-server"></i><span>Explore</span><i class="ri-arrow-right-s-line"></i>
+                        </a>
+                        <ul class="vertical-submenu">
+                            <li><a href="{{route('explore.index')}}">Explores</a></li>
+                            {{-- <li><a href="advanced-ui-kits-jquery-confirm.html">jQuery Confirm</a></li>
                             <li><a href="advanced-ui-kits-nestable.html">Nestable</a></li>
                             <li><a href="advanced-ui-kits-pnotify.html">Pnotify</a></li>
                             <li><a href="advanced-ui-kits-range-slider.html">Range Slider</a></li>
@@ -70,9 +51,9 @@
                             <li><a href="advanced-ui-kits-switchery.html">Switchery</a></li>
                             <li><a href="advanced-ui-kits-toolbar.html">Toolbar</a></li>
                             <li><a href="advanced-ui-kits-tour.html">Tour</a></li>
-                            <li><a href="advanced-ui-kits-treeview.html">Tree View</a></li>
+                            <li><a href="advanced-ui-kits-treeview.html">Tree View</a></li> --}}
                         </ul>
-                    </li> --}}
+                    </li>
                     {{-- <li>
                         <a href="javaScript:void();">
                             <i class="ri-apps-line"></i><span>Apps</span><i class="ri-arrow-right-s-line"></i>

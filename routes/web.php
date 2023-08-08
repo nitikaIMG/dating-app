@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\admin\UserController;
+use App\Http\Controllers\admin\ExploreController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -15,17 +18,25 @@ use App\Http\Controllers\HomeController;
 */
 
 
-Route::get('/',[HomeController::class, 'index']);
+Route::get('/',[HomeController::class, 'index'])->name('dashboard');
+Route::get('back/button',[HomeController::class, 'back'])->name('backbtn');
 
 // Route::any('resetpassword',[apicontroller::class,'resetpassword']);
 
 
+Route:: group(['middleware'=>'auth'],function(){
+    #user controller
+    Route::resource('users',UserController::class);
+    Route::post('user/activeORdeactive',[UserController::class, 'UserActivedeactive'])->name('active.deactive');
+    Route::post('user/updateuserstatus',[UserController::class, 'updateuserstatus'])->name('updateuserstatus');
+    #explore
+    Route::resource('explore',ExploreController::class);
+    Route::post('explore/status',[ExploreController::class, 'updateexplorestatus'])->name('updateexplorestatus');
+    Route::post('explore/activeORdeactive',[UserController::class, 'UserActivedeactive'])->name('active.deactive');
 
+
+
+});
 
 Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-Auth::routes();
-
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

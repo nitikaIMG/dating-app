@@ -6,83 +6,106 @@
 "use strict";
 $(document).ready(function() {
     $('#pnotify-primary').on('click', function() {
-        new PNotify( {
-            title: 'Primary notice', text: 'Check me out! I\'m a notice.', type: 'primary'
+        new PNotify({
+            title: 'Primary notice',
+            text: 'Check me out! I\'m a notice.',
+            type: 'primary'
         });
     });
     $('#pnotify-success').on('click', function() {
-        new PNotify( {
-            title: 'Success notice', text: 'Check me out! I\'m a notice.', type: 'success'
+        new PNotify({
+            title: 'Success notice',
+            text: 'Check me out! I\'m a notice.',
+            type: 'success'
         });
     });
     $('#pnotify-info').on('click', function() {
-        new PNotify( {
-            title: 'Info notice', text: 'Check me out! I\'m a notice.', type: 'info'
+        new PNotify({
+            title: 'Info notice',
+            text: 'Check me out! I\'m a notice.',
+            type: 'info'
         });
     });
     $('#pnotify-danger').on('click', function() {
-        new PNotify( {
-            title: 'Danger notice', text: 'Check me out! I\'m a notice.', type: 'error'
+        new PNotify({
+            title: 'Danger notice',
+            text: 'Check me out! I\'m a notice.',
+            type: 'error'
         });
     });
     /* -- Desktop Notice -- */
     $('#pnotify-desktop-primary').on('click', function() {
         PNotify.desktop.permission();
-        (new PNotify( {
-            title:'Primary Desktop Notice', type:'primary', text:'I\'m a primay desktop notification, if you have given me a permission.', desktop: {
-                desktop: true, icon: 'assets/images/pnotify/primary.png'
+        (new PNotify({
+            title: 'Primary Desktop Notice',
+            type: 'primary',
+            text: 'I\'m a primay desktop notification, if you have given me a permission.',
+            desktop: {
+                desktop: true,
+                icon: 'assets/images/pnotify/primary.png'
             }
-        }
-        )).get().click(function(e) {
-            if($('.ui-pnotify-closer, .ui-pnotify-sticker, .ui-pnotify-closer *, .ui-pnotify-sticker *').is(e.target))return;
+        })).get().click(function(e) {
+            if ($('.ui-pnotify-closer, .ui-pnotify-sticker, .ui-pnotify-closer *, .ui-pnotify-sticker *').is(e.target)) return;
             alert('Hey! You clicked the desktop notification!');
         });
     });
     $('#pnotify-desktop-success').on('click', function() {
         PNotify.desktop.permission();
-        (new PNotify( {
-            title:'Success Desktop Notice', type:'success', text:'I\'m a success desktop notification, if you have given me a permission.', desktop: {
-                desktop: true, icon: 'assets/images/pnotify/success.png'
+        (new PNotify({
+            title: 'Success Desktop Notice',
+            type: 'success',
+            text: 'I\'m a success desktop notification, if you have given me a permission.',
+            desktop: {
+                desktop: true,
+                icon: 'assets/images/pnotify/success.png'
             }
-        }
-        )).get().click(function(e) {
-            if($('.ui-pnotify-closer, .ui-pnotify-sticker, .ui-pnotify-closer *, .ui-pnotify-sticker *').is(e.target))return;
+        })).get().click(function(e) {
+            if ($('.ui-pnotify-closer, .ui-pnotify-sticker, .ui-pnotify-closer *, .ui-pnotify-sticker *').is(e.target)) return;
             alert('Hey! You clicked the desktop notification!');
         });
     });
     $('#pnotify-desktop-danger').on('click', function() {
         PNotify.desktop.permission();
-        (new PNotify( {
-            title:'Danger Desktop Notice', type:'error', text:'I\'m a danger desktop notification, if you have given me a permission.', desktop: {
-                desktop: true, icon: 'assets/images/pnotify/danger.png'
+        (new PNotify({
+            title: 'Danger Desktop Notice',
+            type: 'error',
+            text: 'I\'m a danger desktop notification, if you have given me a permission.',
+            desktop: {
+                desktop: true,
+                icon: 'assets/images/pnotify/danger.png'
             }
-        }
-        )).get().click(function(e) {
-            if($('.ui-pnotify-closer, .ui-pnotify-sticker, .ui-pnotify-closer *, .ui-pnotify-sticker *').is(e.target))return;
+        })).get().click(function(e) {
+            if ($('.ui-pnotify-closer, .ui-pnotify-sticker, .ui-pnotify-closer *, .ui-pnotify-sticker *').is(e.target)) return;
             alert('Hey! You clicked the desktop notification!');
         });
-    });    
+    });
     $('#pnotify-desktop-info').on('click', function() {
         PNotify.desktop.permission();
-        (new PNotify( {
-            title:'Info Desktop Notice', type:'info', text:'I\'m an info desktop notification, if you have given me a permission.', desktop: {
-                desktop: true, icon: 'assets/images/pnotify/notice.png'
+        (new PNotify({
+            title: 'Info Desktop Notice',
+            type: 'info',
+            text: 'I\'m an info desktop notification, if you have given me a permission.',
+            desktop: {
+                desktop: true,
+                icon: 'assets/images/pnotify/notice.png'
             }
-        }
-        )).get().click(function(e) {
-            if($('.ui-pnotify-closer, .ui-pnotify-sticker, .ui-pnotify-closer *, .ui-pnotify-sticker *').is(e.target))return;
+        })).get().click(function(e) {
+            if ($('.ui-pnotify-closer, .ui-pnotify-sticker, .ui-pnotify-closer *, .ui-pnotify-sticker *').is(e.target)) return;
             alert('Hey! You clicked the desktop notification!');
         });
     });
     $('#pnotify-desktop-warning').on('click', function() {
         PNotify.desktop.permission();
-        (new PNotify( {
-            title:'Warning Desktop Notice', type:'warning', text:'I\'m a warning desktop notification, if you have given me a permission.', desktop: {
-                desktop: true, icon: 'assets/images/pnotify/warning.png'
+        (new PNotify({
+            title: 'Warning Desktop Notice',
+            type: 'warning',
+            text: 'I\'m a warning desktop notification, if you have given me a permission.',
+            desktop: {
+                desktop: true,
+                icon: 'assets/images/pnotify/warning.png'
             }
-        }
-        )).get().click(function(e) {
-            if($('.ui-pnotify-closer, .ui-pnotify-sticker, .ui-pnotify-closer *, .ui-pnotify-sticker *').is(e.target))return;
+        })).get().click(function(e) {
+            if ($('.ui-pnotify-closer, .ui-pnotify-sticker, .ui-pnotify-closer *, .ui-pnotify-sticker *').is(e.target)) return;
             alert('Hey! You clicked the desktop notification!');
         });
     });
@@ -197,6 +220,7 @@ $(document).ready(function() {
             min_height: '400px'
         });
     });
+
     function show_rich() {
         new PNotify({
             title: '<span style="color: green;">Rich Content Notice</span>',
@@ -214,6 +238,7 @@ $(document).ready(function() {
             text_escape: true
         });
     });
+
     function dyn_notice() {
         var percent = 0;
         var notice = new PNotify({
@@ -402,13 +427,14 @@ $(document).ready(function() {
             confirm: {
                 confirm: true,
                 buttons: [{
-                    text: 'Ok',
-                    addClass: 'btn-primary',
-                    click: function(notice) {
-                        notice.remove();
-                    }
-                },
-                null]
+                        text: 'Ok',
+                        addClass: 'btn-primary',
+                        click: function(notice) {
+                            notice.remove();
+                        }
+                    },
+                    null
+                ]
             },
             buttons: {
                 closer: false,
@@ -465,7 +491,7 @@ $(document).ready(function() {
                     sticker: true
                 }
             });
-        });        
+        });
     });
     $('#pnotify-multi-line-prompt-dialog').on('click', function() {
         (new PNotify({
@@ -515,7 +541,7 @@ $(document).ready(function() {
                     sticker: true
                 }
             });
-        });        
+        });
     });
     $('#pnotify-notice-with-callback').on('click', function() {
         var dont_alert = function() {};
@@ -582,8 +608,9 @@ $(document).ready(function() {
                 notice.queueRemove();
                 return false;
             }
-        });        
+        });
     });
+
     function fake_load() {
         var cur_value = 1,
             progress;
@@ -593,7 +620,7 @@ $(document).ready(function() {
       <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0">\
         <span class="sr-only">0%</span>\
       </div>\
-    </div>',            
+    </div>',
             icon: 'fa fa-cog fa-spin',
             hide: false,
             buttons: {

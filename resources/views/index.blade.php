@@ -1,5 +1,17 @@
-@extends('layouts.app1')
+@extends('layouts.app')
 @section('content')
+@push('custom-styles')
+<style>
+    a{
+        color: #000000 !important;
+        text-decoration: none;
+        background-color: transparent;
+    }
+</style>
+@endpush
+<br>
+<br>
+<br>
     <!-- Start Breadcrumbbar -->
     {{-- <div class="breadcrumbbar">
         <div class="row align-items-center">
@@ -31,64 +43,78 @@
         <!-- Start row -->
         <div class="row">
             <!-- Start col -->
-            <div class="col-lg-12 col-xl-4">
+            <div class="col-lg-12 col-xl-2">
                 <div class="card m-b-30">
                     <div class="card-header">
-                        <h5 class="card-title mb-0">Leads</h5>
+                        <h5 class="card-title mb-0">Total User</h5>
                     </div>
                     <div class="card-body pb-0">
                         <div class="row align-items-center">
                             <div class="col-6">
-                                <h4>125</h4>
-                            </div>
-                            <div class="col-6 text-right">
-                                <p class="mb-0"><i class="ri-arrow-right-up-line text-success align-middle font-18 mr-1"></i>5%</p>
-                                <p class="mb-0">This week</p>
+                                <h4>{{total_user()}}</h4>
                             </div>
                         </div>
-                        <div id="apex-line-chart1"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 col-xl-2">
+                <div class="card m-b-30">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Active User</h5>
+                    </div>
+                    <div class="card-body pb-0">
+                        <div class="row align-items-center">
+                            <div class="col-6">
+                                <h4>{{active_total_users()}}</h4>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             <!-- End col -->
             <!-- Start col -->
-            <div class="col-lg-12 col-xl-4">
+            <div class="col-lg-12 col-xl-2">
                 <div class="card m-b-30">
                     <div class="card-header">
-                        <h5 class="card-title mb-0">Projects</h5>
+                        <h5 class="card-title mb-0">Males</h5>
                     </div>
                     <div class="card-body pb-0">
                         <div class="row align-items-center">
                             <div class="col-6">
-                                <h4>1,345</h4>
-                            </div>
-                            <div class="col-6 text-right">
-                                <p class="mb-0"><i class="ri-arrow-right-down-line text-danger align-middle font-18 mr-1"></i>15%</p>
-                                <p class="mb-0">This week</p>
+                                <h4>{{total_user_male()}}</h4>
                             </div>
                         </div>
-                        <div id="apex-line-chart2"></div>
                     </div>
                 </div>
             </div>
             <!-- End col -->
             <!-- Start col -->
-            <div class="col-lg-12 col-xl-4">
+            <div class="col-lg-12 col-xl-2">
                 <div class="card m-b-30">
                     <div class="card-header">
-                        <h5 class="card-title mb-0">Clients</h5>
+                        <h5 class="card-title mb-0">Females</h5>
                     </div>
                     <div class="card-body pb-0">
                         <div class="row align-items-center">
                             <div class="col-6">
-                                <h4>57</h4>
-                            </div>
-                            <div class="col-6 text-right">
-                                <p class="mb-0"><i class="ri-arrow-right-up-line text-success align-middle font-18 mr-1"></i>45%</p>
-                                <p class="mb-0">This week</p>
+                                <h4>{{total_user_female()}}</h4>
                             </div>
                         </div>
-                        <div id="apex-line-chart3"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12 col-xl-2">
+                <div class="card m-b-30">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Others</h5>
+                    </div>
+                    <div class="card-body pb-0">
+                        <div class="row align-items-center">
+                            <div class="col-6">
+                                <h4>{{total_user_other()}}</h4>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -98,7 +124,7 @@
         <!-- Start row -->
         <div class="row">
             <!-- Start col -->
-            <div class="col-lg-12 col-xl-4">
+            {{-- <div class="col-lg-12 col-xl-4">
                 <div class="card m-b-30">
                     <div class="card-header text-center">
                         <h5 class="card-title mb-0">Project Status</h5>
@@ -107,10 +133,10 @@
                         <div id="apex-circle-chart"></div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
             <!-- End col -->
             <!-- Start col -->
-            <div class="col-lg-12 col-xl-8">
+            {{-- <div class="col-lg-12 col-xl-8">
                 <div class="card m-b-30">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Profit & Expenses</h5>
@@ -132,7 +158,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
             <!-- End col -->
         </div>
         <!-- End row -->
@@ -141,7 +167,7 @@
             <!-- Start col -->
             <div class="col-lg-12 col-xl-6">
                 <div class="card m-b-30">
-                    <div class="card-header">
+                    {{-- <div class="card-header">
                         <div class="row align-items-center">
                             <div class="col-6 col-lg-9">
                                 <h5 class="card-title mb-0">Latest Projects</h5>
@@ -156,61 +182,42 @@
                                 </select>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-borderless">
                                 <thead>
                                     <tr>
                                         <th scope="col">#</th>
-                                        <th scope="col">Project Name</th>
+                                        <th scope="col"> Profile Image</th>
+                                        <th scope="col"> Name</th>
                                         <th scope="col">Company</th>
-                                        <th scope="col">Country</th>
-                                        <th scope="col">Price</th>
-                                        <th scope="col">Status</th>
+                                        <th scope="col">Age</th>
+                                        {{-- <th scope="col">Price</th> --}}
+                                        <th scope="col">Online Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Native App Development</td>
-                                        <td>New Ways</td>
-                                        <td>Sweden</td>
-                                        <td>$550</td>
-                                        <td><span class="badge badge-primary">Confirmed</span></td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>eCommerce Website</td>
-                                        <td>Rocketics</td>
-                                        <td>Norway</td>
-                                        <td>$999</td>
-                                        <td><span class="badge badge-success">Completed</span></td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td>Digital Marketing</td>
-                                        <td>My Recipes</td>
-                                        <td>Germany</td>
-                                        <td>$199</td>
-                                        <td><span class="badge badge-warning">On Hold</span></td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">4</th>
-                                        <td>SEO Services</td>
-                                        <td>Creativelolo</td>
-                                        <td>Canada</td>
-                                        <td>$799</td>
-                                        <td><span class="badge badge-light">Cancelled</span></td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">5</th>
-                                        <td>Logo Designing</td>
-                                        <td>Unicar</td>
-                                        <td>USA</td>
-                                        <td>$99</td>
-                                        <td><span class="badge badge-success">Completed</span></td>
-                                    </tr>
+                                @php
+                                    $count = 1;
+                                @endphp
+                                @forelse(active_users() as $user)
+                                
+                                <tr>
+                                    <th scope="row">{{$count}}</th>
+                                        
+                                            <td> <a href="{{route('users.edit',$user->id)}}" class="active-list"><img src="{{asset($user->profile_image)}}"  width="50px" height="50px" srcset=""></a></td>
+                                        
+                                        <td><a href="{{route('users.edit',$user->id)}}" class="active-list">{{$user->name}}</a></td>
+                                        <td><a href="{{route('users.edit',$user->id)}}" class="active-list">{{$user->phone}}</a></td>
+                                        <td><a href="{{route('users.edit',$user->id)}}" class="active-list">{{$user->age}}</a></td>
+                                        {{-- <td>$99</td> --}}
+                                        <td><span class="badge badge-success"><a href="{{route('users.edit',$user->id)}}" class="active-list">Active</a></span></td>
+                                </tr>
+                                @empty
+                                    <span>NO One Is Online</span>
+                                    
+                                @endforelse
                                 </tbody>
                             </table>
                         </div>
@@ -222,41 +229,35 @@
             <div class="col-lg-12 col-xl-3">
                 <div class="card m-b-30">
                     <div class="card-header text-center">
-                        <h5 class="card-title mb-0">Top Employees</h5>
+                        <h5 class="card-title mb-0">Top Profiles</h5>
                     </div>
                     <div class="card-body">
+                        {{-- @dd(top_rated_profile()); --}}
                         <div class="user-slider">
-                            <div class="user-slider-item">
-                                <div class="card-body text-center">
-                                    <span class="action-icon badge badge-primary-inverse">JD</span>
-                                    <h5>John Doe</h5>
-                                    <p>Palo Alto, CA</p>
-                                    <p class="mt-3 mb-0"><span class="badge badge-primary font-weight-normal font-14 py-1 px-2">Designer</span></p>
+                            @forelse(top_rated_profile() as $user)
+                                <div class="user-slider-item">
+                                    <div class="card-body text-center">
+                                        @php
+                                            $firstCharacter = substr($user->first_name, 0, 2);
+                                        @endphp
+                                        <a href="{{route('users.edit',$user->id)}}">
+                                            <span class="action-icon badge badge-primary-inverse">{{$firstCharacter}}</span>
+                                            <h5>{{$user->name}}</h5>
+                                            <p>{{$user->phone}}</p>
+                                            <p class="mt-3 mb-0"><span class="badge badge-primary font-weight-normal font-14 py-1 px-2">Most Liked Persons</span></p>
+                                        </a>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="user-slider-item">
-                                <div class="card-body text-center">
-                                    <span class="action-icon badge badge-success-inverse">LS</span>
-                                    <h5>Lauren Smith</h5>
-                                    <p>New Parks, FL</p>
-                                    <p class="mt-3 mb-0"><span class="badge badge-success font-weight-normal font-14 py-1 px-2">Developer</span></p>
-                                </div>
-                            </div>
-                            <div class="user-slider-item">
-                                <div class="card-body text-center">
-                                    <span class="action-icon badge badge-secondary-inverse">MC</span>
-                                    <h5>Maria Carey</h5>
-                                    <p>Avenue Park, NY</p>
-                                    <p class="mt-3 mb-0"><span class="badge badge-secondary font-weight-normal font-14 py-1 px-2">HR</span></p>
-                                </div>
-                            </div>
+                            @empty
+                             <span>None</span>
+                            @endforelse
                         </div>
                     </div>
                 </div>
             </div>
             <!-- End col -->
             <!-- Start col -->
-            <div class="col-lg-12 col-xl-3">
+            {{-- <div class="col-lg-12 col-xl-3">
                 <div class="card bg-secondary-rgba text-center m-b-30">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Achievements</h5>
@@ -266,7 +267,7 @@
                         <h5 class="my-0">Worked more than 40 hours for 3 weeks.</h5>
                     </div>
                 </div>
-            </div>
+            </div> --}}
             <!-- End col -->
         </div>
         <!-- End row -->
