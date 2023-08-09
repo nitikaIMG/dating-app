@@ -20,8 +20,7 @@ class LikeProfileController extends Controller
         try {
             DB::beginTransaction();
             $id = auth()->user()->id;
-            $getusers = LikeProfile::where('liked_user_id', $id)->where('like_status', 1)->with('users')->get();
-
+            $getusers = LikeProfile::where(['liked_user_id'=>$id, 'like_status'=>1])->with('users')->get();
             if (!empty($getusers)) {
                 return ApiResponse::ok(
                     'List Of Users Who Liked Your Profile',
@@ -38,19 +37,19 @@ class LikeProfileController extends Controller
     public function store(Request $request)
     {
         try {
+            // dd($request->all());
             DB::beginTransaction();
             $id = auth()->user()->id;
             $validator =  Validator::make($request->all(), [
                 'sender_id'      => ['required', 'numeric'],
                 'liked_user_id'  => ['required', 'numeric'],
             ]);
-
+            
             if ($validator->fails()) {
                 return $this->validation_error_response($validator);
             }
             $likeddata['sender_id']     = $request['sender_id'];
             $likeddata['liked_user_id'] = $request['liked_user_id'];
-
             $validated = $validator->validated();
 
             $chk_sender_id = User::where('id', $request->sender_id)

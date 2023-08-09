@@ -15,6 +15,8 @@ use App\Http\Controllers\Api\MatchController;
 use App\Http\Controllers\Api\ProfileControlController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\SettingController;
+use App\Http\Controllers\Api\ExploreController;
+use App\Http\Controllers\Api\PreferListController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,14 +62,24 @@ Route::middleware('jwt.verify')->group(function () {
         Route::get('profilecompletnesper', 'profilecompletnesper'); # profile completnes percentage
         Route::post('showsubscription', 'showsubscription'); # show subscription plans
     });
-
+    
+        
+    
     Route::get('showAllRequest', [RequestApiController::class, 'showAllRequest']); #show all request (all matched and not matched request on the basis of auth user)
 
+    Route::get('getActiveUser', [UserController::class, 'getActiveUser']); # show all active users list basis of Active divice id
+    Route::get('topRatedprofile', [UserController::class, 'topRatedprofile']); # show all active users list basis of top rated most liked profile
+    
+    Route::get('myprofile', [UserProfileController::class, 'myprofile']); # show all active users list basis of top rated most liked profile
+    Route::post('profileonglobal', [UserProfileController::class, 'ProfileGlobal']); # Set Profile to globaly level 
+    #explore
+    Route::post('ExploreUser', [ExploreController::class, 'userAddexplore']); # Explore Add in UserInfo
+    Route::post('ExploreUsers', [ExploreController::class, 'GetSingleExplore']); # Single Explore Witn his Usrs
 
-
+    
     Route::apiResource('users', UserController::class); # filled user_detail and show list
-    Route::apiResource('rules', RuleController::class); # Rules Controller
     Route::apiResource('userprofile', UserProfileController::class); # User Profile Controller 
+    Route::apiResource('rules', RuleController::class); # Rules Controller
     Route::apiResource('media', MediaController::class); # User Media Controller
     Route::apiResource('requestapprove', RequestApiController::class);
     Route::apiResource('postunfavourites', FavouritesProfileApiController::class);
@@ -75,6 +87,8 @@ Route::middleware('jwt.verify')->group(function () {
     Route::apiResource('profile', ProfileController::class); # Profile Controller for other use
     Route::apiResource('profilecontrol', ProfileControlController::class); # profile control api
     Route::apiResource('match', MatchController::class); # match found list
+    Route::apiResource('explore', ExploreController::class); # expolore 
+    Route::apiResource('preferlist', PreferListController::class); # user choices/interests for matching 
 });
 
 # Social Login

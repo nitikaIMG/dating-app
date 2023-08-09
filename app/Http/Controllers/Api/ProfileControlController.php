@@ -132,4 +132,20 @@ class ProfileControlController extends Controller
     {
         //
     }
+
+    // public function wholikeprofile(Request $request)
+    // {
+    //     try{
+    //         DB::beginTransaction();
+    //         $id = Auth::user()->id;
+    //         $getData = LikeProfile::where(['liked_user_id'=>$id, 'like_status'=> '1'])
+            
+
+    //     }
+    //     catch (\Exception $e) {
+    //         DB::rollBack();
+    //         return ApiResponse::error($e->getMessage());
+    //         logger($e->getMessage());
+    //     }
+    // }
 }
