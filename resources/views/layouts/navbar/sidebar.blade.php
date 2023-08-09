@@ -41,26 +41,15 @@
                         </a>
                         <ul class="vertical-submenu">
                             <li><a href="{{route('explore.index')}}">Explores</a></li>
-                            {{-- <li><a href="advanced-ui-kits-jquery-confirm.html">jQuery Confirm</a></li>
-                            <li><a href="advanced-ui-kits-nestable.html">Nestable</a></li>
-                            <li><a href="advanced-ui-kits-pnotify.html">Pnotify</a></li>
-                            <li><a href="advanced-ui-kits-range-slider.html">Range Slider</a></li>
-                            <li><a href="advanced-ui-kits-ratings.html">Ratings</a></li>
-                            <li><a href="advanced-ui-kits-session-timeout.html">Session Timeout</a></li>
-                            <li><a href="advanced-ui-kits-sweet-alerts.html">Sweet Alerts</a></li>
-                            <li><a href="advanced-ui-kits-switchery.html">Switchery</a></li>
-                            <li><a href="advanced-ui-kits-toolbar.html">Toolbar</a></li>
-                            <li><a href="advanced-ui-kits-tour.html">Tour</a></li>
-                            <li><a href="advanced-ui-kits-treeview.html">Tree View</a></li> --}}
                         </ul>
                     </li>
-                    {{-- <li>
+                    <li>
                         <a href="javaScript:void();">
-                            <i class="ri-apps-line"></i><span>Apps</span><i class="ri-arrow-right-s-line"></i>
+                            <i class="ri-apps-line"></i><span>Subscription</span><i class="ri-arrow-right-s-line"></i>
                         </a>
                         <ul class="vertical-submenu">
-                            <li><a href="apps-calender.html">Calender</a></li>
-                            <li><a href="apps-chat.html">Chat</a></li>
+                            <li><a href="{{route('subscription.index')}}">Subscriptions</a></li>
+                            {{-- <li><a href="apps-chat.html">Chat</a></li>
                             <li>
                                 <a href="javaScript:void();">Email<i class="ri-arrow-right-s-line"></i></a>
                                 <ul class="vertical-submenu">
@@ -70,9 +59,9 @@
                                 </ul>
                             </li>
                             <li><a href="apps-kanban-board.html">Kanban Board</a></li>
-                            <li><a href="apps-onboarding-screens.html">Onboarding Screens</a></li>
+                            <li><a href="apps-onboarding-screens.html">Onboarding Screens</a></li> --}}
                         </ul>
-                    </li> --}}
+                    </li>
                     {{-- <li>
                         <a href="javaScript:void();">
                             <i class="ri-file-copy-2-line"></i><span>Forms</span><i class="ri-arrow-right-s-line"></i>

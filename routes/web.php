@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\ExploreController;
+use App\Http\Controllers\admin\SubscriptionController;
 
 
 /*
@@ -32,8 +33,11 @@ Route:: group(['middleware'=>'auth'],function(){
     #explore
     Route::resource('explore',ExploreController::class);
     Route::post('explore/status',[ExploreController::class, 'updateexplorestatus'])->name('updateexplorestatus');
-    Route::post('explore/activeORdeactive',[UserController::class, 'UserActivedeactive'])->name('active.deactive');
-
+    Route::post('explore/activeORdeactive',[UserController::class, 'ExploreActivedeactive'])->name('active.deactive');
+    
+    #subscription
+    Route::resource('subscription', SubscriptionController::class);
+    Route::post('subscription/status/update',[SubscriptionController::class, 'subscripptionstatus'])->name('subscripptionstatus');
 
 
 });
