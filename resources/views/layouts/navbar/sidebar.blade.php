@@ -62,6 +62,29 @@
                             <li><a href="apps-onboarding-screens.html">Onboarding Screens</a></li> --}}
                         </ul>
                     </li>
+                    <li>
+                        <a href="javaScript:void();">
+                            <i class="ri-apps-line"></i><span>Users Basic</span><i class="ri-arrow-right-s-line"></i>
+                        </a>
+                        <ul class="vertical-submenu">
+                            <li><a href="{{route('zodiac.index')}}">Zodiacs</a></li>
+                            <li><a href="{{route('education.index')}}">Education Levels</a></li>
+                            <li><a href="{{route('personality.index')}}">Personality Type</a></li>
+                            <li><a href="{{route('communication.index')}}">Communication Style</a></li>
+                            <li><a href="{{route('children.index')}}">Children Q.</a></li>
+                            <li><a href="{{route('receivelove.index')}}">Receive Love</a></li>
+                             {{-- <li><a href="apps-chat.html">Chat</a></li> --}}
+                            {{-- <li>
+                                <a href="javaScript:void();">Zodiac<i class="ri-arrow-right-s-line"></i></a>
+                                <ul class="vertical-submenu">
+                                    <li><a href="{{route('zodiac.index')}}">zodiacs</a></li>
+                                </ul>
+                            </li> --}}
+                            {{--
+                            <li><a href="apps-kanban-board.html">Kanban Board</a></li>
+                            <li><a href="apps-onboarding-screens.html">Onboarding Screens</a></li> --}}
+                        </ul>
+                    </li>
                     {{-- <li>
                         <a href="javaScript:void();">
                             <i class="ri-file-copy-2-line"></i><span>Forms</span><i class="ri-arrow-right-s-line"></i>
