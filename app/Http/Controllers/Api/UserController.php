@@ -16,7 +16,7 @@ use App\Http\Resources\UserResource;
 use Auth;
 use DB;
 use Str;
-use App\Models\UserRule;
+use App\Models\{UserRule, LikeProfile, PreferList};
 use App\Http\Resources\UserProfileResource;
 
 
@@ -31,9 +31,84 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
+        // dd('s');
         try {
             DB::beginTransaction();
-            $users = User::where('phone_verified_at', '!=', null)->with('UserInfo')->get();
+            $id = Auth::user()->id;
+            $getuserchoice = PreferList::where('user_id', $id)->first();
+            // dd($getuserchoice);
+            if(!empty($getuserchoice)){ 
+                if(!empty($getuserchoice->age_status) && !empty($getuserchoice->first_age) || !empty($getuserchoice->second_age)){
+                    $users = User::where('gender', $getuserchoice->show_me_to)->whereHas('userInfo', function ($query) use ($getuserchoice) {
+                    $query->whereBetween('age', [$getuserchoice->first_age, $getuserchoice->second_age]);})->with('userInfo')->get();
+                }
+                if (!empty($getuserchoice->distance_status) && !empty($getuserchoice->first_distance) || !empty($getuserchoice->second_distance)) {
+         
+                    // Fetch users based on distance and gender preference
+                    $latitude = Auth::user()->latitude;
+                    $longitude = Auth::user()->longitude;
+                    // Convert distance preferences to kilometers
+                    $minDistance = $getuserchoice->first_distance;
+                    $maxDistance = $getuserchoice->second_distance;
+                    
+                    // Calculate the bounding box coordinates
+                    $earthRadius = 6371; // Earth's radius in kilometers
+                    $latRadians = deg2rad($latitude);
+                    $lngRadians = deg2rad($longitude);
+                    
+                    $deltaLat = rad2deg($minDistance / $earthRadius);
+                    $deltaLng = rad2deg($minDistance / ($earthRadius * cos($latRadians)));
+                    
+                    $minLat = $latitude - $deltaLat;
+                    $maxLat = $latitude + $deltaLat;
+                    $minLng = $longitude - $deltaLng;
+                    $maxLng = $longitude + $deltaLng;
+                    
+                    // Fetch users based on distance and gender preference within the bounding box
+                    $users = User::where('gender', $getuserchoice->show_me_to)
+                    ->whereBetween('latitude', [$minLat, $maxLat])
+                    ->whereBetween('longitude', [$minLng, $maxLng])
+                    ->with('userInfo')
+                    ->get();
+                }
+
+                if( $getuserchoice->age_status == 1 && $getuserchoice->distance_status == 1){
+                    $latitude = Auth::user()->latitude;
+                    $longitude = Auth::user()->longitude;
+                    // Convert distance preferences to kilometers
+                    $minDistance = $getuserchoice->first_distance;
+                    $maxDistance = $getuserchoice->second_distance;
+                    
+                    // Calculate the bounding box coordinates
+                    $earthRadius = 6371; // Earth's radius in kilometers
+                    $latRadians = deg2rad($latitude);
+                    $lngRadians = deg2rad($longitude);
+                    
+                    $deltaLat = rad2deg($minDistance / $earthRadius);
+                    $deltaLng = rad2deg($minDistance / ($earthRadius * cos($latRadians)));
+                    
+                    $minLat = $latitude - $deltaLat;
+                    $maxLat = $latitude + $deltaLat;
+                    $minLng = $longitude - $deltaLng;
+                    $maxLng = $longitude + $deltaLng;
+                    
+                    // Fetch users based on distance and gender preference within the bounding box
+                    $users = User::where('gender', $getuserchoice->show_me_to)
+                    ->whereBetween('latitude', [$minLat, $maxLat])
+                    ->whereBetween('longitude', [$minLng, $maxLng])
+                    ->with('userInfo')
+                    ->whereHas('userInfo', function ($query) use ($getuserchoice) {
+                        $query->whereBetween('age', [$getuserchoice->first_age, $getuserchoice->second_age]);})
+                    ->get();
+                }  
+                else{
+                    $users = User::Where('gender', $getuserchoice->show_me_to)->with('UserInfo')->get();
+                }
+            }
+            else{
+                $getuserinterest = UserInfo::where('user_id', $id)->first();
+                $users = User::Where('gender', $getuserinterest->interests)->with('UserInfo')->get();
+            }
             if (!empty($users)) {
                 $userdetail = UserResource::collection($users);
                 return ApiResponse::ok(
@@ -68,6 +143,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        
         ## Users Profile Api 
         ## After agreed the rules user will come here and fill details
         try {
@@ -93,14 +169,16 @@ class UserController extends Controller
 
                     // image insertion
                     $imageName = time() . '.' . $request->profile_image->extension();
-                    $request->profile_image->move(public_path('images'), $imageName);
+                    $full_path  = $request->profile_image->move(public_path('images'), $imageName);
+                    $path = 'public/images/'.$imageName;
 
                     // add data into users table
                     $verified['first_name']    = $request->first_name;
                     $verified['last_name']     = $request->last_name;
                     $verified['email']         = $request->email;
                     $verified['gender']        = $request->gender;
-                    $verified['profile_image'] = $request->profile_image;
+                    $verified['latitude']      = $request->latitude;
+                    $verified['longitude']     = $request->longitude;
                     User::where('id', $auth_user_id)->update($verified);
 
                     // add data into usersinfo table
@@ -114,7 +192,8 @@ class UserController extends Controller
                     $data['last_name']    = $verified['last_name'];
                     $data['email']        = $verified['email'];
                     $data['gender']       = $verified['gender'];
-                    $data['profile_image'] = $verified['profile_image'];
+                    // $data['profile_image'] = $verified['profile_image'];
+                    $data['profile_image'] = $path;
                     $data['interests']    = $verifieds['interests'];
                     $data['dob']          = $verifieds['dob'];
                     $data['country']      = $verifieds['country'];
@@ -210,5 +289,49 @@ class UserController extends Controller
         $users['country'] = $users['UserInfo']['country'];
         $users['interests'] = $users['UserInfo']['interests'];
         return $users->formatdata();
+    }
+    public function getActiveUser(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $getusers = User::where(['active_device_id'=>1])->get();
+            if (!empty($getusers)) {
+                return ApiResponse::ok(
+                    'List Of Active Users',
+                    $getusers
+                );
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponse::error(
+                'No User',
+            );
+        }
+    }
+    public function topRatedprofile(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $mainArray = [];
+            $new = [];
+            $getusers = LikeProfile::where('like_status','1')->get();
+            
+            if (!$getusers->isEmpty()) {
+                $groupedUsers = $getusers->groupBy('liked_user_id');
+                foreach ($groupedUsers as $likedUserId => $users) {
+                    $new[] = User::find($likedUserId);
+                }
+                return ApiResponse::ok(
+                    'List Of Top Rated Profiles',
+                    $new
+                );
+            }     
+        }
+        catch (\Exception $e){
+            DB::rollback();
+            return ApiResponse::error(
+                'No User',
+            );
+        }
     }
 }

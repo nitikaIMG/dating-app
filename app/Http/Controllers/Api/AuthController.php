@@ -244,6 +244,7 @@ class AuthController extends ApiController
     #logout
     public function logout(Request $request)
     {
+        // dd('ok');
         try {
             DB::beginTransaction();
             $user = auth()->user()->id;
@@ -251,7 +252,9 @@ class AuthController extends ApiController
                 User::where('id', $user)->update(['active_device_id' => Null]);
                 // $this->auth->logout();
                 DB::commit();
-                auth()->logout();
+                // auth('api')->logout();
+                JWTAuth::invalidate(JWTAuth::getToken());
+                
                 return ApiResponse::ok('Logged Out Successfully');
             } else {
                 return ApiResponse::error('First login user');

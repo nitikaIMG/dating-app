@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Database\Eloquent\Model;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -164,6 +165,11 @@ class User extends Authenticatable implements JWTSubject
     public function media()
     {
         return $this->hasMany(Media::class);
+    }
+    #explore user 
+    public function explore_users()
+    {
+        return $this->hasMany(ExploreUser::class,);
     }
 
     # blockuser model
