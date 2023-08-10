@@ -28,7 +28,7 @@ class FilterController extends ApiController
     {
         $messages = [];
         $validator = Validator::make($request->all(), [
-            'gender'        => ['in:m,f,o'],
+            'gender'        => ['in:1,2,0'],
         ], $messages);
 
         if ($validator->fails()) {
