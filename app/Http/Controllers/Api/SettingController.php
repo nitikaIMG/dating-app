@@ -192,7 +192,7 @@ class SettingController extends ApiController
         }
     }
 
-    # showing list of block user
+    # showing list of block user 
     public function blockcontactlist(Request $request)
     {
         try {
