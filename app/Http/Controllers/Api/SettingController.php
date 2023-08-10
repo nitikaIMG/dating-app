@@ -282,7 +282,7 @@ class SettingController extends ApiController
             return $this->validation_error_response($validator);
         }
         try {
-            DB::beginTransaction();
+            DB::beginTransaction(); 
             $validated = $validator->validated();
             $validated['plan_name'] = $request->plan_name;
             // dd('sdfsn');
