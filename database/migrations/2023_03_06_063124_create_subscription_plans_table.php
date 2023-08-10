@@ -30,6 +30,7 @@ return new class extends Migration
             $table->integer('control_who_sees_you')->nullable()->comment('0=>deactive plan, 1=>active plan');
             $table->integer('control_who_you_see')->nullable()->comment('0=>deactive plan, 1=>active plan');
             $table->integer('hide_ads')->nullable()->comment('0=>deactive plan, 1=>active plan');
+            $table->integer('status')->nullable()->comment('0=>enabled, 1=>disabled');
             $table->timestamps();
         });
     }

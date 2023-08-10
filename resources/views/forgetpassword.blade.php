@@ -9,4 +9,4 @@
     <h2>Your Otp For Reset Password <br> {{$data['otp']}}</h2>
     <p>Thank You</p>
 </body>
-</html>
+</html> 

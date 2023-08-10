@@ -276,13 +276,13 @@ class SettingController extends ApiController
     public function showsubscription(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'plan_name'    => ['required', 'string', 'in:Tinder Plus,Tinder Gold,Tinder Platinum'],
+            'plan_name'    => ['required', 'string',],
         ]);
         if ($validator->fails()) {
             return $this->validation_error_response($validator);
         }
         try {
-            DB::beginTransaction();
+            DB::beginTransaction(); 
             $validated = $validator->validated();
             $validated['plan_name'] = $request->plan_name;
             // dd('sdfsn');

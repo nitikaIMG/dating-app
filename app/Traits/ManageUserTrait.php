@@ -38,7 +38,7 @@ trait ManageUserTrait
     }
 
     public function generateOTP(){
-        return '123456';
+        return rand('1','1000000');
     }
 
     
