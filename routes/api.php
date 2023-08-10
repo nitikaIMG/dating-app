@@ -77,7 +77,7 @@ Route::middleware('jwt.verify')->group(function () {
     Route::post('ExploreUsers', [ExploreController::class, 'GetSingleExplore']); # Single Explore Witn his Usrs
 
     
-    Route::apiResource('users', UserController::class); # filled user_detail and show list
+    Route::apiResource('user', UserController::class); # filled user_detail and show list
     Route::apiResource('userprofile', UserProfileController::class); # User Profile Controller 
     Route::apiResource('rules', RuleController::class); # Rules Controller 
     Route::apiResource('media', MediaController::class); # User Media Controller
@@ -87,7 +87,7 @@ Route::middleware('jwt.verify')->group(function () {
     Route::apiResource('profile', ProfileController::class); # Profile Controller for other use
     Route::apiResource('profilecontrol', ProfileControlController::class); # profile control api
     Route::apiResource('match', MatchController::class); # match found list
-    Route::apiResource('explore', ExploreController::class); # expolore 
+    Route::apiResource('explores', ExploreController::class); # expolore 
     Route::apiResource('preferlist', PreferListController::class); # user choices/interests for matching 
 });
 

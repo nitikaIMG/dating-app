@@ -2,63 +2,61 @@
 @section('content')
     @push('custom-styles')
         <style>
-            
             /* Styles for the toggle switch */
             .switch {
-            position: relative;
-            display: inline-block;
-            width: 40px;
-            height: 20px;
+                position: relative;
+                display: inline-block;
+                width: 40px;
+                height: 20px;
             }
 
             .switch input {
-            display: none;
+                display: none;
             }
 
             .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: 0.4s;
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: #ccc;
+                transition: 0.4s;
             }
 
             .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 2px;
-            bottom: 2px;
-            background-color: white;
-            transition: 0.4s;
+                position: absolute;
+                content: "";
+                height: 16px;
+                width: 16px;
+                left: 2px;
+                bottom: 2px;
+                background-color: white;
+                transition: 0.4s;
             }
 
-            input:checked + .slider {
-            background-color: #4caf50;
+            input:checked+.slider {
+                background-color: #4caf50;
             }
 
-            input:checked + .slider:before {
-            transform: translateX(20px);
+            input:checked+.slider:before {
+                transform: translateX(20px);
             }
 
             /* Rounded sliders */
             .slider.round {
-            border-radius: 34px;
+                border-radius: 34px;
             }
 
             .slider.round:before {
-            border-radius: 50%;
+                border-radius: 50%;
             }
-
         </style>
     @endpush
 
-     <!-- Start Breadcrumbbar -->                    
-     <div class="breadcrumbbar">
+    <!-- Start Breadcrumbbar -->
+    <div class="breadcrumbbar">
         <div class="row align-items-center">
             <div class="col-md-8 col-lg-8">
                 <h4 class="page-title">User</h4>
@@ -73,13 +71,13 @@
             <div class="col-md-4 col-lg-4">
                 <div class="widgetbar">
                     {{-- <button class="btn btn-primary"><i class="ri-add-line align-middle mr-2"></i>ADD</button> --}}
-                </div>                        
+                </div>
             </div>
-        </div>          
+        </div>
     </div>
     <!-- End Breadcrumbbar -->
-    <!-- Start Contentbar -->    
-    <div class="contentbar">                
+    <!-- Start Contentbar -->
+    <div class="contentbar">
         <!-- Start row -->
         <div class="row">
             <!-- Start col -->
@@ -93,14 +91,14 @@
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered datatable" id="edit-btn">
                                 <thead>
-                                  <tr>
-                                    <th>No</th>
-                                    <th>Name</th>
-                                    <th>Gender</th>
-                                    {{-- <th>Age</th> --}}
-                                    <th>Phone</th>                                                   
-                                    <th>Status</th>
-                                  </tr>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Name</th>
+                                        <th>Gender</th>
+                                        {{-- <th>Age</th> --}}
+                                        <th>Phone</th>
+                                        <th>Status</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                 </tbody>
@@ -116,88 +114,102 @@
     <!-- End Contentbar -->
 @endsection
 @push('custom-scripts')
-<script type="text/javascript">
-    $(function () {
-      
-      var table = $('.datatable').DataTable({
-          processing: true,
-          serverSide: true,
-          ajax: "{{ route('users.index') }}",
-          columns: [
-              {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-              {data: 'first_name', name: 'first_name'},
-              {data: 'gender', name: 'gender'},
-            //   {data: 'age', name: 'age'},
-              {data: 'phone', name: 'phone'},
-              {data: 'status', name: 'status'},
-            //   {data: 'dob', name: 'dob'},
-              {
-                  data: 'action', 
-                  name: 'action', 
-                  orderable: true, 
-                  searchable: true
-              },
-          ]
-      });
-      
-    });
-  </script>
+    <script type="text/javascript">
+        $(function() {
 
-<script>
-    function  updatestatus(id){
-
-
-
-        (new PNotify({
-            title: 'Confirmation Needed',
-            text: 'Are you sure?',
-            icon: 'glyphicon glyphicon-question-sign',
-            hide: false,
-            confirm: {
-                confirm: true
-            },
-            buttons: {
-                closer: false,
-                sticker: false
-            },
-            history: {
-                history: false
-            },
-            addclass: 'stack-modal',
-            stack: {
-                'dir1': 'down',
-                'dir2': 'right',
-                'modal': true
-            }
-        })).get().on('pnotify.confirm', function() {
-            $.ajax({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                url: '{{route('updateuserstatus')}}',
-                method: 'POST',
-                data: { id: id },
-                success: function (response) {
-                    if(response.status == 'success')
+            var table = $('.datatable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('users.index') }}",
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex'
+                    },
                     {
-                        new PNotify({
-                            title: 'Success',
-                            text: 'Account Update',
-                            type: 'success'
-                        });
-                        setTimeout(function(){// wait for 5 secs(2)
-                            location.reload(); // then reload the page.(3)
-                        }, 500);
-                    }
-                },
-                error: function (error) {
-                    // Handle error if needed
-                }
+                        data: 'first_name',
+                        name: 'first_name'
+                    },
+                    {
+                        data: 'gender',
+                        name: 'gender'
+                    },
+                    //   {data: 'age', name: 'age'},
+                    {
+                        data: 'phone',
+                        name: 'phone'
+                    },
+                    {
+                        data: 'status',
+                        name: 'status'
+                    },
+                    //   {data: 'dob', name: 'dob'},
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: true,
+                        searchable: true
+                    },
+                ]
             });
-        }).on('pnotify.cancel', function() {
-        });
 
-      
-    }
-</script>
+        });
+    </script>
+
+    <script>
+        function updatestatus(id) {
+
+
+
+            (new PNotify({
+                title: 'Confirmation Needed',
+                text: 'Are you sure?',
+                icon: 'glyphicon glyphicon-question-sign',
+                hide: false,
+                confirm: {
+                    confirm: true
+                },
+                buttons: {
+                    closer: false,
+                    sticker: false
+                },
+                history: {
+                    history: false
+                },
+                addclass: 'stack-modal',
+                stack: {
+                    'dir1': 'down',
+                    'dir2': 'right',
+                    'modal': true
+                }
+            })).get().on('pnotify.confirm', function() {
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '{{ route('updateuserstatus') }}',
+                    method: 'POST',
+                    data: {
+                        id: id
+                    },
+                    success: function(response) {
+                        if (response.status == 'success') {
+                            new PNotify({
+                                title: 'Success',
+                                text: 'Account Update',
+                                type: 'success'
+                            });
+                            setTimeout(function() { // wait for 5 secs(2)
+                                location.reload(); // then reload the page.(3)
+                            }, 500);
+                        }
+                    },
+                    error: function(error) {
+                        // Handle error if needed
+                    }
+                });
+            }).on('pnotify.cancel', function() {});
+
+
+        }
+    </script>
 @endpush
