@@ -45,6 +45,87 @@
                 <form action="{{route('children.update', $editdata->id)}}" method="post" enctype="multipart/form-data">
             @endif
 
+              <!-- receivelove -->
+            @if($edit == 'receivelove')
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Receive Love</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('receivelove.update', $editdata->id)}}" method="post" enctype="multipart/form-data">
+            @endif
+
+            <!-- vaccine -->
+            @if($edit == 'vaccine')
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Vaccine</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('vaccine.update', $editdata->id)}}" method="post" enctype="multipart/form-data">
+            @endif
+
+            <!-- pets -->
+            @if($edit == 'pet')
+               <div class="card-header">                    
+                   <h5 class="card-title mb-0">Pet</h5>
+               </div>
+               <div class="card-body">
+               <form action="{{route('pet.update', $editdata->id)}}" method="post" enctype="multipart/form-data">
+           @endif
+
+            <!-- drinking -->
+            @if($edit == 'drinking')
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Drinking</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('drinking.update', $editdata->id)}}" method="post" enctype="multipart/form-data">
+            @endif
+
+            <!-- sleepinghabit -->
+            @if($edit == 'sleepinghabit')
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Sleeping Habits</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('sleepinghabit.update', $editdata->id)}}" method="post" enctype="multipart/form-data">
+            @endif
+
+            <!-- Workout -->
+            @if($edit == 'workout')
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Workout</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('workout.update', $editdata->id)}}" method="post" enctype="multipart/form-data">
+            @endif
+
+            <!-- dietary -->
+            @if($edit == 'dietary')
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Dietary</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('dietary.update', $editdata->id)}}" method="post" enctype="multipart/form-data">
+            @endif
+
+            <!-- smoke -->
+            @if($edit == 'smoke')
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Smoke</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('smoke.update', $editdata->id)}}" method="post" enctype="multipart/form-data">
+            @endif
+
+              <!-- sexualorientation -->
+            @if($edit == 'sexualorientation')
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Sexual Orientation</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('sexualorientation.update', $editdata->id)}}" method="post" enctype="multipart/form-data">
+            @endif
+
                 @csrf 
                 @method('put')
                 <div class="form-row">

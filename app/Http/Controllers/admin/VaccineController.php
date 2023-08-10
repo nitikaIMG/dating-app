@@ -4,11 +4,10 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\ReceiveLove;
+use App\Models\Vaccine;
 use DataTables;
 
-
-class ReceiveLoveController extends Controller
+class VaccineController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,12 +17,11 @@ class ReceiveLoveController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = ReceiveLove::all();
-            // dd($data);
+            $data = Vaccine::all();
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function($row){
-                    $actionBtn = '<a href="'.route("receivelove.edit",$row->id).'" class="edit btn btn-success btn-sm"><i class="feather icon-eye"></i></a> <button type="button" onclick="deleterecord('. $row->id .')" class="delete btn btn-danger btn-sm"><i class="feather icon-trash-2"></i></button>';
+                    $actionBtn = '<a href="'.route("vaccine.edit",$row->id).'" class="edit btn btn-success btn-sm"><i class="feather icon-eye"></i></a> <button type="button" onclick="deleterecord('. $row->id .')" class="delete btn btn-danger btn-sm"><i class="feather icon-trash-2"></i></button>';
                     return $actionBtn;
                 })
                 ->addColumn('status', function ($row) {
@@ -38,7 +36,7 @@ class ReceiveLoveController extends Controller
                 ->rawColumns(['action','status'])
                 ->make(true);
         }
-        return view('basics.receivelove.index');
+        return view('basics.vaccine.index');
     }
 
     /**
@@ -48,7 +46,7 @@ class ReceiveLoveController extends Controller
      */
     public function create()
     {
-        $create = 'receivelove';
+        $create = 'vaccine';
         return view('basics.create',compact('create'));
     }
 
@@ -61,17 +59,17 @@ class ReceiveLoveController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:receive_love|min:2|max:30',
+            'name' => 'required|unique:vaccines|min:2|max:30',
         ],[
-            'name' => 'this field required!'
+            'name' => 'this field is required!'
         ]);
    
         $data = [
             'name' => $request->name,
             'status' => $request->status,
         ];
-        $save = ReceiveLove::create($data);
-        return redirect()->route('receivelove.index')->with('success', 'Created');
+        $save = Vaccine::create($data);
+        return redirect()->route('vaccine.index')->with('success', 'Created');
     }
 
     /**
@@ -93,8 +91,8 @@ class ReceiveLoveController extends Controller
      */
     public function edit($id)
     {
-        $edit = 'receivelove';
-        $editdata = ReceiveLove::where('id', $id)->first();
+        $edit = 'vaccine';
+        $editdata = Vaccine::where('id', $id)->first();
         return view('basics.edit', compact('editdata','edit'));
     }
 
@@ -107,8 +105,9 @@ class ReceiveLoveController extends Controller
      */
     public function update(Request $request, $id)
     {
+       
         $request->validate([
-            'name' => 'required|min:2|max:30|unique:receive_love,name,'.$id,
+            'name' => 'required|min:2|max:30|unique:vaccines,name,'.$id,
         ],[
             'name' => 'this field is required!'
         ]);
@@ -117,8 +116,8 @@ class ReceiveLoveController extends Controller
             'name' => $request->name,
             'status' => $request->status,
         ];
-        $update = ReceiveLove::where('id',$id)->update($data);
-        return redirect()->route('receivelove.index')->with('success', 'update');
+        $update = Vaccine::where('id',$id)->update($data);
+        return redirect()->route('vaccine.index')->with('success', 'Update');
     }
 
     /**
@@ -130,15 +129,14 @@ class ReceiveLoveController extends Controller
     public function deleterecord(Request $request)
     {
         $id = $request->id;
-        $delete = ReceiveLove::where('id', $id)->delete();
+        $delete = Vaccine::where('id', $id)->delete();
         return response()->json([
             'status'=> 'success'
         ]);
     }
-
     public function updateuserstatus(Request $request)
     {
-        $user = ReceiveLove::where('id', $request->id)->first();
+        $user = Vaccine::where('id', $request->id)->first();
         // dd(user);
         if($user->status == '1'){
             $data['status'] = 0;

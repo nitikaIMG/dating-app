@@ -18,7 +18,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = User::where('phone', '!=','0000000000')->latest()->get();
+            $data = User::where('phone', '!=','')->latest()->get();
             // dd($data);
             return Datatables::of($data)
                 ->addIndexColumn()
