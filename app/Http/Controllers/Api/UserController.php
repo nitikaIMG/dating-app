@@ -38,8 +38,8 @@ class UserController extends Controller
            
             $getuserchoice = PreferList::where('user_id', $id)->first();
             // dd($getuserchoice);
-            if(!empty($getuserchoice)){ 
-                if(!empty($getuserchoice->age_status) && !empty($getuserchoice->first_age) || !empty($getuserchoice->second_age)){
+            if(!empty($getuserchoice->age_status) && !empty($getuserchoice->first_age) || !empty($getuserchoice->second_age)){
+                    if(!empty($getuserchoice)){ 
                     $users = User::where('gender', $getuserchoice->show_me_to)->whereHas('userInfo', function ($query) use ($getuserchoice) {
                     $query->whereBetween('age', [$getuserchoice->first_age, $getuserchoice->second_age]);})->with('userInfo')->get();
                 }
@@ -112,7 +112,7 @@ class UserController extends Controller
             else{
                 $getuserinterest = UserInfo::where('user_id', $id)->first();
                 // dd( $getuserinterest->interests);
-                $users = User::Where('gender', $getuserinterest->interests)->with('UserInfo')->get();
+                $users = User::Where('gender', $getuserinterest->interests)->where('id','!=',$id)->with('UserInfo')->get();
             }
             if (!empty($users)) {
                 $userdetail = UserResource::collection($users);

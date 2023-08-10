@@ -579,7 +579,7 @@ class AuthController extends ApiController
             $mydate = strtotime("now");
             $dob = date('d/m/Y', $mydate);
 
-            $otp = 123456;
+            $otp = $this->generateOTP();
 
             # Create User and store its Information
             $user = User::create([
