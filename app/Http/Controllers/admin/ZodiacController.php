@@ -18,7 +18,6 @@ class ZodiacController extends Controller
     {
         if ($request->ajax()) {
             $data = Zodiac::all();
-            // dd($data);
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function($row){
@@ -26,11 +25,14 @@ class ZodiacController extends Controller
                     return $actionBtn;
                 })
                 ->addColumn('status', function ($row) {
+                    $st  = $row->status;
+            
                     $status = $row->status == '1' ? 'checked' : '';
                     $toggleClass = $row->status == '1' ? 'active' : 'inactive';
                     
+                    
                     return '<label class="switch">
-                                <input type="checkbox"  class="js-switch-primary-small" onclick="updatestatus('. $row->id .')" data-id="' . $row->id . '" ' . $status . ' />
+                                <input type="checkbox"  class="js-switch-primary-small" onclick="updatestatus('. $row->id .', '.$st.')" data-id="' . $row->id . '" ' . $status . ' />
                                 <span class="slider round ' . $toggleClass . '"></span>
                             </label>';
                 })
@@ -48,7 +50,7 @@ class ZodiacController extends Controller
     public function create()
     {
         $create = 'zodiac';
-        return view('basics.zodiac.create',compact('create'));
+        return view('basics.create',compact('create'));
     }
 
     /**
@@ -60,7 +62,7 @@ class ZodiacController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:explores|alpha|min:2|max:30',
+            'name' => 'required|unique:explores|min:2|max:30',
         ],[
             'name' => 'enter zodiac name!'
         ]);
@@ -107,7 +109,7 @@ class ZodiacController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required|alpha|min:2|max:30||unique:zodiacs,name,'.$id,
+            'name' => 'required|min:2|max:30||unique:zodiacs,name,'.$id,
         ],[
             'name' => 'enter zodiac name!'
         ]);
@@ -133,5 +135,21 @@ class ZodiacController extends Controller
         return response()->json([
             'status'=> 'success'
         ]);
+    }
+
+    public function updateuserstatus(Request $request)
+    {
+        $user = Zodiac::where('id', $request->id)->first();
+        
+        if($user->status == '1'){
+            $data['status'] = 0;
+        }else{
+            $data['status'] = 1;
+        }
+        $user->update($data);
+        return response()->json([
+            'status' => 'success'
+        ]);
+
     }
 }

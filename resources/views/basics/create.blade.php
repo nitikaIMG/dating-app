@@ -30,29 +30,101 @@
             @endif
             <!-- comunincation style-->
             @if($create == 'communication')
-            <div class="card-header">                    
-                <h5 class="card-title mb-0">Communication Style</h5>
-            </div>
-            <div class="card-body">
-            <form action="{{route('communication.store')}}" method="post" enctype="multipart/form-data">
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Communication Style</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('communication.store')}}" method="post" enctype="multipart/form-data">
             @endif
 
             <!-- children style-->
             @if($create == 'children')
-            <div class="card-header">                    
-                <h5 class="card-title mb-0">Children</h5>
-            </div>
-            <div class="card-body">
-            <form action="{{route('children.store')}}" method="post" enctype="multipart/form-data">
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Children</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('children.store')}}" method="post" enctype="multipart/form-data">
             @endif
 
-              <!-- children style-->
+              <!-- receivelove style-->
             @if($create == 'receivelove')
                 <div class="card-header">                    
                     <h5 class="card-title mb-0">Love</h5>
                 </div>
                 <div class="card-body">
                 <form action="{{route('receivelove.store')}}" method="post" enctype="multipart/form-data">
+            @endif
+
+                <!-- vaccine -->
+            @if($create == 'vaccine')
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Vaccine</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('vaccine.store')}}" method="post" enctype="multipart/form-data">
+            @endif
+
+            <!-- pet -->
+            @if($create == 'pet')
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Pet</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('pet.store')}}" method="post" enctype="multipart/form-data">
+            @endif
+
+              <!-- drinking -->
+            @if($create == 'drinking')
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Drinking</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('drinking.store')}}" method="post" enctype="multipart/form-data">
+            @endif
+
+              <!-- sleepinghabit -->
+            @if($create == 'sleepinghabit')
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Sleeping Habits</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('sleepinghabit.store')}}" method="post" enctype="multipart/form-data">
+            @endif
+
+            <!-- Workout -->
+            @if($create == 'workout')
+            <div class="card-header">                    
+                <h5 class="card-title mb-0">Workout</h5>
+            </div>
+            <div class="card-body">
+                <form action="{{route('workout.store')}}" method="post" enctype="multipart/form-data">
+            @endif
+
+            <!-- dietary -->
+            @if($create == 'dietary')
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Dietary</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('dietary.store')}}" method="post" enctype="multipart/form-data">
+            @endif
+
+            <!-- smoke -->
+            @if($create == 'smoke')
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Smoke</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('smoke.store')}}" method="post" enctype="multipart/form-data">
+            @endif
+
+            <!-- sexualorientation -->
+            @if($create == 'sexualorientation')
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Sexual Orientation</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('sexualorientation.store')}}" method="post" enctype="multipart/form-data">
             @endif
 
                 @csrf 

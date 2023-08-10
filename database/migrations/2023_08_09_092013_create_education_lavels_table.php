@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('education_lavels', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullabel();
-            $table->integer('status')->nullable()->comment('0=>enabled, 1=>disabled');
+            $table->integer('status')->default(0)->comment('0=>enabled, 1=>disabled');
             $table->timestamps();
         });
     }
