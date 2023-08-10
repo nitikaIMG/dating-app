@@ -64,7 +64,7 @@
                     </li>
                     <li>
                         <a href="javaScript:void();">
-                            <i class="ri-apps-line"></i><span>Users Basic</span><i class="ri-arrow-right-s-line"></i>
+                            <i class="fa fa-info-circle" aria-hidden="true"></i><span>Users Basic</span><i class="ri-arrow-right-s-line"></i>
                         </a>
                         <ul class="vertical-submenu">
                             <li><a href="{{route('zodiac.index')}}">Zodiacs</a></li>
