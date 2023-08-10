@@ -21,8 +21,8 @@ return new class extends Migration
             $table->integer('see_who_likes_you')->nullable()->comment('0=>deactive plan, 1=>active plan');
             $table->integer('priority_likes')->nullable()->comment('0=>deactive plan, 1=>active plan');
             $table->integer('unlimited_rewinds')->nullable()->comment('0=>deactive plan, 1=>active plan');
-            $table->integer('1_free_boost_per_month')->nullable()->comment('0=>deactive plan, 1=>active plan');
-            $table->integer('5_free_super_likes_per_week')->nullable()->comment('0=>deactive plan, 1=>active plan');
+            $table->integer('free_boost_per_month_1')->nullable()->comment('0=>deactive plan, 1=>active plan');
+            $table->integer('free_super_likes_per_week_5')->nullable()->comment('0=>deactive plan, 1=>active plan');
             $table->integer('message_before_matching')->nullable()->comment('0=>deactive plan, 1=>active plan');
             $table->integer('passport')->nullable()->comment('0=>deactive plan, 1=>active plan');
             $table->integer('top_pics')->nullable()->comment('0=>deactive plan, 1=>active plan');
