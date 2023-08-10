@@ -64,7 +64,7 @@ Route::middleware('jwt.verify')->group(function () {
     });
     
         
-    
+     
     Route::get('showAllRequest', [RequestApiController::class, 'showAllRequest']); #show all request (all matched and not matched request on the basis of auth user)
 
     Route::get('getActiveUser', [UserController::class, 'getActiveUser']); # show all active users list basis of Active divice id
@@ -79,7 +79,7 @@ Route::middleware('jwt.verify')->group(function () {
     
     Route::apiResource('users', UserController::class); # filled user_detail and show list
     Route::apiResource('userprofile', UserProfileController::class); # User Profile Controller 
-    Route::apiResource('rules', RuleController::class); # Rules Controller
+    Route::apiResource('rules', RuleController::class); # Rules Controller 
     Route::apiResource('media', MediaController::class); # User Media Controller
     Route::apiResource('requestapprove', RequestApiController::class);
     Route::apiResource('postunfavourites', FavouritesProfileApiController::class);
