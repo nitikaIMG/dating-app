@@ -169,25 +169,25 @@
                 'modal': true
             }
         })).get().on('pnotify.confirm', function() {
-           
             $.ajax({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            url: '{{route('updateexplorestatus')}}',
+            url: '{{route('zodiacupdate')}}',
             method: 'POST',
             data: { id: id },
             success: function (response) {
                 if(response.status == 'success')
                 {
+                    console.log(response);
                     new PNotify({
                         title: 'Success',
                         text: 'Account Update',
                         type: 'success'
                     });
-                    setTimeout(function(){// wait for 5 secs(2)
-                        location.reload(); // then reload the page.(3)
-                    }, 1000);
+                    // setTimeout(function(){// wait for 5 secs(2)
+                    //     location.reload(); // then reload the page.(3)
+                    // }, 1000);
                 }
             },
             error: function (error) {

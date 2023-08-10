@@ -174,7 +174,7 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            url: '{{route('updateexplorestatus')}}',
+            url: '{{route('personalitystatus')}}',
             method: 'POST',
             data: { id: id },
             success: function (response) {
@@ -185,9 +185,6 @@
                         text: 'Account Update',
                         type: 'success'
                     });
-                    setTimeout(function(){// wait for 5 secs(2)
-                        location.reload(); // then reload the page.(3)
-                    }, 1000);
                 }
             },
             error: function (error) {

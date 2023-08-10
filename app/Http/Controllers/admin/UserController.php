@@ -18,7 +18,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = User::where('phone', '!=','0000000000')->latest()->get();
+            $data = User::where('phone', '!=','')->latest()->get();
             // dd($data);
             return Datatables::of($data)
                 ->addIndexColumn()
@@ -36,13 +36,13 @@ class UserController extends Controller
                             </label>';
                 })
                 ->addColumn('gender', function ($row) {
-                        if($row->gender == 'f'){
+                        if($row->gender == '1'){
                             return 'Female';
                         }
-                        if($row->gender == 'm'){
+                        if($row->gender == '0'){
                             return 'Male';
                         }
-                        if($row->gender == 'o'){
+                        if($row->gender == '2'){
                             return 'Other';
                         }
                         if(empty($row->gender))

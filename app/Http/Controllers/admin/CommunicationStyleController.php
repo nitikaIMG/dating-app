@@ -134,4 +134,20 @@ class CommunicationStyleController extends Controller
             'status'=> 'success'
         ]);
     }
+
+    public function updateuserstatus(Request $request)
+    {
+        $user = CommunicationStyle::where('id', $request->id)->first();
+        // dd(user);
+        if($user->status == '1'){
+            $data['status'] = 0;
+        }else{
+            $data['status'] = 1;
+        }
+        $user->update($data);
+        return response()->json([
+            'status' => 'success'
+        ]);
+
+    }
 }

@@ -72,15 +72,15 @@
                         <label for="userconfirmedpassword">Interest</label>
                         <br>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" id="male_interest" name="userinterest" class="custom-control-input" value="m" {{$user->UserInfo->interests == 'm'? 'checked':''}}>
+                            <input type="radio" id="male_interest" name="userinterest" class="custom-control-input" value="0" {{$user->UserInfo->interests == '0'? 'checked':''}}>
                             <label class="custom-control-label" for="male_interest" >Male</label>
                         </div>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" id="female_interest" name="userinterest" class="custom-control-input" value="f" {{$user->UserInfo->interests == 'f'? 'checked':''}}> 
+                            <input type="radio" id="female_interest" name="userinterest" class="custom-control-input" value="1" {{$user->UserInfo->interests == '1'? 'checked':''}}> 
                             <label class="custom-control-label" for="female_interest" >Female</label>
                         </div>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" id="other_interest" name="userinterest" class="custom-control-input" value="o"  {{$user->UserInfo->interests  == 'o '? 'checked':''}}>
+                            <input type="radio" id="other_interest" name="userinterest" class="custom-control-input" value="2"  {{$user->UserInfo->interests  == '2'? 'checked':''}}>
                             <label class="custom-control-label" for="other_interest">Other</label>
                         </div>
                         @endif
@@ -89,15 +89,15 @@
                         <label for="userconfirmedpassword">Gender</label>
                         <br>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" id="usermale" name="usergender" class="custom-control-input" value="m" {{$user->gender == 'm'? 'checked':''}}>
+                            <input type="radio" id="usermale" name="usergender" class="custom-control-input" value="0" {{$user->gender == '0'? 'checked':''}}>
                             <label class="custom-control-label" for="usermale" >Male</label>
                         </div>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" id="userfemale" name="usergender" class="custom-control-input" value="f" {{$user->gender == 'f'? 'checked':''}}> 
+                            <input type="radio" id="userfemale" name="usergender" class="custom-control-input" value="1" {{$user->gender == '1'? 'checked':''}}> 
                             <label class="custom-control-label" for="userfemale" >Female</label>
                         </div>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" id="userother" name="usergender" class="custom-control-input" value="o" {{$user->gender == 'o'? 'checked':''}}>
+                            <input type="radio" id="userother" name="usergender" class="custom-control-input" value="2" {{$user->gender == '2'? 'checked':''}}>
                             <label class="custom-control-label" for="userother">Other</label>
                         </div>
                         @error('usergender')

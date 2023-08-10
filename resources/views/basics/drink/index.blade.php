@@ -61,18 +61,18 @@
      <div class="breadcrumbbar">
         <div class="row align-items-center">
             <div class="col-md-8 col-lg-8">
-                <h4 class="page-title">Children</h4>
+                <h4 class="page-title">Drinks</h4>
                 <div class="breadcrumb-list">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html">Home</a></li>
                         <li class="breadcrumb-item"><a href="#">Basics</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">children</li>
+                        <li class="breadcrumb-item active" aria-current="page">drinks</li>
                     </ol>
                 </div>
             </div>
             <div class="col-md-4 col-lg-4">
                 <div class="widgetbar">
-                    <a href="{{route('children.create')}}">
+                    <a href="{{route('drinking.create')}}">
                         <button class="btn btn-primary"><i class="ri-add-line align-middle mr-2"></i>ADD</button>
                     </a>
                 </div>                        
@@ -124,7 +124,7 @@
       var table = $('.datatable').DataTable({
           processing: true,
           serverSide: true,
-          ajax: "{{route('children.index')}}",
+          ajax: "{{ route('drinking.index') }}",
           columns: [
               {data: 'DT_RowIndex', name: 'DT_RowIndex'},
               {data: 'name', name: 'name'},
@@ -174,7 +174,7 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            url: '{{route('childrenstatus')}}',
+            url: '{{route('drinkingstatus')}}',
             method: 'POST',
             data: { id: id },
             success: function (response) {
@@ -226,7 +226,7 @@
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                url: '{{route("children.deleterecord")}}',
+                url: '{{route("drinking.deleterecord")}}',
                 data: {id:id},
                 method: 'DELETE',
                 success: function (response) {
@@ -237,7 +237,7 @@
                             text: 'Account Delete',
                             type: 'success'
                         });
-                        setTimeout(function(){// wait for 1 secs(2)
+                        setTimeout(function(){// wait for 5 secs(2)
                             location.reload(); // then reload the page.(3)
                         }, 1000);
                     }

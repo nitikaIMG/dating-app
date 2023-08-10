@@ -11,21 +11,21 @@ if(!function_exists('total_user')){
 }
 if(!function_exists('total_user_male')){
     function total_user_male(){
-        $users = User::where('gender','m')->get();
+        $users = User::where('gender','0')->get();
         $total  = Count($users);
         return $total;
     }
 }
 if(!function_exists('total_user_female')){
     function total_user_female(){
-        $users = User::where('gender','f')->get();
+        $users = User::where('gender','1')->get();
         $total  = Count($users);
         return $total;
     }
 }
 if(!function_exists('total_user_other')){
     function total_user_other(){
-        $users = User::where('gender','o')->get();
+        $users = User::where('gender','2')->get();
         $total  = Count($users);
         return $total;
     }
