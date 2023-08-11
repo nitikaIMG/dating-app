@@ -1,55 +1,57 @@
 <!-- Start Leftbar -->
-    <div class="leftbar">
-        <!-- Start Sidebar -->
-        <div class="sidebar">
-            <!-- Start Logobar -->
-            <div class="logobar">
-                <a href="{{route('dashboard')}}" class="logo logo-large" style="color: aqua;font-weight:bold;"><img src="{{asset('public/assets/images/logo11.png')}}" width="70px" class="img-fluid" alt="logo">MatchMingle</a>
-                <a href="{{route('dashboard')}}" class="logo logo-small">MatchMingle</a>
-            </div>
-            <!-- End Logobar -->
-            <!-- Start Navigationbar -->
-            <div class="navigationbar">
-                <ul class="vertical-menu">
-                    <li>
-                        <a href="{{route('dashboard')}}">
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                    {{-- <li>
+<div class="leftbar">
+    <!-- Start Sidebar -->
+    <div class="sidebar">
+        <!-- Start Logobar -->
+        <div class="logobar">
+            <a href="{{ route('dashboard') }}" class="logo logo-large" style="color: aqua;font-weight:bold;"><img
+                    src="{{ asset('public/assets/images/logo11.png') }}" width="70px" class="img-fluid"
+                    alt="logo">MatchMingle</a>
+            <a href="{{ route('dashboard') }}" class="logo logo-small">MatchMingle</a>
+        </div>
+        <!-- End Logobar -->
+        <!-- Start Navigationbar -->
+        <div class="navigationbar">
+            <ul class="vertical-menu">
+                <li>
+                    <a href="{{ route('dashboard') }}">
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                {{-- <li>
                         <a href="dashboard-ecommerce.html">
                             <i class="ri-store-2-fill"></i><span>E-Commerce</span>
                         </a>
                     </li> --}}
-                    {{-- <li>
+                {{-- <li>
                         <a href="dashboard-hospital.html">
                             <i class="ri-hospital-fill"></i><span>Hospital</span>
                         </a>
                     </li> --}}
-                    <li class="vertical-header"></li>
-                    <li>
-                        <a href="javaScript:void();">
-                            <i class="ri-user-6-fill"></i><span>All Users</span><i class="ri-arrow-right-s-line"></i>
-                        </a>
-                        <ul class="vertical-submenu">
-                            <li><a href="{{route('users.index')}}">Users</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javaScript:void();">
-                            <i class="feather icon-server"></i><span>Explore</span><i class="ri-arrow-right-s-line"></i>
-                        </a>
-                        <ul class="vertical-submenu">
-                            <li><a href="{{route('explore.index')}}">Explores</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javaScript:void();">
-                            <i class="ri-apps-line"></i><span>Subscription</span><i class="ri-arrow-right-s-line"></i>
-                        </a>
-                        <ul class="vertical-submenu">
-                            <li><a href="{{route('subscription.index')}}">Subscriptions</a></li>
-                            {{-- <li><a href="apps-chat.html">Chat</a></li>
+                <li class="vertical-header"></li>
+                <li>
+                    <a href="javaScript:void();">
+                        <i class="ri-user-6-fill"></i><span>All Users</span><i class="ri-arrow-right-s-line"></i>
+                    </a>
+                    <ul class="vertical-submenu">
+                        <li><a href="{{ route('users.index') }}">Users</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javaScript:void();">
+                        <i class="feather icon-server"></i><span>Explore</span><i class="ri-arrow-right-s-line"></i>
+                    </a>
+                    <ul class="vertical-submenu">
+                        <li><a href="{{ route('explore.index') }}">Explores</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javaScript:void();">
+                        <i class="ri-apps-line"></i><span>Subscription</span><i class="ri-arrow-right-s-line"></i>
+                    </a>
+                    <ul class="vertical-submenu">
+                        <li><a href="{{ route('subscription.index') }}">Subscriptions</a></li>
+                        {{-- <li><a href="apps-chat.html">Chat</a></li>
                             <li>
                                 <a href="javaScript:void();">Email<i class="ri-arrow-right-s-line"></i></a>
                                 <ul class="vertical-submenu">
@@ -88,12 +90,12 @@
                                     <li><a href="{{route('zodiac.index')}}">zodiacs</a></li>
                                 </ul>
                             </li> --}}
-                            {{--
+                        {{--
                             <li><a href="apps-kanban-board.html">Kanban Board</a></li>
                             <li><a href="apps-onboarding-screens.html">Onboarding Screens</a></li> --}}
-                        </ul>
-                    </li>
-                    {{-- <li>
+                    </ul>
+                </li>
+                {{-- <li>
                         <a href="javaScript:void();">
                             <i class="ri-file-copy-2-line"></i><span>Forms</span><i class="ri-arrow-right-s-line"></i>
                         </a>
@@ -114,7 +116,7 @@
                             <li><a href="form-xeditable.html">X-editable</a></li>
                         </ul>
                     </li> --}}
-                    {{-- <li>
+                {{-- <li>
                         <a href="javaScript:void();">
                             <i class="ri-pie-chart-line"></i><span>Charts</span><i class="ri-arrow-right-s-line"></i>
                         </a>
@@ -130,7 +132,7 @@
                             <li><a href="chart-sparkline.html">Sparkline</a></li>
                         </ul>
                     </li> --}}
-                    {{-- <li>
+                {{-- <li>
                         <a href="javaScript:void();">
                             <i class="ri-service-line"></i><span>Icons</span><i class="ri-arrow-right-s-line"></i>
                         </a>
@@ -150,7 +152,7 @@
                             <li><a href="icon-typicons.html">Typicons</a></li>
                         </ul>
                     </li> --}}
-                    {{-- <li>
+                {{-- <li>
                         <a href="javaScript:void();">
                             <i class="ri-table-line"></i><span>Tables</span><i class="ri-arrow-right-s-line"></i>
                         </a>
@@ -162,7 +164,7 @@
                             <li><a href="table-rwdtable.html">RWD</a></li>
                         </ul>
                     </li> --}}
-                    {{-- <li>
+                {{-- <li>
                         <a href="javaScript:void();">
                             <i class="ri-map-pin-line"></i><span>Maps</span><i class="ri-arrow-right-s-line"></i>
                         </a>
@@ -171,7 +173,7 @@
                             <li><a href="map-vector.html">Vector</a></li>
                         </ul>
                     </li> --}}
-                    {{-- <li>
+                {{-- <li>
                         <a href="javaScript:void();">
                             <i class="ri-pages-line"></i><span>Pages</span><i class="ri-arrow-right-s-line"></i>
                         </a>
@@ -223,15 +225,15 @@
                             </li>
                         </ul>
                     </li> --}}
-                    {{-- <li>
+                {{-- <li>
                         <a href="widgets.html">
                             <i class="ri-palette-line"></i><span>Widgets</span><span class="new-icon"></span>
                         </a>
                     </li> --}}
-                </ul>
-            </div>
-            <!-- End Navigationbar -->
+            </ul>
         </div>
-        <!-- End Sidebar -->
+        <!-- End Navigationbar -->
     </div>
+    <!-- End Sidebar -->
+</div>
 <!-- End Leftbar -->
