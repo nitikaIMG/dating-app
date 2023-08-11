@@ -34,6 +34,7 @@ use App\Http\Controllers\admin\SexualOrientationController;
 
 
 Route::get('/',[HomeController::class, 'index'])->name('dashboard');
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 Route::get('back/button',[HomeController::class, 'back'])->name('backbtn');
 
@@ -131,4 +132,4 @@ Route:: group(['middleware'=>'auth'],function(){
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
