@@ -51,7 +51,7 @@
                     <div class="card-body pb-0">
                         <div class="row align-items-center">
                             <div class="col-6">
-                                <h4>{{ total_user() }}</h4>
+                                {{-- <h4>{{ total_user() }}</h4> --}}
                             </div>
                         </div>
                     </div>
@@ -65,7 +65,7 @@
                     <div class="card-body pb-0">
                         <div class="row align-items-center">
                             <div class="col-6">
-                                <h4>{{ active_total_users() }}</h4>
+                                {{-- <h4>{{ active_total_users() }}</h4> --}}
                             </div>
                         </div>
                     </div>
@@ -81,7 +81,7 @@
                     <div class="card-body pb-0">
                         <div class="row align-items-center">
                             <div class="col-6">
-                                <h4>{{ total_user_male() }}</h4>
+                                {{-- <h4>{{ total_user_male() }}</h4> --}}
                             </div>
                         </div>
                     </div>
@@ -97,7 +97,7 @@
                     <div class="card-body pb-0">
                         <div class="row align-items-center">
                             <div class="col-6">
-                                <h4>{{ total_user_female() }}</h4>
+                                {{-- <h4>{{ total_user_female() }}</h4> --}}
                             </div>
                         </div>
                     </div>
@@ -112,7 +112,7 @@
                     <div class="card-body pb-0">
                         <div class="row align-items-center">
                             <div class="col-6">
-                                <h4>{{ total_user_other() }}</h4>
+                                {{-- <h4>{{ total_user_other() }}</h4> --}}
                             </div>
                         </div>
                     </div>
@@ -201,7 +201,7 @@
                                     @php
                                         $count = 1;
                                     @endphp
-                                    @forelse(active_users() as $user)
+                                    {{-- @forelse(active_users() as $user)
                                         <tr>
                                             <th scope="row">{{ $count++ }}</th>
 
@@ -215,14 +215,14 @@
                                                     class="active-list">{{ $user->phone }}</a></td>
                                             <td><a href="{{ route('users.edit', $user->id) }}"
                                                     class="active-list">{{ $user->age }}</a></td>
-                                            {{-- <td>$99</td> --}}
+                                            
                                             <td><span class="badge badge-success"><a
                                                         href="{{ route('users.edit', $user->id) }}"
                                                         class="active-list">Active</a></span></td>
                                         </tr>
                                     @empty
                                         <span>NO One Is Online</span>
-                                    @endforelse
+                                    @endforelse --}}
                                 </tbody>
                             </table>
                         </div>
@@ -240,7 +240,7 @@
                     <div class="card-body">
                         {{-- @dd(top_rated_profile()); --}}
                         <div class="user-slider">
-                            @forelse(top_rated_profile() as $user)
+                            {{-- @forelse(top_rated_profile() as $user)
                                 <div class="user-slider-item">
                                     <div class="card-body text-center">
                                         @php
@@ -259,7 +259,7 @@
                                 </div>
                             @empty
                                 <span>None</span>
-                            @endforelse
+                            @endforelse --}}
                         </div>
                     </div>
                 </div>
