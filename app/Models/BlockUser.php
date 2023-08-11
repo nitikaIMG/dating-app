@@ -13,6 +13,6 @@ class BlockUser extends Model
 
     public function user()
     {
-        return $this->hasMany(User::class, 'id');
+        return $this->belongsTo(User::class, 'blocked_to');
     }
 }

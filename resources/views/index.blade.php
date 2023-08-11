@@ -204,7 +204,7 @@
                                 @forelse(active_users() as $user)
                                 
                                 <tr>
-                                    <th scope="row">{{$count}}</th>
+                                    <th scope="row">{{$count++}}</th>
                                         
                                             <td> <a href="{{route('users.edit',$user->id)}}" class="active-list"><img src="{{asset($user->profile_image)}}"  width="50px" height="50px" srcset=""></a></td>
                                         
@@ -221,6 +221,7 @@
                                 </tbody>
                             </table>
                         </div>
+                        {{ active_users()->links('pagination::bootstrap-5') }}
                     </div>
                 </div>
             </div>

@@ -84,6 +84,7 @@ class ExploreController extends Controller
         ],[
             'name' => 'Please Enter A Unique Explore\'s Category Name!'
         ]);
+        
        if(!empty($request->file)){
            $imageName = time() . '.' . $request->file->extension();;
            $full_path = $request->file->move(public_path('images'), $imageName);

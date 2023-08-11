@@ -51,10 +51,11 @@ class UserProfileController extends Controller
                 $validator =  Validator::make($request->all(), [
                     'first_name'     => ['required', 'string', 'min:3', 'max:60'],
                     'last_name'      => ['required', 'string', 'min:3', 'max:60'],
-                    'gender'         => ['required', 'in:m,f,o'],
+                    'gender'         => ['required', 'in:0,1,2'],
                     'age'            => ['required', 'numeric'],
                     'enable_location' => ['required', 'in:1,0'],
                     'dob'            => ['required', 'date'],
+                    'email'            => ['required','email','unique:users'],
                     'country'        => ['required', 'string'],
                     'interests'      => ['required', 'integer', 'max:2'],
                     'phone'          => ['numeric', 'digits:10'],
@@ -79,7 +80,7 @@ class UserProfileController extends Controller
                 $verified['gender']          = $request->gender;
                 $verified['age']             = $request->age;
                 $verified['enable_location'] = $request->enable_location;
-                // $verified['profile_image']   =    $request->profile_image;
+                $verified['email']   =    $request->email;
                 $verified['profile_image']   =    $path;
                 $verified['latitude']      = $request->latitude;
                 $verified['longitude']     = $request->longitude;

@@ -151,7 +151,7 @@ class SettingController extends ApiController
     {
         $messages = [];
         $validator = Validator::make($request->all(), [
-            'phone' => ['required', 'digits:10'],
+            'id' => ['required'],
         ], $messages);
 
         if ($validator->fails()) {
@@ -161,7 +161,7 @@ class SettingController extends ApiController
             DB::beginTransaction();
             $validated = $validator->validated();
             $id = auth()->user()->id;
-            $userget = User::where('phone', $validated['phone'])->where('phone_verified_at', '!=', null)->first();
+            $userget = User::where('id', $validated['id'])->where('phone_verified_at', '!=', null)->first();
 
             if (!empty($userget)) {
                 $blockuser = BlockUser::where('blocked_to', $userget->id)->first();
@@ -192,16 +192,19 @@ class SettingController extends ApiController
         }
     }
 
-    # showing list of block user
+    # showing list of block user 
     public function blockcontactlist(Request $request)
     {
         try {
             DB::beginTransaction();
             $id = auth()->user()->id;
+            
             $blockuserlist = BlockUser::where('blocked_by', $id)->with(['user' => function ($query) {
-                $query->select('id', 'phone');
+                $query->select('id','first_name','last_name');
             }])->get()->pluck('user')->flatten();
-
+            // dd($blockuserlist);
+            // $blockuserlist=BlockUser::where('blocked_by',$id)
+            // ->join('users','users.id','blockusers.blocked_to')->select('users.id','users.first_name','users.last_name')->get()->flatten();
             return ApiResponse::ok(
                 'Blocked user list',
                 $this->getaccountsetting($blockuserlist)
@@ -276,13 +279,13 @@ class SettingController extends ApiController
     public function showsubscription(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'plan_name'    => ['required', 'string', 'in:Tinder Plus,Tinder Gold,Tinder Platinum'],
+            'plan_name'    => ['required', 'string',],
         ]);
         if ($validator->fails()) {
             return $this->validation_error_response($validator);
         }
         try {
-            DB::beginTransaction();
+            DB::beginTransaction(); 
             $validated = $validator->validated();
             $validated['plan_name'] = $request->plan_name;
             // dd('sdfsn');

@@ -31,14 +31,15 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        // dd('s');
+       
         try {
             DB::beginTransaction();
             $id = Auth::user()->id;
+           
             $getuserchoice = PreferList::where('user_id', $id)->first();
             // dd($getuserchoice);
-            if(!empty($getuserchoice)){ 
-                if(!empty($getuserchoice->age_status) && !empty($getuserchoice->first_age) || !empty($getuserchoice->second_age)){
+            if(!empty($getuserchoice->age_status) && !empty($getuserchoice->first_age) || !empty($getuserchoice->second_age)){
+                    if(!empty($getuserchoice)){ 
                     $users = User::where('gender', $getuserchoice->show_me_to)->whereHas('userInfo', function ($query) use ($getuserchoice) {
                     $query->whereBetween('age', [$getuserchoice->first_age, $getuserchoice->second_age]);})->with('userInfo')->get();
                 }
@@ -63,13 +64,14 @@ class UserController extends Controller
                     $maxLat = $latitude + $deltaLat;
                     $minLng = $longitude - $deltaLng;
                     $maxLng = $longitude + $deltaLng;
-                    
+                   
                     // Fetch users based on distance and gender preference within the bounding box
                     $users = User::where('gender', $getuserchoice->show_me_to)
                     ->whereBetween('latitude', [$minLat, $maxLat])
                     ->whereBetween('longitude', [$minLng, $maxLng])
                     ->with('userInfo')
                     ->get();
+                   
                 }
 
                 if( $getuserchoice->age_status == 1 && $getuserchoice->distance_status == 1){
@@ -100,14 +102,17 @@ class UserController extends Controller
                     ->whereHas('userInfo', function ($query) use ($getuserchoice) {
                         $query->whereBetween('age', [$getuserchoice->first_age, $getuserchoice->second_age]);})
                     ->get();
+                   
                 }  
                 else{
+                    
                     $users = User::Where('gender', $getuserchoice->show_me_to)->with('UserInfo')->get();
                 }
             }
             else{
                 $getuserinterest = UserInfo::where('user_id', $id)->first();
-                $users = User::Where('gender', $getuserinterest->interests)->with('UserInfo')->get();
+                // dd( $getuserinterest->interests);
+                $users = User::Where('gender', $getuserinterest->interests)->where('id','!=',$id)->with('UserInfo')->get();
             }
             if (!empty($users)) {
                 $userdetail = UserResource::collection($users);
@@ -143,7 +148,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        
+        // dd('dd')
         ## Users Profile Api 
         ## After agreed the rules user will come here and fill details
         try {

@@ -173,8 +173,8 @@ class User extends Authenticatable implements JWTSubject
     }
 
     # blockuser model
-    public function blockuser()
-    {
-        return $this->belongsTo(BlockUser::class, 'blocked_by');
-    }
+    // public function blockuser()
+    // {
+    //     return $this->belongsTo(BlockUser::class, 'blocked_to');
+    // }
 }
