@@ -40,24 +40,28 @@ class FilterController extends ApiController
             $validated = $validator->validated();
 
             $user = User::where('gender', $request->gender)->where('phone_verified_at', '!=', null)->with('UserInfo')->get();
-
-
             if (!empty($user)) {
-                if ($request->gender == 'f') {
+                if ($request->gender == '1') {
                     return ApiResponse::ok(
                         'Filter out on basis on Profile privacy',
-                        $this->getUserWithotpverify($user)
+                            $user
                     );
-                } elseif ($request->gender == 'm') {
+                } elseif ($request->gender == '0') {
                     return ApiResponse::ok(
                         'Filter out on basis on Profile privacy',
-                        $this->getUserWithotpverify($user)
+                        $user
+                    );
+                } 
+                elseif ($request->gender == '2') {
+                    return ApiResponse::ok(
+                        'Filter out on basis on Profile privacy',
+                        $user
                     );
                 } else {
                     $user = User::where('phone_verified_at', '!=', null)->get();
                     return ApiResponse::ok(
                         'Filter out on basis on Profile privacy',
-                        $this->getUserWithotpverify($user)
+                        $user
                     );
                 }
             } else {

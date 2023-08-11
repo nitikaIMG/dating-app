@@ -46,7 +46,10 @@
     <div class="row align-items-center">
         <div class="col-md-12">
             <div class="mobile-logobar">
-                <a href="index.html" class="mobile-logo"><img src="{{asset('public/assets/images/logo.svg')}}" class="img-fluid" alt="logo"></a>
+                <a href="{{ route('dashboard') }}" class="logo logo-large" style="color: aqua;font-weight:bold;"><img
+                    src="{{ asset('public/assets/images/logo11.png') }}" width="30px" height="20px" class="img-fluid"
+                    alt="logo">MatchMingle</a>
+            {{-- <a href="{{ route('dashboard') }}" class="logo logo-small">MatchMingle</a> --}}
             </div>
             <div class="mobile-togglebar">
                 <ul class="list-inline mb-0">
