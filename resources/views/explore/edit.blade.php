@@ -88,7 +88,7 @@ $(document).ready(function() {
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            url: "{{route('active.deactive')}}",
+            url: "{{route('explore.activedeactive')}}",
             type: "POST",
             data: {
                 value:value,

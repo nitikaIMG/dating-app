@@ -62,29 +62,29 @@
                             </li>
                             <li><a href="apps-kanban-board.html">Kanban Board</a></li>
                             <li><a href="apps-onboarding-screens.html">Onboarding Screens</a></li> --}}
-                    </ul>
-                </li>
-                <li>
-                    <a href="javaScript:void();">
-                        <i class="ri-apps-line"></i><span>Users Basic</span><i class="ri-arrow-right-s-line"></i>
-                    </a>
-                    <ul class="vertical-submenu">
-                        <li><a href="{{ route('zodiac.index') }}">Zodiacs</a></li>
-                        <li><a href="{{ route('education.index') }}">Education Levels</a></li>
-                        <li><a href="{{ route('personality.index') }}">Personality Type</a></li>
-                        <li><a href="{{ route('communication.index') }}">Communication Style</a></li>
-                        <li><a href="{{ route('children.index') }}">Children Q.</a></li>
-                        <li><a href="{{ route('receivelove.index') }}">Receive Love</a></li>
-                        <li><a href="{{ route('vaccine.index') }}">Vaccine Q.</a></li>
-                        <li><a href="{{ route('pet.index') }}">Pets Q.</a></li>
-                        <li><a href="{{ route('drinking.index') }}">Drink Q.</a></li>
-                        <li><a href="{{ route('smoke.index') }}">Smoke Q.</a></li>
-                        <li><a href="{{ route('dietary.index') }}">Dietary Preference Q.</a></li>
-                        <li><a href="{{ route('sleepinghabit.index') }}">Sleeping Habit Q.</a></li>
-                        <li><a href="{{ route('workout.index') }}">Workout</a></li>
-                        <li><a href="{{ route('sexualorientation.index') }}">Sexual Orientation</a></li>
-                        {{-- <li><a href="apps-chat.html">Chat</a></li> --}}
-                        {{-- <li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javaScript:void();">
+                            <i class="fa fa-info-circle" aria-hidden="true"></i><span>Users Basic</span><i class="ri-arrow-right-s-line"></i>
+                        </a>
+                        <ul class="vertical-submenu">
+                            <li><a href="{{route('zodiac.index')}}">Zodiacs</a></li>
+                            <li><a href="{{route('education.index')}}">Education Levels</a></li>
+                            <li><a href="{{route('personality.index')}}">Personality Type</a></li>
+                            <li><a href="{{route('communication.index')}}">Communication Style</a></li>
+                            <li><a href="{{route('children.index')}}">Children Q.</a></li>
+                            <li><a href="{{route('receivelove.index')}}">Receive Love</a></li>
+                            <li><a href="{{route('vaccine.index')}}">Vaccine Q.</a></li>
+                            <li><a href="{{route('pet.index')}}">Pets Q.</a></li>
+                            <li><a href="{{route('drinking.index')}}">Drink Q.</a></li>
+                            <li><a href="{{route('smoke.index')}}">Smoke Q.</a></li>
+                            <li><a href="{{route('dietary.index')}}">Dietary Preference Q.</a></li>
+                            <li><a href="{{route('sleepinghabit.index')}}">Sleeping Habit Q.</a></li>
+                            <li><a href="{{route('workout.index')}}">Workout</a></li>
+                            <li><a href="{{route('sexualorientation.index')}}">Sexual Orientation</a></li>
+                             {{-- <li><a href="apps-chat.html">Chat</a></li> --}}
+                            {{-- <li>
                                 <a href="javaScript:void();">Zodiac<i class="ri-arrow-right-s-line"></i></a>
                                 <ul class="vertical-submenu">
                                     <li><a href="{{route('zodiac.index')}}">zodiacs</a></li>
