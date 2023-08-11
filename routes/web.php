@@ -33,7 +33,8 @@ use App\Http\Controllers\admin\SexualOrientationController;
 */
 
 
-// Route::get('/',[HomeController::class, 'index'])->name('dashboard');
+Route::get('/',[HomeController::class, 'index'])->name('dashboard');
+
 Route::get('back/button',[HomeController::class, 'back'])->name('backbtn');
 
 // Route::any('resetpassword',[apicontroller::class,'resetpassword']);
