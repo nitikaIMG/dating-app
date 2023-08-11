@@ -39,7 +39,7 @@ if(!function_exists('active_total_users')){
 }
 if(!function_exists('active_users')){
     function active_users(){
-        $users = User::where('active_device_id','1')->with('UserInfo')->get();
+        $users = User::where('active_device_id','1')->with('UserInfo')->paginate('4');
         return $users;
     }
 }

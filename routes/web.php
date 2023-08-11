@@ -44,9 +44,12 @@ Route:: group(['middleware'=>'auth'],function(){
     Route::resource('users',UserController::class);
     Route::post('user/activeORdeactive',[UserController::class, 'UserActivedeactive'])->name('active.deactive');
     Route::post('user/updateuserstatus',[UserController::class, 'updateuserstatus'])->name('updateuserstatus');
+    
     #explore
     Route::resource('explore',ExploreController::class);
     Route::post('explore/status',[ExploreController::class, 'updateexplorestatus'])->name('updateexplorestatus');
+    Route::post('explore/activeORdeactive',[ExploreController::class, 'ExploreActivedeactive'])->name('explore.activedeactive');
+    ;
     
     #subscription
     Route::resource('subscription', SubscriptionController::class);
@@ -55,7 +58,7 @@ Route:: group(['middleware'=>'auth'],function(){
     #basics 
     #zodiac 
     Route::resource('zodiac', ZodiacController::class);
-    Route::delete('zodiac/delete',[ZodiacController::class, 'deleterecord'])->name('zodiac.deleterecord');
+    Route::delete('zodiacs/delete',[ZodiacController::class, 'deleterecord'])->name('zodiac.deleterecord');
     Route::post('zodiac/status/update',[ZodiacController::class, 'updateuserstatus'])->name('zodiacupdate');
 
     #education 
