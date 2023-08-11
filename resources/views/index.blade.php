@@ -1,17 +1,17 @@
 @extends('layouts.app')
 @section('content')
-@push('custom-styles')
-<style>
-    a{
-        color: #000000 !important;
-        text-decoration: none;
-        background-color: transparent;
-    }
-</style>
-@endpush
-<br>
-<br>
-<br>
+    @push('custom-styles')
+        <style>
+            a {
+                color: #000000 !important;
+                text-decoration: none;
+                background-color: transparent;
+            }
+        </style>
+    @endpush
+    <br>
+    <br>
+    <br>
     <!-- Start Breadcrumbbar -->
     {{-- <div class="breadcrumbbar">
         <div class="row align-items-center">
@@ -51,7 +51,7 @@
                     <div class="card-body pb-0">
                         <div class="row align-items-center">
                             <div class="col-6">
-                                <h4>{{total_user()}}</h4>
+                                <h4>{{ total_user() }}</h4>
                             </div>
                         </div>
                     </div>
@@ -65,7 +65,7 @@
                     <div class="card-body pb-0">
                         <div class="row align-items-center">
                             <div class="col-6">
-                                <h4>{{active_total_users()}}</h4>
+                                <h4>{{ active_total_users() }}</h4>
                             </div>
                         </div>
                     </div>
@@ -81,7 +81,7 @@
                     <div class="card-body pb-0">
                         <div class="row align-items-center">
                             <div class="col-6">
-                                <h4>{{total_user_male()}}</h4>
+                                <h4>{{ total_user_male() }}</h4>
                             </div>
                         </div>
                     </div>
@@ -97,7 +97,7 @@
                     <div class="card-body pb-0">
                         <div class="row align-items-center">
                             <div class="col-6">
-                                <h4>{{total_user_female()}}</h4>
+                                <h4>{{ total_user_female() }}</h4>
                             </div>
                         </div>
                     </div>
@@ -112,7 +112,7 @@
                     <div class="card-body pb-0">
                         <div class="row align-items-center">
                             <div class="col-6">
-                                <h4>{{total_user_other()}}</h4>
+                                <h4>{{ total_user_other() }}</h4>
                             </div>
                         </div>
                     </div>
@@ -198,30 +198,35 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                @php
-                                    $count = 1;
-                                @endphp
-                                @forelse(active_users() as $user)
-                                
-                                <tr>
-                                    <th scope="row">{{$count++}}</th>
-                                        
-                                            <td> <a href="{{route('users.edit',$user->id)}}" class="active-list"><img src="{{asset($user->profile_image)}}"  width="50px" height="50px" srcset=""></a></td>
-                                        
-                                        <td><a href="{{route('users.edit',$user->id)}}" class="active-list">{{$user->name}}</a></td>
-                                        <td><a href="{{route('users.edit',$user->id)}}" class="active-list">{{$user->phone}}</a></td>
-                                        <td><a href="{{route('users.edit',$user->id)}}" class="active-list">{{$user->age}}</a></td>
-                                        {{-- <td>$99</td> --}}
-                                        <td><span class="badge badge-success"><a href="{{route('users.edit',$user->id)}}" class="active-list">Active</a></span></td>
-                                </tr>
-                                @empty
-                                    <span>NO One Is Online</span>
-                                    
-                                @endforelse
+                                    @php
+                                        $count = 1;
+                                    @endphp
+                                    @forelse(active_users() as $user)
+                                        <tr>
+                                            <th scope="row">{{ $count++ }}</th>
+
+                                            <td> <a href="{{ route('users.edit', $user->id) }}" class="active-list"><img
+                                                        src="{{ asset($user->profile_image) }}" width="50px"
+                                                        height="50px" srcset=""></a></td>
+
+                                            <td><a href="{{ route('users.edit', $user->id) }}"
+                                                    class="active-list">{{ $user->name }}</a></td>
+                                            <td><a href="{{ route('users.edit', $user->id) }}"
+                                                    class="active-list">{{ $user->phone }}</a></td>
+                                            <td><a href="{{ route('users.edit', $user->id) }}"
+                                                    class="active-list">{{ $user->age }}</a></td>
+                                            {{-- <td>$99</td> --}}
+                                            <td><span class="badge badge-success"><a
+                                                        href="{{ route('users.edit', $user->id) }}"
+                                                        class="active-list">Active</a></span></td>
+                                        </tr>
+                                    @empty
+                                        <span>NO One Is Online</span>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
-                        {{ active_users()->links('pagination::bootstrap-5') }}
+                        {{-- {{ active_users()->links('pagination::bootstrap-5') }} --}}
                     </div>
                 </div>
             </div>
@@ -241,16 +246,19 @@
                                         @php
                                             $firstCharacter = substr($user->first_name, 0, 2);
                                         @endphp
-                                        <a href="{{route('users.edit',$user->id)}}">
-                                            <span class="action-icon badge badge-primary-inverse">{{$firstCharacter}}</span>
-                                            <h5>{{$user->name}}</h5>
-                                            <p>{{$user->phone}}</p>
-                                            <p class="mt-3 mb-0"><span class="badge badge-primary font-weight-normal font-14 py-1 px-2">Most Liked Persons</span></p>
+                                        <a href="{{ route('users.edit', $user->id) }}">
+                                            <span
+                                                class="action-icon badge badge-primary-inverse">{{ $firstCharacter }}</span>
+                                            <h5>{{ $user->name }}</h5>
+                                            <p>{{ $user->phone }}</p>
+                                            <p class="mt-3 mb-0"><span
+                                                    class="badge badge-primary font-weight-normal font-14 py-1 px-2">Most
+                                                    Liked Persons</span></p>
                                         </a>
                                     </div>
                                 </div>
                             @empty
-                             <span>None</span>
+                                <span>None</span>
                             @endforelse
                         </div>
                     </div>
