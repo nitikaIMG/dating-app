@@ -16,7 +16,9 @@
         @stack('custom-styles')
         <!-- End css -->
         <style>
-            
+            .topbar-mobile .mobile-logobar img {
+                width: 35px !important;
+            }
         </style>
     </head>
     <body class="vertical-layout">  
@@ -41,10 +43,11 @@
                     @yield('content')
 
                     {{-- @if(!Request::is('workspace/create'))  --}}
-                    
-                    <div class="footerbar">
-                        @include('layouts.footer.footer')
-                    </div>
+                    @auth
+                        <div class="footerbar">
+                            @include('layouts.footer.footer')
+                        </div>
+                    @endauth
                     {{-- </div> --}}
                     {{-- <div> --}}
                 @auth

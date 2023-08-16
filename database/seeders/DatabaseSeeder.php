@@ -29,6 +29,10 @@ class DatabaseSeeder extends Seeder
         $this->call(SleepingSeeder::class);
         $this->call(PetSeeder::class);
         $this->call(SexualOrientationSeeder::class);
+        $this->call(RelationshipGoalSeeder::class);
+        $this->call(RelationshipTypeSeeder::class);
+        $this->call(LanguageSeederSeeder::class);
+        $this->call(PassionSeederSeeder::class);
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([

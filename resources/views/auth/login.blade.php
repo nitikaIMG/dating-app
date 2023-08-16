@@ -1,4 +1,11 @@
 @extends('layouts.app')
+@push('custom-styles')
+    <style>
+        .auth-box .auth-box-right .form-head img {
+            width: 80px !important;
+        }
+    </style>
+@endpush
 
 @section('content')
 <div id="containerbar" class="containerbar authenticate-bg">
@@ -16,7 +23,9 @@
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
                         <div class="form-head">
-                            <a href="index.html" class="logo"><img src="{{asset('public/assets/images/logo.svg')}}" class="img-fluid" alt="logo"></a>
+                            <a href="{{ route('dashboard') }}" class="logo logo-large" style="color: aqua;font-weight:bold;"><img
+                                src="{{ asset('public/assets/images/logo11.png') }}" width="20px" height="10px" class="img-fluid"
+                                alt="logo">MatchMingle</a>
                         </div>                                        
                         <h4 class="text-primary my-4">Log in !</h4>
 

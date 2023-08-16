@@ -38,76 +38,99 @@ class UserController extends Controller
            
             $getuserchoice = PreferList::where('user_id', $id)->first();
             // dd($getuserchoice);
-            if(!empty($getuserchoice->age_status) && !empty($getuserchoice->first_age) || !empty($getuserchoice->second_age)){
-                    if(!empty($getuserchoice)){ 
-                    $users = User::where('gender', $getuserchoice->show_me_to)->whereHas('userInfo', function ($query) use ($getuserchoice) {
-                    $query->whereBetween('age', [$getuserchoice->first_age, $getuserchoice->second_age]);})->with('userInfo')->get();
-                }
-                if (!empty($getuserchoice->distance_status) && !empty($getuserchoice->first_distance) || !empty($getuserchoice->second_distance)) {
-         
-                    // Fetch users based on distance and gender preference
-                    $latitude = Auth::user()->latitude;
-                    $longitude = Auth::user()->longitude;
-                    // Convert distance preferences to kilometers
-                    $minDistance = $getuserchoice->first_distance;
-                    $maxDistance = $getuserchoice->second_distance;
-                    
-                    // Calculate the bounding box coordinates
-                    $earthRadius = 6371; // Earth's radius in kilometers
-                    $latRadians = deg2rad($latitude);
-                    $lngRadians = deg2rad($longitude);
-                    
-                    $deltaLat = rad2deg($minDistance / $earthRadius);
-                    $deltaLng = rad2deg($minDistance / ($earthRadius * cos($latRadians)));
-                    
-                    $minLat = $latitude - $deltaLat;
-                    $maxLat = $latitude + $deltaLat;
-                    $minLng = $longitude - $deltaLng;
-                    $maxLng = $longitude + $deltaLng;
-                   
-                    // Fetch users based on distance and gender preference within the bounding box
-                    $users = User::where('gender', $getuserchoice->show_me_to)
-                    ->whereBetween('latitude', [$minLat, $maxLat])
-                    ->whereBetween('longitude', [$minLng, $maxLng])
-                    ->with('userInfo')
-                    ->get();
-                   
-                }
+                if($getuserchoice->show_me_to !== ''){
 
-                if( $getuserchoice->age_status == 1 && $getuserchoice->distance_status == 1){
-                    $latitude = Auth::user()->latitude;
-                    $longitude = Auth::user()->longitude;
-                    // Convert distance preferences to kilometers
-                    $minDistance = $getuserchoice->first_distance;
-                    $maxDistance = $getuserchoice->second_distance;
+                    if(!empty($getuserchoice->age_status == '1')){ 
+                        $users = User::where('gender', $getuserchoice->show_me_to)->whereBetween('age', [$getuserchoice->first_age, $getuserchoice->second_age])->with('userInfo')->get();
+                    }
+
+                    if($getuserchoice->distance_status == '1' && $getuserchoice->first_distance !== '' ) {
+            
+                        // Fetch users based on distance and gender preference
+                        $latitude = Auth::user()->latitude;
+                        $longitude = Auth::user()->longitude;
+                        // Convert distance preferences to kilometers
+                        $minDistance = $getuserchoice->first_distance;
+                        $maxDistance = $getuserchoice->second_distance;
+                        
+                        // Calculate the bounding box coordinates
+                        $earthRadius = 6371; // Earth's radius in kilometers
+                        $latRadians = deg2rad($latitude);
+                        $lngRadians = deg2rad($longitude);
+                        
+                        $deltaLat = rad2deg($minDistance / $earthRadius);
+                        $deltaLng = rad2deg($minDistance / ($earthRadius * cos($latRadians)));
+                        
+                        $minLat = $latitude - $deltaLat;
+                        $maxLat = $latitude + $deltaLat;
+                        $minLng = $longitude - $deltaLng;
+                        $maxLng = $longitude + $deltaLng;
+
+                        
+                        // $latitude  = $validated['latitude'];
+                        // $longitude = $validated['longitude'];
+
+
+                        // $users = User::selectRaw("id,first_name,last_name,latitude, longitude,
+                        // ( 6371 * acos( cos( radians(?) ) *
+                        //     cos( radians( latitude ) )
+                        //    * cos( radians( longitude ) - radians(?)
+                        //    ) + sin( radians(?) ) *
+                        //     sin( radians( latitude ) ) )
+                        // ) AS distance", [$latitude, $longitude, $latitude])
+                        //     ->where('enable_location', 1)
+                        //     ->orderBy("distance", 'asc')
+                        //     ->offset(0)
+                        //     ->limit(20)->get();
                     
-                    // Calculate the bounding box coordinates
-                    $earthRadius = 6371; // Earth's radius in kilometers
-                    $latRadians = deg2rad($latitude);
-                    $lngRadians = deg2rad($longitude);
+                        // Fetch users based on distance and gender preference within the bounding box
+                        $users = User:: 
+                        selectRaw("id,first_name,last_name,latitude, longitude,
+                            ( 6371 * acos( cos( radians(?) ) *
+                                cos( radians( latitude ) )
+                            * cos( radians( longitude ) - radians(?)
+                            ) + sin( radians(?) ) *
+                                sin( radians( latitude ) ) )
+                            ) AS distance", [$latitude, $longitude, $latitude])->where('gender', $getuserchoice->show_me_to)
+                        ->whereBetween('latitude', [$minLat, $maxLat])
+                        ->whereBetween('longitude', [$minLng, $maxLng])
+                        ->with('userInfo')
+                        ->get();
+    
+                    }
+
+                    if( $getuserchoice->age_status == 1 && $getuserchoice->distance_status == 1){
+                        $latitude = Auth::user()->latitude;
+                        $longitude = Auth::user()->longitude;
+                        // Convert distance preferences to kilometers
+                        $minDistance = $getuserchoice->first_distance;
+                        $maxDistance = $getuserchoice->second_distance;
+                        
+                        // Calculate the bounding box coordinates
+                        $earthRadius = 6371; // Earth's radius in kilometers
+                        $latRadians = deg2rad($latitude);
+                        $lngRadians = deg2rad($longitude);
+                        
+                        $deltaLat = rad2deg($minDistance / $earthRadius);
+                        $deltaLng = rad2deg($minDistance / ($earthRadius * cos($latRadians)));
+                        
+                        $minLat = $latitude - $deltaLat;
+                        $maxLat = $latitude + $deltaLat;
+                        $minLng = $longitude - $deltaLng;
+                        $maxLng = $longitude + $deltaLng;
+                        
+                        // Fetch users based on distance and gender preference within the bounding box
+                        $users = User::where('gender', $getuserchoice->show_me_to)
+                        ->whereBetween('latitude', [$minLat, $maxLat])
+                        ->whereBetween('longitude', [$minLng, $maxLng])
+                        ->with('userInfo')->whereBetween('age', [$getuserchoice->first_age, $getuserchoice->second_age])
+                        ->get();
                     
-                    $deltaLat = rad2deg($minDistance / $earthRadius);
-                    $deltaLng = rad2deg($minDistance / ($earthRadius * cos($latRadians)));
+                    }  
+                // else{
                     
-                    $minLat = $latitude - $deltaLat;
-                    $maxLat = $latitude + $deltaLat;
-                    $minLng = $longitude - $deltaLng;
-                    $maxLng = $longitude + $deltaLng;
-                    
-                    // Fetch users based on distance and gender preference within the bounding box
-                    $users = User::where('gender', $getuserchoice->show_me_to)
-                    ->whereBetween('latitude', [$minLat, $maxLat])
-                    ->whereBetween('longitude', [$minLng, $maxLng])
-                    ->with('userInfo')
-                    ->whereHas('userInfo', function ($query) use ($getuserchoice) {
-                        $query->whereBetween('age', [$getuserchoice->first_age, $getuserchoice->second_age]);})
-                    ->get();
-                   
-                }  
-                else{
-                    
-                    $users = User::Where('gender', $getuserchoice->show_me_to)->with('UserInfo')->get();
-                }
+                //     $users = User::Where('gender', $getuserchoice->show_me_to)->with('UserInfo')->get();
+                // }
             }
             else{
                 $getuserinterest = UserInfo::where('user_id', $id)->first();
@@ -191,6 +214,11 @@ class UserController extends Controller
                     $verifieds['dob']       = $request->dob;
                     $verifieds['country']   = $request->country;
                     UserInfo::where('user_id', $auth_user_id)->update($verifieds);
+                    PreferList::updateOrCreate([
+                        'user_id' => $auth_user_id,
+                    ],
+                    $verifieds['show_me_to']);
+                    
 
                     $data['id']           = $auth_user_id;
                     $data['first_name']   = $verified['first_name'];
@@ -226,6 +254,7 @@ class UserController extends Controller
                 $verifieddata['phone']        = $request->phone;
                 $verifieddata['phone_enable'] = 0;
                 User::where('id', $auth_user_id)->update($verifieddata);
+                 
             } else {
                 return ApiResponse::error('User Not Found');
             }

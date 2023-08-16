@@ -127,6 +127,39 @@
                 <form action="{{route('sexualorientation.store')}}" method="post" enctype="multipart/form-data">
             @endif
 
+             <!-- passion -->
+            @if($create == 'passion')
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Passion</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('passion.store')}}" method="post" enctype="multipart/form-data">
+            @endif
+             <!-- Lang -->
+            @if($create == 'lang')
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Lang..</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('languages.store')}}" method="post" enctype="multipart/form-data">
+            @endif
+            <!-- relationship_goal -->
+                @if($create == 'relationship_goal')
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Relationship Goal</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('relationship_goal.store')}}" method="post" enctype="multipart/form-data">
+            @endif
+            <!-- relationship_type -->
+            @if($create == 'relationship_type')
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Relationship Type</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('relationship_type.store')}}" method="post" enctype="multipart/form-data">
+            @endif
+
                 @csrf 
                 <div class="form-row">
                     <div class="form-group col-md-6">

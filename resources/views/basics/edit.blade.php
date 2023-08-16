@@ -126,6 +126,42 @@
                 <form action="{{route('sexualorientation.update', $editdata->id)}}" method="post" enctype="multipart/form-data">
             @endif
 
+            <!-- passion -->
+            @if($edit == 'passion')
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Passion</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('passion.update', $editdata->id)}}" method="post" enctype="multipart/form-data">
+            @endif
+
+            <!-- lang -->
+            @if($edit == 'Lang')
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Lang..</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('languages.update', $editdata->id)}}" method="post" enctype="multipart/form-data">
+            @endif
+
+            <!-- relationship_goal -->
+            @if($edit == 'relationship_goal')
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Relationship Goal</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('relationship_goal.update', $editdata->id)}}" method="post" enctype="multipart/form-data">
+            @endif
+
+            <!-- relationship_type -->
+            @if($edit == 'relationship_type')
+                <div class="card-header">                    
+                    <h5 class="card-title mb-0">Relationship Type</h5>
+                </div>
+                <div class="card-body">
+                <form action="{{route('relationship_type.update', $editdata->id)}}" method="post" enctype="multipart/form-data">
+            @endif
+
                 @csrf 
                 @method('put')
                 <div class="form-row">

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
-use App\Models\UserInfo;
+use App\Models\{UserInfo, PreferList};
 use App\Api\ApiResponse;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\UserProfileResource;
@@ -91,6 +91,7 @@ class UserProfileController extends Controller
                 $verifieds['dob'] = $request->dob;
                 $verifieds['country'] = $request->country;
                 $verifieds['interests'] = $request->interests;
+                $preferdata['show_me_to'] = $request->interests;
                 if(!empty($request->about_me)){
                     $verifieds['about_me'] = $request->about_me;
                 }
@@ -126,8 +127,14 @@ class UserProfileController extends Controller
                 $users['interests']       = $verifieds['interests'];
                 $users['email']           = $users->email;
                 DB::commit();
-                // $userd = new UserResource($users);
+                  
+                    
                 $userd = new UserProfileResource($users);
+               
+                PreferList::updateOrCreate([
+                    'user_id' => $auth_user_id,
+                ],
+                $preferdata);
                 return ApiResponse::ok(
                     'User Profile Updated Successfully',
                     $this->getUser($userd)

@@ -19,6 +19,10 @@ use App\Http\Controllers\admin\SmokeController;
 use App\Http\Controllers\admin\SleepingHabitController;
 use App\Http\Controllers\admin\DietaryController;
 use App\Http\Controllers\admin\SexualOrientationController;
+use App\Http\Controllers\admin\LanguageController;
+use App\Http\Controllers\admin\PassionController;
+use App\Http\Controllers\admin\RelationshipGoalController;
+use App\Http\Controllers\admin\RelationshipTypeController;
 
 
 /*
@@ -127,7 +131,27 @@ Route:: group(['middleware'=>'auth'],function(){
     Route::resource('sexualorientation', SexualOrientationController::class);
     Route::delete('sexualorientations/delete',[SexualOrientationController::class, 'deleterecord'])->name('sexualorientation.deleterecord');
     Route::post('sexualorientation/update/status',[SexualOrientationController::class, 'updateuserstatus'])->name('sexualorientationstatus');
+    
+    #lang
+    Route::resource('languages', LanguageController::class);
+    Route::delete('langs/delete',[LanguageController::class, 'deleterecord'])->name('languages.deleterecord');
+    Route::post('lang/update/status',[LanguageController::class, 'updateuserstatus'])->name('langstatus');
  
+    #passion 
+    Route::resource('passion', PassionController::class);
+    Route::delete('passions/delete',[PassionController::class, 'deleterecord'])->name('passion.deleterecord');
+    Route::post('passion/update/status',[PassionController::class, 'updateuserstatus'])->name('passionstatus');
+    
+    #relationship_goal 
+    Route::resource('relationship_goal', RelationshipGoalController::class);
+    Route::delete('relationship_goals/delete',[RelationshipGoalController::class, 'deleterecord'])->name('relationship_goal.deleterecord');
+    Route::post('relationship_goal/update/status',[RelationshipGoalController::class, 'updateuserstatus'])->name('relationship_goalstatus');
+
+    #passion 
+    Route::resource('relationship_type', RelationshipTypeController::class);
+    Route::delete('relationship_types/delete',[RelationshipTypeController::class, 'deleterecord'])->name('relationship_type.deleterecord');
+    Route::post('relationship_type/update/status',[RelationshipTypeController::class, 'updateuserstatus'])->name('relationship_typestatus');
+
 });
 
 Auth::routes();

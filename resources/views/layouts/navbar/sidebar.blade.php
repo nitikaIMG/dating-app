@@ -75,6 +75,8 @@
                             <li><a href="{{route('communication.index')}}">Communication Style</a></li>
                             <li><a href="{{route('children.index')}}">Children Q.</a></li>
                             <li><a href="{{route('receivelove.index')}}">Receive Love</a></li>
+                            <li><a href="{{route('relationship_goal.index')}}">Relationship Goal</a></li>
+                            <li><a href="{{route('relationship_type.index')}}">Relationship Type</a></li>
                             <li><a href="{{route('vaccine.index')}}">Vaccine Q.</a></li>
                             <li><a href="{{route('pet.index')}}">Pets Q.</a></li>
                             <li><a href="{{route('drinking.index')}}">Drink Q.</a></li>
@@ -82,6 +84,8 @@
                             <li><a href="{{route('dietary.index')}}">Dietary Preference Q.</a></li>
                             <li><a href="{{route('sleepinghabit.index')}}">Sleeping Habit Q.</a></li>
                             <li><a href="{{route('workout.index')}}">Workout</a></li>
+                            <li><a href="{{route('languages.index')}}">Languages</a></li>
+                            <li><a href="{{route('passion.index')}}">Passion</a></li>
                             <li><a href="{{route('sexualorientation.index')}}">Sexual Orientation</a></li>
                              {{-- <li><a href="apps-chat.html">Chat</a></li> --}}
                             {{-- <li>
