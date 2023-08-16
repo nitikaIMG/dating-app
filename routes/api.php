@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\ExploreController;
 use App\Http\Controllers\Api\PreferListController;
+use App\Http\Controllers\Api\SubscriptionBuyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -89,6 +90,7 @@ Route::middleware('jwt.verify')->group(function () {
     Route::apiResource('match', MatchController::class); # match found list
     Route::apiResource('explores', ExploreController::class); # expolore 
     Route::apiResource('preferlist', PreferListController::class); # user choices/interests for matching 
+    Route::apiResource('subcriptionbuy', SubscriptionBuyController::class); # filled user_detail and show list
 });
 
 # Social Login
