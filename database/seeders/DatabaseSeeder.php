@@ -31,8 +31,9 @@ class DatabaseSeeder extends Seeder
         $this->call(SexualOrientationSeeder::class);
         $this->call(RelationshipGoalSeeder::class);
         $this->call(RelationshipTypeSeeder::class);
-        $this->call(LanguageSeederSeeder::class);
-        $this->call(PassionSeederSeeder::class);
+        $this->call(LanguageSeeder::class);
+        $this->call(PassionSeeder::class);
+        $this->call(SubscriptionSeeder::class);
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([

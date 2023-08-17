@@ -16,7 +16,7 @@ use App\Http\Resources\UserResource;
 use Auth;
 use DB;
 use Str;
-use App\Models\{UserRule, LikeProfile, PreferList};
+use App\Models\{UserRule, LikeProfile, PreferList, SubscriptionUser};
 use App\Http\Resources\UserProfileResource;
 
 
@@ -37,10 +37,12 @@ class UserController extends Controller
             $id = Auth::user()->id;
            
             $getuserchoice = PreferList::where('user_id', $id)->first();
-            // dd($getuserchoice);
+          
                 if($getuserchoice->show_me_to !== ''){
+                    $users = User::where('gender', $getuserchoice->show_me_to)->get();
 
-                    if(!empty($getuserchoice->age_status == '1')){ 
+                    if(!empty($getuserchoice->age_status == '1')){
+
                         $users = User::where('gender', $getuserchoice->show_me_to)->whereBetween('age', [$getuserchoice->first_age, $getuserchoice->second_age])->with('userInfo')->get();
                     }
 
@@ -82,7 +84,7 @@ class UserController extends Controller
                         //     ->orderBy("distance", 'asc')
                         //     ->offset(0)
                         //     ->limit(20)->get();
-                    
+                        
                         // Fetch users based on distance and gender preference within the bounding box
                         $users = User:: 
                         selectRaw("id,first_name,last_name,latitude, longitude,
@@ -94,6 +96,7 @@ class UserController extends Controller
                             ) AS distance", [$latitude, $longitude, $latitude])->where('gender', $getuserchoice->show_me_to)
                         ->whereBetween('latitude', [$minLat, $maxLat])
                         ->whereBetween('longitude', [$minLng, $maxLng])
+                       
                         ->with('userInfo')
                         ->get();
     
@@ -138,6 +141,7 @@ class UserController extends Controller
                 $users = User::Where('gender', $getuserinterest->interests)->where('id','!=',$id)->with('UserInfo')->get();
             }
             if (!empty($users)) {
+                $users = $users->sortByDesc('boost_status');
                 $userdetail = UserResource::collection($users);
                 return ApiResponse::ok(
                     'All Users Details',

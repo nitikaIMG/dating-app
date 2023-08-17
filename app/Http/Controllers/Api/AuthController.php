@@ -14,6 +14,10 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth as JWTAuth;
 use Twilio\Rest\Client;
+use App\Models\{SubscriptionUser};
+use App\Http\Resources\UserProfileResource;
+use Carbon\Carbon;
+use Auth;
 
 class AuthController extends ApiController
 {
@@ -139,6 +143,16 @@ class AuthController extends ApiController
                                 'device_id' => $device_id
                             ]);
                         }
+                        #check User Subscription 
+                        $subscription = SubscriptionUser::where('user_id', $user->id)->first();
+                        if(!empty($subscription)){
+                            $formattedDate = Carbon::now()->format('Y-m-d H:i:s');
+                            if($subscription->expire_date < $formattedDate)
+                            {
+                                $updatestatus['status'] = 0;
+                                SubscriptionUser::where('user_id', $user->id)->update($updatestatus);
+                            }
+                        }
                         $token = JWTAuth::fromUser($user);
                         $type = ($request->type == 'reg') ? true : ((!empty($user->dob)) ? false : true);
                         $message = ($request->type == 'reg') ? 'Registration Sucessfully!' : 'Login Successfully';
@@ -217,6 +231,7 @@ class AuthController extends ApiController
         }
         try {
             DB::beginTransaction();
+         
             $user = User::where('phone', $request->phone)->where('phone_verified_at', '!=', NULL)->first();
 
             # Get the User
