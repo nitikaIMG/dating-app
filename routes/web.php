@@ -23,6 +23,8 @@ use App\Http\Controllers\admin\LanguageController;
 use App\Http\Controllers\admin\PassionController;
 use App\Http\Controllers\admin\RelationshipGoalController;
 use App\Http\Controllers\admin\RelationshipTypeController;
+use App\Http\Controllers\admin\ContactUsController;
+use App\Http\Controllers\admin\AboutUsController;
 
 
 /*
@@ -151,6 +153,18 @@ Route:: group(['middleware'=>'auth'],function(){
     Route::resource('relationship_type', RelationshipTypeController::class);
     Route::delete('relationship_types/delete',[RelationshipTypeController::class, 'deleterecord'])->name('relationship_type.deleterecord');
     Route::post('relationship_type/update/status',[RelationshipTypeController::class, 'updateuserstatus'])->name('relationship_typestatus');
+
+    #contact us 
+    Route::resource('contactus', ContactUsController::class);
+    Route::delete('contactuss/delete',[ContactUsController::class, 'deleterecord'])->name('contactus.deleterecord');
+    Route::post('contactus/update/status',[ContactUsController::class, 'updateuserstatus'])->name('contactusstatus');
+    Route::post('contactus/activeORdeactive',[ContactUsController::class, 'ContactusActivedeactive'])->name('contactus.activedeactive');
+
+    #About Us
+    Route::resource('aboutus', AboutUsController::class);
+    Route::post('ckeditor/image/upload', [AboutUsController::class, 'ckeditorUpload'])->name('ckeditor.upload');
+
+
 
 });
 

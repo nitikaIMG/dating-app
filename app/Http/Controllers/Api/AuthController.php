@@ -150,7 +150,12 @@ class AuthController extends ApiController
                             if($subscription->expire_date < $formattedDate)
                             {
                                 $updatestatus['status'] = 0;
+                                $updatestatus['free_boost_per_month'] = 0;
+                                $updatestatus['free_super_like'] = 0;
+                                $updatestatus['boost_status'] = 0;
                                 SubscriptionUser::where('user_id', $user->id)->update($updatestatus);
+                                $updatebooststatus['boost_status'] = 0;
+                                User::where('id', $user->id)->update($updatebooststatus);
                             }
                         }
                         $token = JWTAuth::fromUser($user);

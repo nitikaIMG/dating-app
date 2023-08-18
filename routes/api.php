@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\ExploreController;
 use App\Http\Controllers\Api\PreferListController;
 use App\Http\Controllers\Api\SubscriptionBuyController;
 use App\Http\Controllers\Api\SuperLikeController;
+use App\Http\Controllers\Api\UserContactAdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -97,6 +98,7 @@ Route::middleware('jwt.verify')->group(function () {
     Route::apiResource('preferlist', PreferListController::class); # user choices/interests for matching 
     Route::apiResource('subcriptionbuy', SubscriptionBuyController::class); # filled user_detail and show list
     Route::apiResource('superlike', SuperLikeController::class);#super like 
+    Route::apiResource('contacttoadmin', UserContactAdminController::class);#Contact us
 });
 
 # Social Login
