@@ -17,7 +17,10 @@ use Twilio\Rest\Client;
 use App\Models\{SubscriptionUser};
 use App\Http\Resources\UserProfileResource;
 use Carbon\Carbon;
+use DateTime;
+use DateInterval;
 use Auth;
+use App\Mail\ContactUsMail;
 
 class AuthController extends ApiController
 {
@@ -145,6 +148,8 @@ class AuthController extends ApiController
                         }
                         #check User Subscription 
                         $subscription = SubscriptionUser::where('user_id', $user->id)->first();
+                        $email = User::where('id', $user->id)->value('email');
+
                         if(!empty($subscription)){
                             $formattedDate = Carbon::now()->format('Y-m-d H:i:s');
                             if($subscription->expire_date < $formattedDate)
@@ -156,15 +161,43 @@ class AuthController extends ApiController
                                 SubscriptionUser::where('user_id', $user->id)->update($updatestatus);
                                 $updatebooststatus['boost_status'] = 0;
                                 User::where('id', $user->id)->update($updatebooststatus);
+                                $email = User::where('id', $user->id)->value('email');
+                                if(!empty($email)){
+                                    $alertmsg = 'Your Subscription Plan Was expire. Renew For Super likes, Boost Profile, Chat etc.';
+                                    Mail::to($email)->send(new ContactUsMail($alertmsg, 'email.contact_to_admin', 'Subscription Plan Information'));
+                                }
+                                $reminder = "Your Plan Was Expire!";
                             }
                         }
+                        // $subscription = SubscriptionUser::where('user_id', $id)->first();
+                        if ($subscription){
+                            $expirationDate = new DateTime($subscription->expire_date);
+                            $reminderDate = clone $expirationDate;
+                            $reminderDate->sub(new DateInterval('P2D'));
+                            $today = new DateTime();
+                            
+                            // dd($expirationDate,$reminderDate);
+                            // google Help
+                            $timeDifference = $expirationDate->getTimestamp() - $reminderDate->getTimestamp();
+                            if ($reminderDate->format('Y-m-d') === $today->format('Y-m-d')) {
+                            // dd($timeDifference);
+                            if ($timeDifference == 172800) { 
+                                // dd('ok');
+                                $reminder = "After 2 days  your plan expire!";
+                                $alertmsg = 'Your Subscription Plan will be expire in  next 2 days.';
+                                Mail::to($email)->send(new ContactUsMail($alertmsg, 'email.contact_to_admin', 'Subscription Plan Information'));
+                                }
+                              
+                            }
+                        }
+
                         $token = JWTAuth::fromUser($user);
                         $type = ($request->type == 'reg') ? true : ((!empty($user->dob)) ? false : true);
                         $message = ($request->type == 'reg') ? 'Registration Sucessfully!' : 'Login Successfully';
                         DB::commit();
                         return ApiResponse::ok(
-                            $message,
-                            $this->getUserWithToken($token, $user, $type)
+                            $reminder??$message,
+                            $this->getUserWithToken($token, $user, $type),
                         );
                     } else {
                         return ApiResponse::error('Please enter a valid OTP');

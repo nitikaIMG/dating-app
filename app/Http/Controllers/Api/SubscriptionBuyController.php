@@ -13,7 +13,7 @@ use App\Api\ApiResponse;
 use Session;
 use Auth;
 use Exception;
-use App\Models\{UserInfo, ExploreUser,User};
+use App\Models\{UserInfo, ExploreUser,User,SubscriptionPlan};
 use App\Http\Resources\UserProfileResource;
 
 class SubscriptionBuyController extends Controller
@@ -25,24 +25,23 @@ class SubscriptionBuyController extends Controller
      */
     public function index(Request $request)
     {
-        dd('ok');
-        // try {
-        //     DB::beginTransaction();
-        //     $rules =  UserRule::all();
-        //     if ($rules) {
-        //         $ruledata = RuleResource::collection($rules);
-        //         return ApiResponse::ok(
-        //             'Terms and conditions',
-        //             $this->getRule($ruledata)
-        //         );
-        //     } else {
-        //         return ApiResponse::error('No Rules Are Mentioned Here !!');
-        //     }
-        // } catch (\Exception $e) {
-        //     DB::rollBack();
-        //     return ApiResponse::error($e->getMessage());
-        //     logger($e->getMessage());
-        // }
+        // dd('ok');
+        try {
+            DB::beginTransaction();
+            $subscription =  SubscriptionPlan::where('status',1)->get();
+            if ($subscription) {
+                return ApiResponse::ok(
+                    'Terms and conditions',
+                    $subscription
+                );
+            } else {
+                return ApiResponse::error('No Rules Are Mentioned Here !!');
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
+        }
     }
 
     /**

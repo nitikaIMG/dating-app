@@ -10,7 +10,11 @@ use Illuminate\Support\Facades\Validator;
 use App\Api\ApiResponse;
 use App\Models\User;
 use Auth;
+use DateTime;
+use DateInterval;
 use App\Models\{UserInfo, ExploreUser};
+use App\Models\{SubscriptionUser};
+
 use App\Http\Resources\UserProfileResource;
 
 class PreferListController extends Controller
@@ -69,8 +73,10 @@ class PreferListController extends Controller
                 'user_id' => $id,
             ],
             $data);
+
             DB::commit();
             if($save){
+            
                 return ApiResponse::ok(
                     'Added  Successfully'
                 );
