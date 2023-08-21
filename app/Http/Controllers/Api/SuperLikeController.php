@@ -41,18 +41,18 @@ class SuperLikeController extends Controller
             DB::beginTransaction();
             $id = auth()->user()->id;
             $validator =  Validator::make($request->all(), [
-                'sender_id'      => ['required', 'numeric'],
+                // 'sender_id'      => ['required', 'numeric'],
                 'super_like_user_id'  => ['required', 'numeric'],
             ]);
             
             if ($validator->fails()) {
                 return $this->validation_error_response($validator);
             }
-            $likeddata['sender_id']     = $request['sender_id'];
+            // $likeddata['sender_id']     = $request['sender_id'];
             $likeddata['super_like_user_id'] = $request['super_like_user_id'];
             $validated = $validator->validated();
 
-            $chk_sender_id = User::where('id', $request->sender_id)
+            $chk_sender_id = User::where('id', $id)
                 ->where('phone_verified_at', '!=', null)->first();
 
             $chk_liked_user_id = User::where('id', $request->super_like_user_id)
@@ -62,21 +62,21 @@ class SuperLikeController extends Controller
             if($subscription){
                 
             // dd($request->all());
-            if (!empty($chk_sender_id) && !empty($chk_liked_user_id && $subscription->status == '1')) {
-                if ($request->sender_id == $id) {
-                    $findliked = SuperLike::where('sender_id', $request->sender_id)
+            if (!empty($chk_sender_id) && !empty($chk_liked_user_id && $subscription->status == '1')){
+                if ($id){
+                    $findliked = SuperLike::where('sender_id', $id)
                         ->where('super_like_user_id', $request->super_like_user_id)->first();
 
                     if (!empty($findliked)) {
                         if ($findliked->like_status == 1) {
                             $verified['super_like_status'] = 0;
-                            SuperLike::where('sender_id', $request->sender_id)
+                            SuperLike::where('sender_id', $id)
                                 ->where('super_like_user_id', $request->super_like_user_id)->update($verified);
                             DB::commit();
                             return ApiResponse::ok('You dislike the user profile!!');
                         } else {
                             $verified['super_like_status'] = 1;
-                            SuperLike::where('sender_id', $request->sender_id)
+                            SuperLike::where('sender_id', $id)
                                 ->where('super_like_user_id', $request->super_like_user_id)->update($verified);
                             DB::commit();
                             return ApiResponse::ok('You liked the user profile!!');
@@ -99,7 +99,7 @@ class SuperLikeController extends Controller
                             $updatesuper_like['free_super_like'] = $subscription->free_super_like + 1;
                             SubscriptionUser::where('user_id', $id)->update($updatesuper_like);
                             $fav = SuperLike::create([
-                                'sender_id' => $request->sender_id,
+                                'sender_id' => $id,
                                 'super_like_user_id' => $request->super_like_user_id,
                                 'super_like_status' => 1
                             ]);
@@ -112,7 +112,7 @@ class SuperLikeController extends Controller
                             return ApiResponse::error('Your Super Like Limit Complete');
                         }
                     }
-                } else {
+                }else {
                     return ApiResponse::error('Login First');
                 }
             } else {
