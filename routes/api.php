@@ -18,6 +18,9 @@ use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\ExploreController;
 use App\Http\Controllers\Api\PreferListController;
 use App\Http\Controllers\Api\SubscriptionBuyController;
+use App\Http\Controllers\Api\SuperLikeController;
+use App\Http\Controllers\Api\UserContactAdminController;
+use App\Http\Controllers\Api\AboutUsPageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -77,6 +80,12 @@ Route::middleware('jwt.verify')->group(function () {
     Route::post('ExploreUser', [ExploreController::class, 'userAddexplore']); # Explore Add in UserInfo
     Route::post('ExploreUsers', [ExploreController::class, 'GetSingleExplore']); # Single Explore Witn his Usrs
 
+    #boost Account
+    Route::post('boostaccount', [SuperLikeController::class, 'boostaccount']); #Boost Account
+
+    Route::get('aboutuspage', [AboutUsPageController::class, 'index']); #About Us Page Show
+
+
     
     Route::apiResource('user', UserController::class); # filled user_detail and show list
     Route::apiResource('userprofile', UserProfileController::class); # User Profile Controller 
@@ -91,6 +100,8 @@ Route::middleware('jwt.verify')->group(function () {
     Route::apiResource('explores', ExploreController::class); # expolore 
     Route::apiResource('preferlist', PreferListController::class); # user choices/interests for matching 
     Route::apiResource('subcriptionbuy', SubscriptionBuyController::class); # filled user_detail and show list
+    Route::apiResource('superlike', SuperLikeController::class);#super like 
+    Route::apiResource('contacttoadmin', UserContactAdminController::class);#Contact us
 });
 
 # Social Login

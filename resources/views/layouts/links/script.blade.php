@@ -82,3 +82,7 @@ var switchery = new Switchery(dark_small, { color: '#181a39', size: 'small' });
     });
 @endif
 </script>
+
+<!-- Ck Editor 5-->
+<script src="https://cdn.ckbox.io/ckbox/latest/ckbox.js"></script>
+<script src="{{asset('public/assets/ckeditor/build/ckeditor.js')}}"></script>

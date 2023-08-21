@@ -149,6 +149,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(UserInfo::class);
     }
 
+    public function contactus()
+    {
+        return $this->hasOne(ContactUs::class);
+    }
+
     # request model 
     public function requests()
     {

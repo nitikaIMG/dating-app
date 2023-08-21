@@ -38,6 +38,7 @@ return new class extends Migration
             $table->string('social_id')->nullable();
             $table->string('social_session_id')->nullable();;
             $table->text('referred_from')->nullable();
+            $table->integer('boost_status')->comment('0->not usaable, 1->Active profile in boost mode')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
