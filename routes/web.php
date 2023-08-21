@@ -163,6 +163,9 @@ Route:: group(['middleware'=>'auth'],function(){
     #About Us
     Route::resource('aboutus', AboutUsController::class);
     Route::post('ckeditor/image/upload', [AboutUsController::class, 'ckeditorUpload'])->name('ckeditor.upload');
+    Route::delete('aboutuss/delete',[AboutUsController::class, 'deleterecord'])->name('aboutus.deleterecord');
+    Route::post('aboutus/update/status',[AboutUsController::class, 'updateuserstatus'])->name('aboutusstatus');
+    Route::post('aboutus/activeORdeactive',[AboutUsController::class, 'AboutusActivedeactive'])->name('aboutus.activedeactive');
 
 
 

@@ -63,6 +63,7 @@ class UserContactAdminController extends Controller
             $id = Auth::user()->id;
             $validator =  Validator::make($request->all(), [
                 'msg_for_admin'      => 'required', 
+                'email' => 'required'
             ]);
             
             if ($validator->fails()) {
@@ -74,7 +75,8 @@ class UserContactAdminController extends Controller
 
             $save = ContactUs::updateOrCreate([
                 'user_id'   => $id,
-                'msg_for_admin' => $request->msg_for_admin
+                'msg_for_admin' => $request->msg_for_admin,
+                'email' => $request->email
                 ],
                 $data);
 

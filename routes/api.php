@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\PreferListController;
 use App\Http\Controllers\Api\SubscriptionBuyController;
 use App\Http\Controllers\Api\SuperLikeController;
 use App\Http\Controllers\Api\UserContactAdminController;
+use App\Http\Controllers\Api\AboutUsPageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,6 +82,8 @@ Route::middleware('jwt.verify')->group(function () {
 
     #boost Account
     Route::post('boostaccount', [SuperLikeController::class, 'boostaccount']); #Boost Account
+
+    Route::get('aboutuspage', [AboutUsPageController::class, 'index']); #About Us Page Show
 
 
     

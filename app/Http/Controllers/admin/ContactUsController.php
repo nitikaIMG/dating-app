@@ -117,7 +117,8 @@ class ContactUsController extends Controller
 
         $email = 'aksharma72299@gmail.com';
         $contactus = ContactUs::where('id', $id)->with('user')->first();
-        $email = User::where('id', $contactus->user_id)->value('email');
+        // $email = User::where('id', $contactus->user_id)->value('email');
+        $email = $contactus->email;
         if(!empty($email)){
             Mail::to($email)->send(new ContactUsMail($request->reply, 'email.contact_to_admin', 'Contact Us'));
         }
@@ -157,6 +158,14 @@ class ContactUsController extends Controller
         $update = ContactUs::where('id', $request->explore_id)->update($data);
         return response()->json([
             'status' => 'success'
+        ]);
+    }
+    public function deleterecord(Request $request)
+    {
+        $id = $request->id;
+        $delete = ContactUs::where('id', $id)->delete();
+        return response()->json([
+            'status'=> 'success'
         ]);
     }
 }

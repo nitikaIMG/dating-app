@@ -56,61 +56,56 @@
 
 @push('custom-scripts')
 
-<script>
-    let editor;
-    ClassicEditor
-    .create( document.querySelector(  '#about_page' ), {
-      // Configure image upload
-      ckfinder : {
-        // Replace 'your-server-url' with the actual server endpoint for image upload
-        uploadUrl: "{{ route('ckeditor.upload',['_token'=>csrf_token()]) }}",
-      },
-      // ...
-      // Other configuration options
-    } )
-      .then( newEditor => {
-      editor = newEditor;
-      } )
-      .catch( error => {
-          console.error( error );
-      } );
+    <script>
+        let editor;
+        ClassicEditor
+        .create( document.querySelector(  '#about_page' ), {
+        ckfinder : {
+            uploadUrl: "{{ route('ckeditor.upload',['_token'=>csrf_token()]) }}",
+        },
+        } )
+        .then( newEditor => {
+        editor = newEditor;
+        } )
+        .catch( error => {
+            console.error( error );
+        } );
   </script>
-
-{{-- <script>
-    $(document).ready(function() {
-        $(document).on('change', '#status', function() {
-            var value = $('#status').val();
-            var explore_id = $('#explore_id').val();
-            // alert('Selected value: ' + value);
-            $.ajax({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                url: "{{route('contactus.activedeactive')}}",
-                type: "POST",
-                data: {
-                    value:value,
-                    explore_id:explore_id
-                },
-                success: function(data) {
-                    if(data.status == 'success'){
-                        new PNotify({
-                            title: 'Success',
-                            text: 'Explore Update',
-                            type: 'success'
-                        });
+    <script>
+        $(document).ready(function() {
+            $(document).on('change', '#status', function() {
+                var value = $('#status').val();
+                var explore_id = $('#explore_id').val();
+                // alert('Selected value: ' + value);
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: "{{route('aboutus.activedeactive')}}",
+                    type: "POST",
+                    data: {
+                        value:value,
+                        explore_id:explore_id
+                    },
+                    success: function(data) {
+                        if(data.status == 'success'){
+                            new PNotify({
+                                title: 'Success',
+                                text: 'Explore Update',
+                                type: 'success'
+                            });
+                        }
+                        else{
+                            new PNotify({
+                                title: 'Warning',
+                                text: 'Something Went Wrong',
+                                type: 'Warning'
+                            });
+                        }
                     }
-                    else{
-                        new PNotify({
-                            title: 'Warning',
-                            text: 'Something Went Wrong',
-                            type: 'Warning'
-                        });
-                    }
-                }
-            })
+                })
+            });
         });
-    });
-</script> --}}
+    </script>
 
 @endpush

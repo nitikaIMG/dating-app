@@ -132,4 +132,37 @@ class AboutUsController extends Controller
         $request->file('upload')->move(public_path('/storage/uploadimages'), $validation);
         return response()->json(['filename'=>$validation, 'uploaded'=>1,'url'=>asset('public/storage/uploadimages/'.$validation)]);
     }
+
+    public function AboutusActivedeactive(Request $request)
+    {
+        $data['status'] = $request->value;
+        $update = AboutUs::where('id', $request->explore_id)->update($data);
+        return response()->json([
+            'status' => 'success'
+        ]);
+    }
+
+    public function updateuserstatus(Request $request)
+    {
+        $user = AboutUs::where('id', $request->id)->first();
+        // dd(user);
+        if($user->status == '1'){
+            $data['status'] = 0;
+        }else{
+            $data['status'] = 1;
+        }
+        $user->update($data);
+        return response()->json([
+            'status' => 'success'
+        ]);
+
+    }
+    public function deleterecord(Request $request)
+    {
+        $id = $request->id;
+        $delete = AboutUs::where('id', $id)->delete();
+        return response()->json([
+            'status'=> 'success'
+        ]);
+    }
 }

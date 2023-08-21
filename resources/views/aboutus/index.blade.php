@@ -61,12 +61,12 @@
      <div class="breadcrumbbar">
         <div class="row align-items-center">
             <div class="col-md-8 col-lg-8">
-                <h4 class="page-title">Children</h4>
+                <h4 class="page-title">About Us Page Design</h4>
                 <div class="breadcrumb-list">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html">Home</a></li>
                         <li class="breadcrumb-item"><a href="#">Basics</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">children</li>
+                        <li class="breadcrumb-item active" aria-current="page">About Us</li>
                     </ol>
                 </div>
             </div>
@@ -145,7 +145,7 @@
     });
   </script>
 
-{{-- <script>
+<script>
     function  updatestatus(id){
         (new PNotify({
             title: 'Confirmation Needed',
@@ -174,7 +174,7 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            url: '{{route('childrenstatus')}}',
+            url: '{{route('aboutusstatus')}}',
             method: 'POST',
             data: { id: id },
             success: function (response) {
@@ -195,9 +195,9 @@
         }).on('pnotify.cancel', function() {
         });      
     }
-</script> --}}
+</script>
 
-{{-- <script>
+<script>
     function  deleterecord(id){
         (new PNotify({
             title: 'Confirmation Needed',
@@ -226,7 +226,7 @@
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                url: '{{route("children.deleterecord")}}',
+                url: '{{route("aboutus.deleterecord")}}',
                 data: {id:id},
                 method: 'DELETE',
                 success: function (response) {
@@ -250,5 +250,5 @@
         }).on('pnotify.cancel', function() {
         });      
     }
-</script> --}}
+</script>
 @endpush

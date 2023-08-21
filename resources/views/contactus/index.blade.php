@@ -61,10 +61,10 @@
      <div class="breadcrumbbar">
         <div class="row align-items-center">
             <div class="col-md-8 col-lg-8">
-                <h4 class="page-title">Children</h4>
+                <h4 class="page-title">Contact Us</h4>
                 <div class="breadcrumb-list">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Contact Us</a></li>
+                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
                         <li class="breadcrumb-item"><a href="#">Basics</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Contact Us</li>
                     </ol>
