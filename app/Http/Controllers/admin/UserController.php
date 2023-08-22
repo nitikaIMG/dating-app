@@ -176,6 +176,68 @@ class UserController extends Controller
        if(!empty($request->userinterest)){
         $userinfo['interests'] = $request->userinterest;
        }
+
+    #user basic Info
+        if(!empty($request->zodiac)){
+            $userinfo['zodiac'] = $request->zodiac;
+        }
+
+        if(!empty($request->education)){
+            $userinfo['education'] = $request->education;
+        }
+
+        if(!empty($request->personality_type)){
+            $userinfo['personality_type'] = $request->personality_type;
+        }
+        if(!empty($request->communication_style)){
+            $userinfo['communication_style'] = $request->communication_style;
+        }
+        if(!empty($request->receive_love)){
+            $userinfo['receive_love'] = $request->receive_love;
+        }
+        if(!empty($request->relationship_types)){
+            $userinfo['relationship_types'] = $request->relationship_types;
+        }
+
+        if(!empty($request->relationship_goal)){
+            $userinfo['relationship_goal'] = $request->relationship_goal;
+        }
+
+        if(!empty($request->vaccine)){
+            $userinfo['vaccine'] = $request->vaccine;
+        }
+        if(!empty($request->children)){
+            $userinfo['children'] = $request->children;
+        }
+        if(!empty($request->drink)){
+            $userinfo['drink'] = $request->drink;
+        }
+        if(!empty($request->dietary)){
+            $userinfo['dietary'] = $request->dietary;
+        }
+        if(!empty($request->workout)){
+            $userinfo['workout'] = $request->workout;
+        }
+        if(!empty($request->pet)){
+            $userinfo['pet'] = $request->pet;
+        }
+        if(!empty($request->smoke)){
+            $userinfo['smoke'] = $request->smoke;
+        }
+        if(!empty($request->sleeping_habit)){
+            $userinfo['sleeping_habit'] = $request->sleeping_habit;
+        }
+        if(!empty($request->sexualorientation)){
+            $userinfo['sexualorientation'] = $request->sexualorientation;
+        }
+        if(!empty($request->language)){
+            $userinfo['language'] = $request->language;
+        }
+        if(!empty($request->passion)){
+            $userinfo['passion'] = $request->passion;
+        }
+
+
        if(!empty($request->userbirthdate)){
             $request->validate([  
                 'userbirthdate' =>  'required|date|before:'.now()->subYears(18)->toDateString(),
