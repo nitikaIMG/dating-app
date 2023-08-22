@@ -84,6 +84,8 @@ Route::middleware('jwt.verify')->group(function () {
     Route::post('boostaccount', [SuperLikeController::class, 'boostaccount']); #Boost Account
 
     Route::get('aboutuspage', [AboutUsPageController::class, 'index']); #About Us Page Show
+    Route::get('activeuserlist', [UserController::class, 'activeuserlist']); #Active Users List 
+    
 
 
     
