@@ -5,7 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\UserInfo;
+use App\Models\{UserInfo, SubscriptionPlan};
 use DataTables;
 
 class UserController extends Controller
@@ -18,8 +18,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = User::where('phone', '!=','0000000000')->latest()->get();
-            // dd($data);
+            $data = User::where('phone', '!=','0000000000')->with(['subscriptionusers'])->latest()->get();
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function($row){
@@ -50,7 +49,25 @@ class UserController extends Controller
                             return 'not select yet!';
                         }
                 })
-                ->rawColumns(['action','status','gender'])
+                ->addColumn('subscription_active', function($row){
+                    // dd($row->subscription)
+                    if(!empty($row->subscriptionusers)){
+                       $sub = $row->subscriptionusers->status == '1'?'<button class="btn-sm btn-success">Active</button>':'<button class="btn-sm btn btn-danger">Expire</button>';
+                       return $sub;
+                    }else{
+                        return 'No Plan';
+                    }
+                })
+                ->addColumn('subscription_name', function($row){
+                    if(!empty($row->subscriptionusers)){
+                        $subscription_name = SubscriptionPlan::where('id', $row->subscriptionusers->subscription_id)->value('plan_name');
+                        return '<b>'.$subscription_name.'</b>';
+                    }
+                    else{
+                        return '--';
+                    }
+                })
+                ->rawColumns(['action','status','gender','subscription_active', 'subscription_name'])
                 ->make(true);
         }
         return view('users.user_index');
@@ -98,8 +115,13 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        $user = User::where('id', $id)->with('UserInfo')->first();
-        return view('users.user_profile', compact('user'));
+        $user = User::where('id', $id)->with('UserInfo','subscriptionusers')->first();
+        if(!empty($user->subscriptionusers)){
+            $subscription_details = SubscriptionPlan::where('id', $user->subscriptionusers->subscription_id)->first();
+        }else{
+            $subscription_details = '';
+        }
+        return view('users.user_profile', compact('user','subscription_details'));
     }
 
     /**
@@ -154,6 +176,68 @@ class UserController extends Controller
        if(!empty($request->userinterest)){
         $userinfo['interests'] = $request->userinterest;
        }
+
+    #user basic Info
+        if(!empty($request->zodiac)){
+            $userinfo['zodiac'] = $request->zodiac;
+        }
+
+        if(!empty($request->education)){
+            $userinfo['education'] = $request->education;
+        }
+
+        if(!empty($request->personality_type)){
+            $userinfo['personality_type'] = $request->personality_type;
+        }
+        if(!empty($request->communication_style)){
+            $userinfo['communication_style'] = $request->communication_style;
+        }
+        if(!empty($request->receive_love)){
+            $userinfo['receive_love'] = $request->receive_love;
+        }
+        if(!empty($request->relationship_types)){
+            $userinfo['relationship_types'] = $request->relationship_types;
+        }
+
+        if(!empty($request->relationship_goal)){
+            $userinfo['relationship_goal'] = $request->relationship_goal;
+        }
+
+        if(!empty($request->vaccine)){
+            $userinfo['vaccine'] = $request->vaccine;
+        }
+        if(!empty($request->children)){
+            $userinfo['children'] = $request->children;
+        }
+        if(!empty($request->drink)){
+            $userinfo['drink'] = $request->drink;
+        }
+        if(!empty($request->dietary)){
+            $userinfo['dietary'] = $request->dietary;
+        }
+        if(!empty($request->workout)){
+            $userinfo['workout'] = $request->workout;
+        }
+        if(!empty($request->pet)){
+            $userinfo['pet'] = $request->pet;
+        }
+        if(!empty($request->smoke)){
+            $userinfo['smoke'] = $request->smoke;
+        }
+        if(!empty($request->sleeping_habit)){
+            $userinfo['sleeping_habit'] = $request->sleeping_habit;
+        }
+        if(!empty($request->sexualorientation)){
+            $userinfo['sexualorientation'] = $request->sexualorientation;
+        }
+        if(!empty($request->language)){
+            $userinfo['language'] = $request->language;
+        }
+        if(!empty($request->passion)){
+            $userinfo['passion'] = $request->passion;
+        }
+
+
        if(!empty($request->userbirthdate)){
             $request->validate([  
                 'userbirthdate' =>  'required|date|before:'.now()->subYears(18)->toDateString(),

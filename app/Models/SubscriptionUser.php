@@ -17,4 +17,15 @@ class SubscriptionUser extends Model
         'free_super_like',
         'status',
     ];
+
+    public function users()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function subscriptionusers()
+    {
+        return $this->hasMany(SubscriptionPlan::class,'subscription_id');
+    }
+
 }

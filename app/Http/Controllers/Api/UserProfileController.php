@@ -55,10 +55,26 @@ class UserProfileController extends Controller
                     'age'            => ['required', 'numeric'],
                     'enable_location' => ['required', 'in:1,0'],
                     'dob'            => ['required', 'date'],
-                    'email'            => ['required','email','unique:users'],
+                    'email'            => 'required|email||unique:users,email,'.$auth_user_id,
                     'country'        => ['required', 'string'],
                     'interests'      => ['required', 'integer', 'max:2'],
-                    'phone'          => ['numeric', 'digits:10'],
+                    // 'zodiac'      => ['required', 'integer', 'max:2'],
+                    // 'communication_style'      => ['required', 'integer', 'max:2'],
+                    // 'personality_type'      => ['required', 'integer', 'max:2'],
+                    // 'education'      => ['required', 'integer', 'max:2'],
+                    // 'vaccine'      => ['required', 'integer', 'max:2'],
+                    // 'relationship_types'      => ['required', 'integer', 'max:2'],
+                    // 'receive_love'      => ['required', 'integer', 'max:2'],
+                    // 'children'      => ['required', 'integer', 'max:2'],
+                    // 'dietary'      => ['required', 'integer', 'max:2'],
+                    // 'drink'      => ['required', 'integer', 'max:2'],
+                    // 'smoke'      => ['required', 'integer', 'max:2'],
+                    // 'pet'      => ['required', 'integer', 'max:2'],
+                    // 'workout'      => ['required', 'integer', 'max:2'],
+                    // 'sexualorientation'          => ['numeric', 'digits:10'],
+                    // 'passion'          => ['numeric', 'digits:10'],
+                    // 'language'          => ['numeric', 'digits:10'],
+                    // 'sleeping_habit'          => ['numeric', 'digits:10'],
                     'profile_image'  => ['required', 'mimes:jpg,jpeg,png,PNG,JPG,JPEG'],
                 ]);
 
@@ -91,6 +107,66 @@ class UserProfileController extends Controller
                 $verifieds['dob'] = $request->dob;
                 $verifieds['country'] = $request->country;
                 $verifieds['interests'] = $request->interests;
+
+                if(!empty($request->zodiac)){
+                    $verifieds['zodiac'] = $request->zodiac;
+                }
+
+                if(!empty($request->education)){
+                    $verifieds['education'] = $request->education;
+                }
+
+                if(!empty($request->personality_type)){
+                    $verifieds['personality_type'] = $request->personality_type;
+                }
+                if(!empty($request->communication_style)){
+                    $verifieds['communication_style'] = $request->communication_style;
+                }
+                if(!empty($request->receive_love)){
+                    $verifieds['receive_love'] = $request->receive_love;
+                }
+                if(!empty($request->relationship_types)){
+                    $verifieds['relationship_types'] = $request->relationship_types;
+                }
+
+                if(!empty($request->relationship_goal)){
+                    $verifieds['relationship_goal'] = $request->relationship_goal;
+                }
+
+                if(!empty($request->vaccine)){
+                    $verifieds['vaccine'] = $request->vaccine;
+                }
+                if(!empty($request->children)){
+                    $verifieds['children'] = $request->children;
+                }
+                if(!empty($request->drink)){
+                    $verifieds['drink'] = $request->drink;
+                }
+                if(!empty($request->dietary)){
+                    $verifieds['dietary'] = $request->dietary;
+                }
+                if(!empty($request->workout)){
+                    $verifieds['workout'] = $request->workout;
+                }
+                if(!empty($request->pet)){
+                    $verifieds['pet'] = $request->pet;
+                }
+                if(!empty($request->smoke)){
+                    $verifieds['smoke'] = $request->smoke;
+                }
+                if(!empty($request->sleeping_habit)){
+                    $verifieds['sleeping_habit'] = $request->sleeping_habit;
+                }
+                if(!empty($request->sexualorientation)){
+                    $verifieds['sexualorientation'] = $request->sexualorientation;
+                }
+                if(!empty($request->language)){
+                    $verifieds['language'] = $request->language;
+                }
+                if(!empty($request->passion)){
+                    $verifieds['passion'] = $request->passion;
+                }
+
                 $preferdata['show_me_to'] = $request->interests;
                 if(!empty($request->about_me)){
                     $verifieds['about_me'] = $request->about_me;
