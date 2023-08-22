@@ -97,6 +97,8 @@
                                         <th>Gender</th>
                                         {{-- <th>Age</th> --}}
                                         <th>Phone</th>
+                                        <th>Subscription Plan</th>
+                                        <th>Subscription Name</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
@@ -137,6 +139,14 @@
                     {
                         data: 'phone',
                         name: 'phone'
+                    },
+                    {
+                        data: 'subscription_active',
+                        name: 'subscription_active'
+                    },
+                    {
+                        data: 'subscription_name',
+                        name: 'subscription_name'
                     },
                     {
                         data: 'status',

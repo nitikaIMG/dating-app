@@ -8,7 +8,7 @@ use App\Models\LikeProfile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Api\ApiResponse;
-use App\Models\User;
+use App\Models\{User, SubscriptionUser};
 use App\Http\Resources\UserProfileResource;
 
 
@@ -20,11 +20,29 @@ class LikeProfileController extends Controller
         try {
             DB::beginTransaction();
             $id = auth()->user()->id;
-            $getusers = LikeProfile::where(['liked_user_id'=>$id, 'like_status'=>1])->with('users')->get();
-            if (!empty($getusers)) {
+            $getlike = LikeProfile::where(['liked_user_id'=>$id, 'like_status'=>1])->with('users')->get();
+            if($getlike){
+
+                $subscription = SubscriptionUser::where('user_id', $id)->where('status', '1')->first();
+                if(!empty($subscription)){
+                    if (!empty($getlike)) {
+                        return ApiResponse::ok(
+                            'List Of Users Who Liked Your Profile ',
+                            $this->getUserlist($getlike), 
+                            $total_like
+                        );
+                    }
+                }else{
+                        return ApiResponse::ok(
+                            'Buy Plan And See Who Likes Your Profile',
+                            'your total likes ' .count($getlike)??''
+                            
+                        );
+                }
+            }
+            else{
                 return ApiResponse::ok(
-                    'List Of Users Who Liked Your Profile',
-                    $this->getUserlist($getusers)
+                    'You have No likes',  
                 );
             }
         } catch (\Exception $e) {

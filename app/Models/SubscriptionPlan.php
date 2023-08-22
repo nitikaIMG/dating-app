@@ -13,4 +13,10 @@ class SubscriptionPlan extends Model
         'created_at',
         'updated_at',
     ];
+
+    #subscription
+    public function subscriptionplan()
+    {
+        return $this->belongsTO(SubscriptionUser::class);
+    }
 }

@@ -353,7 +353,7 @@ class AuthController extends ApiController
                     $socialDatas->refer_code = $this->getReferralCode($socialDatas->first_name);
                     $socialDatas->update();
                 }
-
+                
                 // $type = (!empty($socialDatas->dob)?false:true);  #social Login response
                 // return ApiResponse::ok(
                 //     'Login Successfully',

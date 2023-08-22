@@ -31,7 +31,7 @@ class AppServiceProvider extends ServiceProvider
         $total_user_female = User::where('gender','1')->get();
         $total_user_other = User::where('gender','2')->get();
         $total_active_users = User::where('active_device_id','1')->get();
-        $active_users = User::where('active_device_id','1')->with('UserInfo')->paginate('2');
+        $active_users = User::where('active_device_id','1')->with('UserInfo')->paginate('3');
        
         # Top Rated Profiles basis of likes
         $mainArray = [];
@@ -44,8 +44,6 @@ class AppServiceProvider extends ServiceProvider
                 $new[] = User::find($likedUserId);
             }
         }
-
-      
 
         #return 
         view()->share('total_user', $total_user);

@@ -1,6 +1,14 @@
 @extends('layouts.app')
 @section('content')
 
+@push('custom-styles')
+    <style>
+        .plan_detail{
+            margin-left: 340px !important;
+        }
+    </style>
+@endpush
+
 
    {{-- <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab"> --}}
    <br>
@@ -141,6 +149,48 @@
                         </select>
                     </div>
                 </div>
+
+                <!-- Subscription Details-->
+                @if(!empty($user->subscriptionusers))
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="subscription_name">Subscription Name</label>
+                        <a href="{{route('subscription.edit',$user->subscriptionusers->subscription_id)}}"  class="btn btn-sm btn-link plan_detail">Full Detail</a>
+                        <input type="text" class="form-control" id="subscription_name" value="{{$subscription_details->plan_name??''}}" readonly>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="refer_code">Price</label>
+                        <input type="text" class="form-control" id="refer_code" value="{{$subscription_details->price??''}}" readonly>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="refer_by">Boost Use Or Not</label>
+                        <input type="email" class="form-control" id="refer_by" value="{{$user->subscriptionusers->free_boost_per_month !== 0 ?'Use':'Not Use'}}" readonly>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="refer_by">Super Like Use</label>
+                        <input type="email" class="form-control" id="refer_by" value="{{$user->subscriptionusers->free_super_like}}" readonly>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="default-date">Expire Date</label>
+                        <input type="text" id="default-date" class="form-control" placeholder="{{$user->subscriptionusers->expire_date??''}}" aria-describedby="basic-addon2" value="{{$user->subscriptionusers->expire_date??''}}" name="expire_date" readonly/>
+                  
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="sub_status">Subscription Status</label>
+                        <select type="text" class="form-control" id="sub_status" readonly>
+                            <option value="1" {{$user->subscriptionusers->status == 1 ? 'selected': ''}}>Active</option>
+                            <option value="0" {{$user->subscriptionusers->status == 0 ? 'selected': ''}}>Disabled</option>
+                        </select>
+                    </div>
+                </div>
+                @endif
+
+
                 <button type="submit" class="btn btn-primary-rgba font-16"><i class="ri-save-line mr-2"></i>Update</button>
             </form>
         </div>
