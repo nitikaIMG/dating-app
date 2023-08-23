@@ -8,11 +8,11 @@
    <br>
     <div class="card m-b-30">
         <div class="card-header">                    
-            <h5 class="card-title mb-0">About Page</h5>
+            <h5 class="card-title mb-0">Privacy & Terms</h5>
             {{-- <input type="checkbox" class="js-switch-primary-small" checked /> --}}
         </div>
         <div class="card-body">
-            <form action="{{route('aboutus.store')}}" method="post" enctype="multipart/form-data">
+            <form action="{{route('privacy.store')}}" method="post" enctype="multipart/form-data">
                 @csrf 
                 {{-- <input type="hidden" name="explore_id" id="explore_id" value="{{$contactus->id}}"> --}}
                 <div class="form-row">
@@ -34,10 +34,10 @@
                     {{-- </div> --}}
                 </div>
                     <div class="mb-4">
-                        <label for="about_page">About Page Design</label>
-                        <textarea class="form-control" id="about_page" name="about_page" value="{{old('about_page')}}"></textarea>
+                        <label for="privacy">Privacy Page Design</label>
+                        <textarea class="form-control" id="privacy" name="privacy" value="{{old('privacy')}}"></textarea>
                     </div>
-                    @error('about_page')
+                    @error('privacy')
                             <div class="error text-danger">{{ $message }}</div>
                     @enderror
                     <button type="submit" class="btn btn-primary-rgba font-16"><i class="ri-save-line mr-2"></i>Create</button>
@@ -55,11 +55,11 @@
 <script>
     let editor;
     ClassicEditor
-    .create( document.querySelector(  '#about_page' ), {
+    .create( document.querySelector(  '#privacy' ), {
       // Configure image upload
       ckfinder : {
         // Replace 'your-server-url' with the actual server endpoint for image upload
-        uploadUrl: "{{ route('ckeditor.upload',['_token'=>csrf_token()]) }}",
+        uploadUrl: "{{ route('privacy.upload',['_token'=>csrf_token()]) }}",
       },
       // ...
       // Other configuration options

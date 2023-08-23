@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Requests;
 use App\Models\User;
+use Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Api\ApiResponse;
@@ -195,5 +196,29 @@ class RequestApiController extends Controller
     public function getRequestedUserList($result)
     {
         return $result;
+    }
+
+    public function friendlist(Request $request)
+    {
+        try{
+            DB::beginTransaction();
+            $id = Auth::user()->id;
+            $friend = Requests::where(['sender_id'=>$id, 'status'=>1])->with('users')->get();
+            if(!empty($friend)){
+                return ApiResponse::ok(
+                    'Your Chat List',
+                    $friend
+                );
+            }else{
+                return ApiResponse::error(
+                    'You Have No Friends!'
+                );
+            }
+        }catch(\Exception $e)
+        {
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage());
+            logger($e->getMessage());
+        }
     }
 }

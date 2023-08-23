@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('boost_status')->comment('0->not usaable, 1->Active profile in boost mode')->nullable();
             $table->integer('free_super_like')->comment('5 per month')->nullable();
             $table->integer('status')->default('1')->comment('1=>Active,0=>deactive');
+            $table->dateTime('created_date')->nullable();
             $table->dateTime('expire_date')->nullable();
             $table->timestamps();
         });

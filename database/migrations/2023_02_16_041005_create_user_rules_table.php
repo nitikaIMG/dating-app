@@ -15,7 +15,9 @@ return new class extends Migration
     {
         Schema::create('user_rules', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->longtext('terms_conditions');
+            $table->integer('status')->comment('1->active, 0->deactive')->nullable();
             $table->timestamps();
         });
     }

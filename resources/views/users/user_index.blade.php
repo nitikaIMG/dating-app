@@ -62,7 +62,7 @@
                 <h4 class="page-title">User</h4>
                 <div class="breadcrumb-list">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('dashboard')}}">Home</a></li>
                         <li class="breadcrumb-item"><a href="#">user</a></li>
                         <li class="breadcrumb-item active" aria-current="page">table</li>
                     </ol>

@@ -64,7 +64,7 @@
                 <h4 class="page-title">Zodiac</h4>
                 <div class="breadcrumb-list">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('dashboard')}}">Home</a></li>
                         <li class="breadcrumb-item"><a href="#">basics</a></li>
                         <li class="breadcrumb-item active" aria-current="page">zodiac</li>
                     </ol>

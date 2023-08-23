@@ -13,8 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('userinfo', function (Blueprint $table) {
-            //
+        Schema::create('privacy_terms', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->nullabel();
+            $table->longtext('privacy_page')->nullable();
+            $table->integer('status')->comment('1->active, 0->deactive')->nullable();
+            $table->timestamps();
         });
     }
 
@@ -25,8 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('userinfo', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('privacy_terms');
     }
 };

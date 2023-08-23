@@ -25,6 +25,8 @@ use App\Http\Controllers\admin\RelationshipGoalController;
 use App\Http\Controllers\admin\RelationshipTypeController;
 use App\Http\Controllers\admin\ContactUsController;
 use App\Http\Controllers\admin\AboutUsController;
+use App\Http\Controllers\admin\PrivacyController;
+use App\Http\Controllers\admin\RuleController;
 
 
 /*
@@ -167,8 +169,20 @@ Route:: group(['middleware'=>'auth'],function(){
     Route::post('aboutus/update/status',[AboutUsController::class, 'updateuserstatus'])->name('aboutusstatus');
     Route::post('aboutus/activeORdeactive',[AboutUsController::class, 'AboutusActivedeactive'])->name('aboutus.activedeactive');
 
+    #Privacy
+    Route::resource('privacy', PrivacyController::class);
+    Route::post('ckeditor/image/upload', [PrivacyController::class, 'ckeditorUpload'])->name('privacy.upload');
+    Route::delete('privacys/delete',[PrivacyController::class, 'deleterecord'])->name('privacy.deleterecord');
+    Route::post('privacy/update/status',[PrivacyController::class, 'updateuserstatus'])->name('privacystatus');
+    Route::post('privacy/activeORdeactive',[PrivacyController::class, 'AboutusActivedeactive'])->name('privacy.activedeactive');
 
 
+    #Rule
+    Route::resource('rule', RuleController::class);
+    Route::post('ckeditor/image/upload', [RuleController::class, 'ckeditorUpload'])->name('rule.upload');
+    Route::delete('rules/delete',[RuleController::class, 'deleterecord'])->name('rule.deleterecord');
+    Route::post('rule/update/status',[RuleController::class, 'updateuserstatus'])->name('rulestatus');
+    Route::post('rule/activeORdeactive',[RuleController::class, 'AboutusActivedeactive'])->name('rule.activedeactive'); 
 });
 
 Auth::routes();

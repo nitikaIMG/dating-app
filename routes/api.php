@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\SubscriptionBuyController;
 use App\Http\Controllers\Api\SuperLikeController;
 use App\Http\Controllers\Api\UserContactAdminController;
 use App\Http\Controllers\Api\AboutUsPageController;
+use App\Http\Controllers\Api\UserBasicDetailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -103,7 +104,34 @@ Route::middleware('jwt.verify')->group(function () {
     Route::apiResource('preferlist', PreferListController::class); # user choices/interests for matching 
     Route::apiResource('subcriptionbuy', SubscriptionBuyController::class); # filled user_detail and show list
     Route::apiResource('superlike', SuperLikeController::class);#super like 
-    Route::apiResource('contacttoadmin', UserContactAdminController::class);#Contact us
+    Route::apiResource('contacttoadmin', UserContactAdminController::class);#Contact us 
+
+    #privacy page
+    Route::get('privacypage', [AboutUsPageController::class, 'privacypage']); #privacypage List for chat
+
+    #chatlist
+    Route::get('chatlist', [RequestApiController::class, 'friendlist']); #friendlist List for chat
+
+    #basic Detail of Users
+    Route::get('drinklist', [UserBasicDetailController::class, 'drink']); #Drinks List
+    Route::get('petlist', [UserBasicDetailController::class, 'pet']); #Pet List
+    Route::get('smokelist', [UserBasicDetailController::class, 'smoke']); #smoke List
+    Route::get('educationlist', [UserBasicDetailController::class, 'education']); #education List
+    Route::get('dietarylist', [UserBasicDetailController::class, 'dietary']); #dietary List
+    Route::get('languagelist', [UserBasicDetailController::class, 'language']); #language List
+    Route::get('relationshiptypelist', [UserBasicDetailController::class, 'relation_type']); #relation_type List
+    Route::get('relationshipgoallist', [UserBasicDetailController::class, 'relation_goal']); #relation_goal List
+    Route::get('sleepinghabitList', [UserBasicDetailController::class, 'SleepingHabit']); #SleepingHabit List
+    Route::get('receivelovelist', [UserBasicDetailController::class, 'ReceiveLove']); #ReceiveLove List
+    Route::get('personalitytypelist', [UserBasicDetailController::class, 'personality_type']); #personality_type List
+    Route::get('sexualorientationlist', [UserBasicDetailController::class, 'all_sexual_orientation']); #all_sexual_orientation List
+    Route::get('passionlist', [UserBasicDetailController::class, 'passion']); #Passion List
+    Route::get('workoutlist', [UserBasicDetailController::class, 'workout']); #workout List
+    Route::get('vaccinelist', [UserBasicDetailController::class, 'vaccine']); #Vaccine List
+    Route::get('zodiaclist', [UserBasicDetailController::class, 'zodiac']); #zodiac List
+    Route::get('childrenlist', [UserBasicDetailController::class, 'children']); #children List
+
+
 });
 
 # Social Login

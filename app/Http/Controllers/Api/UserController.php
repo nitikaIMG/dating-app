@@ -112,7 +112,7 @@ class UserController extends Controller
                         // Calculate the bounding box coordinates
                         $earthRadius = 6371; // Earth's radius in kilometers
                         $latRadians = deg2rad($latitude);
-                        $lngRadians = deg2rad($longitude);
+                        $lngRadians = deg2rad($longitude);   
                         
                         $deltaLat = rad2deg($minDistance / $earthRadius);
                         $deltaLng = rad2deg($minDistance / ($earthRadius * cos($latRadians)));
