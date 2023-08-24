@@ -15,7 +15,7 @@
             <form action="{{route('privacy.update',$privacy->id)}}" method="post" enctype="multipart/form-data">
                 @csrf 
                 @method('put')
-                {{-- <input type="hidden" name="explore_id" id="explore_id" value="{{$contactus->id}}"> --}}
+                <input type="hidden" name="privacy_id" id="privacy_id" value="{{$privacy->id}}">
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="username">Name</label>
@@ -75,7 +75,7 @@
         $(document).ready(function() {
             $(document).on('change', '#status', function() {
                 var value = $('#status').val();
-                var explore_id = $('#explore_id').val();
+                var privacy_id = $('#privacy_id').val();
                 // alert('Selected value: ' + value);
                 $.ajax({
                     headers: {
@@ -85,7 +85,7 @@
                     type: "POST",
                     data: {
                         value:value,
-                        explore_id:explore_id
+                        privacy_id:privacy_id
                     },
                     success: function(data) {
                         if(data.status == 'success'){

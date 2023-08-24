@@ -220,7 +220,6 @@ class MediaController extends Controller
                             if (!empty($explode[$update_key])) {
                                 unlink($explode[$update_key]);
                             }
-
                             $explode[$update_key] = $img_url;
                         }
                         $imp_image =  implode('|', $explode);

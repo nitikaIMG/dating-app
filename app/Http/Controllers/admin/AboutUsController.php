@@ -136,7 +136,7 @@ class AboutUsController extends Controller
     public function AboutusActivedeactive(Request $request)
     {
         $data['status'] = $request->value;
-        $update = AboutUs::where('id', $request->explore_id)->update($data);
+        $update = AboutUs::where('id', $request->about_id)->update($data);
         return response()->json([
             'status' => 'success'
         ]);

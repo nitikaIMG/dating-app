@@ -15,7 +15,7 @@
             <form action="{{route('rule.update',$rule->id)}}" method="post" enctype="multipart/form-data">
                 @csrf 
                 @method('put')
-                {{-- <input type="hidden" name="explore_id" id="explore_id" value="{{$contactus->id}}"> --}}
+                <input type="hidden" name="rule_id" id="rule_id" value="{{$rule->id}}">
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="username">Name</label>
@@ -75,23 +75,23 @@
         $(document).ready(function() {
             $(document).on('change', '#status', function() {
                 var value = $('#status').val();
-                var explore_id = $('#explore_id').val();
+                var rule_id = $('#rule_id').val();
                 // alert('Selected value: ' + value);
                 $.ajax({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    url: "{{route('privacy.activedeactive')}}",
+                    url: "{{route('rule.activedeactive')}}",
                     type: "POST",
                     data: {
                         value:value,
-                        explore_id:explore_id
+                        rule_id:rule_id
                     },
                     success: function(data) {
                         if(data.status == 'success'){
                             new PNotify({
                                 title: 'Success',
-                                text: 'Explore Update',
+                                text: 'Status Update',
                                 type: 'success'
                             });
                         }

@@ -133,10 +133,10 @@ class RuleController extends Controller
         return response()->json(['filename'=>$validation, 'uploaded'=>1,'url'=>asset('public/storage/uploadimages/'.$validation)]);
     }
 
-    public function AboutusActivedeactive(Request $request)
+    public function ruleActivedeactive(Request $request)
     {
         $data['status'] = $request->value;
-        $update = UserRule::where('id', $request->explore_id)->update($data);
+        $update = UserRule::where('id', $request->rule_id)->update($data);
         return response()->json([
             'status' => 'success'
         ]);
