@@ -115,38 +115,22 @@
                             <li><a href="{{route('aboutus.index')}}">About Us</a></li>
                         </ul>
                     </li>
-                {{-- <li>
+                <li>
                         <a href="javaScript:void();">
-                            <i class="ri-service-line"></i><span>Icons</span><i class="ri-arrow-right-s-line"></i>
+                            <i class="ri-service-line"></i><span>Privacy & Terms</span><i class="ri-arrow-right-s-line"></i>
                         </a>
                         <ul class="vertical-submenu">
-                            <li><a href="icon-svg.html">SVG</a></li>
-                            <li><a href="icon-dripicons.html">Dripicons</a></li>
-                            <li><a href="icon-feather.html">Feather</a></li>
-                            <li><a href="icon-flag.html">Flag</a></li>
-                            <li><a href="icon-font-awesome.html">Font Awesome</a></li>
-                            <li><a href="icon-ionicons.html">Ion</a></li>
-                            <li><a href="icon-line-awesome.html">Line Awesome</a></li>
-                            <li><a href="icon-material-design.html">Material Design</a></li>
-                            <li><a href="icon-remixicon.html">Remixicon</a></li>
-                            <li><a href="icon-simple-line.html">Simple Line</a></li>
-                            <li><a href="icon-socicon.html">Socicon</a></li>
-                            <li><a href="icon-themify.html">Themify</a></li>
-                            <li><a href="icon-typicons.html">Typicons</a></li>
+                            <li><a href="{{route('privacy.index')}}">Privacy & Terms</a></li>
                         </ul>
-                    </li> --}}
-                {{-- <li>
-                        <a href="javaScript:void();">
-                            <i class="ri-table-line"></i><span>Tables</span><i class="ri-arrow-right-s-line"></i>
-                        </a>
-                        <ul class="vertical-submenu">
-                            <li><a href="table-bootstrap.html">Bootstrap</a></li>
-                            <li><a href="table-datatable.html">Datatable</a></li>
-                            <li><a href="table-editable.html">Editable</a></li>
-                            <li><a href="table-footable.html">Foo</a></li>
-                            <li><a href="table-rwdtable.html">RWD</a></li>
-                        </ul>
-                    </li> --}}
+                    </li>
+                <li>
+                    <a href="javaScript:void();">
+                        <i class="ri-table-line"></i><span>Rules</span><i class="ri-arrow-right-s-line"></i>
+                    </a>
+                    <ul class="vertical-submenu">
+                        <li><a href="{{route('rule.index')}}">Rules</a></li>
+                    </ul>
+                </li>
                 {{-- <li>
                         <a href="javaScript:void();">
                             <i class="ri-map-pin-line"></i><span>Maps</span><i class="ri-arrow-right-s-line"></i>

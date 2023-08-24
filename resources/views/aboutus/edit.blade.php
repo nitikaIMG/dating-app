@@ -15,7 +15,7 @@
             <form action="{{route('aboutus.update',$aboutus->id)}}" method="post" enctype="multipart/form-data">
                 @csrf 
                 @method('put')
-                {{-- <input type="hidden" name="explore_id" id="explore_id" value="{{$contactus->id}}"> --}}
+                <input type="hidden" name="about_id" id="about_id" value="{{$aboutus->id}}">
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="username">Name</label>
@@ -75,7 +75,7 @@
         $(document).ready(function() {
             $(document).on('change', '#status', function() {
                 var value = $('#status').val();
-                var explore_id = $('#explore_id').val();
+                var about_id = $('#about_id').val();
                 // alert('Selected value: ' + value);
                 $.ajax({
                     headers: {
@@ -85,7 +85,7 @@
                     type: "POST",
                     data: {
                         value:value,
-                        explore_id:explore_id
+                        about_id:about_id
                     },
                     success: function(data) {
                         if(data.status == 'success'){

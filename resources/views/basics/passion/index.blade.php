@@ -63,7 +63,7 @@
                 <h4 class="page-title">Passion</h4>
                 <div class="breadcrumb-list">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('dashboard')}}">Home</a></li>
                         <li class="breadcrumb-item"><a href="#">Basics</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Passion</li>
                     </ol>

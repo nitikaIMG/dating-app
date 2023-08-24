@@ -24,6 +24,7 @@ class ExploreController extends Controller
     public function index()
     {
         try{
+            // dd('ok');
             DB::beginTransaction();
             $GetExplores = Explore::all();
             if(!empty($GetExplores)){
