@@ -34,6 +34,7 @@ class DatabaseSeeder extends Seeder
         $this->call(LanguageSeeder::class);
         $this->call(PassionSeeder::class);
         $this->call(SubscriptionSeeder::class);
+        $this->call(ExploreSeeder::class);
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([

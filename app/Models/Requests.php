@@ -25,6 +25,6 @@ class Requests extends Model
     # user model 
     public function users()
     {
-        return $this->belongsTo(User::class,'id');
+        return $this->belongsTo(User::class,'receiver_id');
     }
 }

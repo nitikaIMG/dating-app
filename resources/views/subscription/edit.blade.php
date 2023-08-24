@@ -14,6 +14,7 @@
             <form action="{{route('subscription.update',$subcription->id)}}" method="post" enctype="multipart/form-data">
                 @csrf 
                 @method('put')
+                
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="plan_name">Name</label>

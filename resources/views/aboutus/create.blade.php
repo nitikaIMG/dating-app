@@ -8,7 +8,7 @@
    <br>
     <div class="card m-b-30">
         <div class="card-header">                    
-            <h5 class="card-title mb-0">View Message & Reply</h5>
+            <h5 class="card-title mb-0">About Page</h5>
             {{-- <input type="checkbox" class="js-switch-primary-small" checked /> --}}
         </div>
         <div class="card-body">
